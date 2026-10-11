@@ -5,7 +5,8 @@
   "scripts": {
     "build:core": "python scripts/build_core.py",
     "dev:lan": "python scripts/serve_local.py --bind 127.0.0.1",
-    "dev": "python scripts/serve_accounts.py"
+    "dev": "python scripts/serve_accounts.py",
+    "dev:phone": "python scripts/serve_local.py --bind 192.168.0.22 --port 8004"
   },
   "devDependencies": {
     "typescript": "5.9.3"

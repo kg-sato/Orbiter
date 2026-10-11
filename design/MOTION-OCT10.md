@@ -96,3 +96,11 @@ Replaced the restrained shared button release with a 440 ms compression/rebound/
 ## Glass editors and date clarification
 
 Removed the opaque My Rhythm planner parent, made dialog shells and inputs translucent, and softened focus outlines while retaining visible keyboard focus. Transparency and contrast preferences still take precedence. Enlarged the date plaque to balance the heading (64 px desktop / 54 px phone). The header now always reads the real device date, refreshes while open and on tab return; the demo calendar remains explicitly labeled Oct 5-11, 2026.
+
+## Tidal panel entrances
+
+Added a 620 ms curved reveal to native dialogs, including Workspace preferences, event/task editors, Capture, Search and the dynamically created account panel. An 820 ms curved light wash passes over the glass and removes itself. The same wash accompanies the leading visible Workspace panel, preserving the existing spatial panel transfers. Expanded details use a short rise/fade. Native focus, Escape and form actions remain immediate. Reduced motion suppresses these effects; closed panels cancel owned motion and remove decorations.
+
+### Stronger tidal continuation
+
+Replaced the simple elliptical light plate with two original SVG wave fronts and a crossing secondary current. Dialog reveals now last 760 ms with short staggered field groups; the wave clears after 1050 ms. Main Workspace sections use the same curved reveal while retaining the focus/planner spatial transfers. Native controls are never delayed or intercepted.

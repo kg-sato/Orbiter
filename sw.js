@@ -1,5 +1,5 @@
 /* Cache only the public application shell. Personal schedules remain in local storage. */
-const SHELL_VERSION = "8b595d6e7610df5e";
+const SHELL_VERSION = "5a9133fea6cc2af0";
 const CACHE_PREFIX = `scheduler-shell:${new URL(self.registration.scope).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + SHELL_VERSION;
 const appURL = new URL("Application.html", self.registration.scope).href;
