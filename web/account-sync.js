@@ -1,4 +1,4 @@
-﻿/* Account sync is explicit: local data is never uploaded just because somebody signs in. */
+/* Account sync is explicit: local data is never uploaded just because somebody signs in. */
 (() => {
   "use strict";
   const bridge = window.SchedulerAccountBridge;
@@ -60,11 +60,9 @@
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(20000),
     });
-    const result = await response
-      .json()
-      .catch(() => ({
-        error: "Open Scheduler through its account server to use sync.",
-      }));
+    const result = await response.json().catch(() => ({
+      error: "Open Scheduler through its account server to use sync.",
+    }));
     if (!response.ok) {
       if (response.status === 401) {
         account = null;
@@ -116,11 +114,18 @@
   entry.addEventListener("click", () => {
     document.getElementById("settings-editor").close();
     dialog.showModal();
-    if (!bridge.enabled || !["http:", "https:"].includes(location.protocol)) {
+    const localHost = ["127.0.0.1", "localhost", "[::1]"].includes(
+      location.hostname,
+    );
+    if (
+      !bridge.enabled ||
+      !["http:", "https:"].includes(location.protocol) ||
+      (location.protocol !== "https:" && !localHost)
+    ) {
       $("account-auth").hidden = true;
       $("account-workspace").hidden = true;
       status(
-        "Accounts are available in the real app at http://127.0.0.1:8003/Application.html. The design preview and file copy stay local.",
+        "Account sign-in is disabled in this preview. Use the account server on your PC; phone sign-in will require HTTPS. Your phone schedule stays in this browser.",
       );
       return;
     }
