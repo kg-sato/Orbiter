@@ -1,5 +1,5 @@
 /* Cache only the public application shell. Personal schedules remain in local storage. */
-const SHELL_VERSION = "5a9133fea6cc2af0";
+const SHELL_VERSION = "e9659bb06a49d224";
 const CACHE_PREFIX = `scheduler-shell:${new URL(self.registration.scope).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + SHELL_VERSION;
 const appURL = new URL("Application.html", self.registration.scope).href;
@@ -7,6 +7,8 @@ const shellURLs = [
   "Application.html",
   "manifest.webmanifest",
   "web/account-sync.js",
+  "web/study-companion.html",
+  "web/study-companion.js",
   "web/icons/orbit-192.png",
   "web/icons/orbit-512.png",
   "web/icons/orbit-180.png",

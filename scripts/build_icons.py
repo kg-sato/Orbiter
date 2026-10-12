@@ -1,4 +1,4 @@
-"""Render the original orbital mark as opaque PNGs with Python's standard library.
+"""Render the original eclipse mark as opaque PNGs with Python's standard library.
 
 Geometry is code-owned so small launcher icons remain crisp without downloaded art.
 Run: python scripts/build_icons.py. This regenerates web icons and the Apple icon.
@@ -16,24 +16,27 @@ def mix(a, b, ratio):
 
 
 def pixel(x, y):
-    background = mix((25, 28, 36), (54, 58, 68), max(0, min(1, .55 - .3*x - .35*y)))
-    rx, ry = .9004*x - .4350*y, .4350*x + .9004*y
-    ellipse = math.sqrt((rx/.70)**2 + (ry/.235)**2)
-    ring = .85 < ellipse < 1.13
-    ring_color = mix((101, 86, 130), (222, 211, 240), max(0, min(1, .5 - rx*.3 - ry*.8)))
+    """Opaque eclipse icon with a dark horizon and layered accretion light."""
+    background = mix((9, 13, 28), (36, 35, 60), max(0, min(1, .55-.3*x-.35*y)))
+    radius = math.hypot(x, y)
+    glow = math.exp(-((radius-.4)/.13)**2)*.25
+    background = mix(background, (113, 91, 178), glow)
+    rx, ry = .94*x-.342*y, .342*x+.94*y
+    ellipse = math.sqrt((rx/.77)**2+(ry/.235)**2)
+    ring = .92 < ellipse < 1.08
+    color = mix((131, 152, 221), (239, 216, 226), max(0,min(1,.55-rx*.4-ry)))
     if ring:
-        background = ring_color
-    radius = math.hypot(x+.025, y+.015)
-    if radius < .39:
-        nx, ny = (x+.025)/.39, (y+.015)/.39
-        nz = math.sqrt(max(0, 1-nx*nx-ny*ny))
-        light = max(0, min(1, -.4*nx-.5*ny+.75*nz))
-        background = mix((47, 75, 75), (191, 228, 210), light)
+        background = color
+    if radius < .40:
+        background = mix((7, 10, 23), (29, 26, 49), (radius/.4)**8*.7)
+    if .395 < radius < .425 and y < -.08:
+        background = mix((174, 157, 226), (243, 228, 245), max(0,min(1,.6-x)))
     if ring and ry > 0:
-        background = ring_color
-    satellite = math.hypot(x-.43, y+.47)
-    if satellite < .065:
-        background = mix((183, 119, 98), (255, 215, 185), max(0,min(1,.6-3*(x-.43)-4*(y+.47))))
+        background = color
+    # A small four-point guiding star keeps the mark distinct at launcher sizes.
+    sx, sy = abs(x-.52), abs(y+.57)
+    if (sx/.024+sy/.075)<1 or (sx/.075+sy/.024)<1:
+        background = (242, 213, 186)
     return background
 
 

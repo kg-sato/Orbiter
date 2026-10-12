@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Orbit companion</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 22px;
+        min-height: 100dvh;
+        background:
+          radial-gradient(ellipse at 80% 0%, #55406b88, transparent 65%),
+          linear-gradient(145deg, #1b293a, #0b1724);
+        color: #e6edf1;
+        font:
+          14px Avenir,
+          "Segoe UI",
+          sans-serif;
+        text-align: center;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: #c4b8e1;
+      }
+      button,
+      select {
+        font: inherit;
+        color: #e7eef0;
+        border: 1px solid #c9d8e533;
+        border-radius: 14px;
+        background: #c1b5e916;
+        padding: 11px 14px;
+        min-height: 42px;
+      }
+      button:disabled,
+      select:disabled {
+        opacity: 0.4;
+      }
+      button:focus-visible,
+      select:focus-visible {
+        outline: 2px solid #d4c1ef;
+        outline-offset: 3px;
+      }
+      button:hover {
+        background: #c7b4ed26;
+      }
+      #close {
+        min-height: 30px;
+        padding: 2px 10px;
+      }
+      #creature {
+        display: block;
+        width: 190px;
+        height: 170px;
+        margin: 8px auto;
+        overflow: visible;
+        filter: drop-shadow(0 14px 15px #0005);
+      }
+      .being {
+        transform-origin: 100px 92px;
+        animation: float 8s ease-in-out infinite;
+      }
+      .eyes {
+        transform-origin: 100px 88px;
+        animation: blink 9s infinite;
+      }
+      .aura {
+        transform-origin: 100px 90px;
+        animation: turn 22s linear infinite;
+        opacity: 0.45;
+      }
+      .running .aura {
+        animation-duration: 7s;
+        opacity: 0.9;
+      }
+      .spark .being {
+        animation: spark 600ms ease-out;
+      }
+      .calm #creature * {
+        animation: none !important;
+      }
+      h1 {
+        font-size: 38px;
+        font-weight: 400;
+        letter-spacing: -2px;
+        margin: 4px 0;
+        font-variant-numeric: tabular-nums;
+      }
+      #intention {
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 8px 0 18px;
+        overflow-wrap: anywhere;
+      }
+      #toggle {
+        width: 100%;
+        background: linear-gradient(135deg, #beaee633, #a3c4d225);
+      }
+      #status {
+        font-size: 11px;
+        color: #b6c6d1;
+        margin: 14px 0;
+      }
+      .practice {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        align-items: center;
+      }
+      select {
+        width: 100%;
+        min-width: 0;
+        font-size: 11px;
+      }
+      option {
+        background: #22303e;
+      }
+      #practice-go {
+        font-size: 11px;
+      }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-top: 20px;
+        color: #c3b7da;
+        font-size: 10px;
+      }
+      #return {
+        font-size: 10px;
+        padding: 6px 10px;
+        min-height: 34px;
+      }
+      #pet {
+        border: 0;
+        background: none;
+        padding: 0;
+        width: 100%;
+        display: block;
+      }
+      #pet:hover {
+        background: none;
+      }
+      #pet:disabled {
+        opacity: 1;
+      }
+      @keyframes float {
+        50% {
+          transform: translateY(-7px) rotate(4deg);
+        }
+      }
+      @keyframes turn {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes blink {
+        0%,
+        43%,
+        46%,
+        100% {
+          transform: scaleY(1);
+        }
+        44%,
+        45% {
+          transform: scaleY(0.15);
+        }
+      }
+      @keyframes spark {
+        50% {
+          transform: translateY(-9px) scale(1.08);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #creature * {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span>ORBIT COMPANION</span
+      ><button id="close" aria-label="Close companion">&times;</button>
+    </header>
+    <button id="pet" aria-label="Send your companion a spark">
+      <svg id="creature" viewBox="0 0 200 180" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="body">
+            <stop stop-color="#55446f" />
+            <stop offset=".7" stop-color="#172338" />
+            <stop offset="1" stop-color="#080f20" />
+          </radialGradient>
+          <linearGradient id="ring">
+            <stop stop-color="#dcc9ee" />
+            <stop offset=".6" stop-color="#8e9bd5" />
+            <stop offset="1" stop-color="#eec6a8" />
+          </linearGradient>
+        </defs>
+        <g class="aura">
+          <path
+            d="M35 85C45 12 165 16 173 91M36 109C68 162 149 145 164 119"
+            stroke="url(#ring)"
+            stroke-width="1"
+          />
+          <circle cx="165" cy="49" r="2" fill="#edcfb6" />
+          <circle cx="38" cy="129" r="1.5" fill="#b7a8e2" />
+        </g>
+        <g class="being">
+          <ellipse
+            cx="100"
+            cy="93"
+            rx="75"
+            ry="24"
+            transform="rotate(-18 100 93)"
+            stroke="url(#ring)"
+            stroke-opacity=".4"
+            stroke-width="2"
+          />
+          <circle cx="100" cy="87" r="39" fill="url(#body)" />
+          <path
+            d="M68 65A39 39 0 0 1 133 66"
+            stroke="#cebae9"
+            stroke-width="1.3"
+          />
+          <g class="eyes">
+            <ellipse cx="88" cy="86" rx="3" ry="4" fill="#e7dbfb" />
+            <ellipse cx="111" cy="86" rx="3" ry="4" fill="#e7dbfb" />
+          </g>
+          <path
+            d="M94 98Q100 102 106 98"
+            stroke="#cdb9df"
+            stroke-width="1.2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M31 104C47 135 151 116 171 86"
+            stroke="url(#ring)"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+        </g>
+      </svg>
+    </button>
+    <h1 id="time">--:--</h1>
+    <p id="intention">Open this companion from Scheduler.</p>
+    <button id="toggle" disabled>Start focus</button>
+    <p id="status" role="status">Waiting for Scheduler</p>
+    <div class="practice">
+      <select id="practice" aria-label="Study project" disabled>
+        <option value="">Choose a study project</option></select
+      ><button id="practice-go" disabled>Focus</button>
+    </div>
+    <footer>
+      <span id="progress">Seed ? 0m today</span
+      ><button id="return" disabled>Return &nearr;</button>
+    </footer>
+    <script src="./study-companion.js"></script>
+  </body>
+</html>

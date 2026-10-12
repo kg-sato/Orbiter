@@ -126,6 +126,41 @@ namespace StudyCore {
     return { placements, unplaced };
   }
 
+  export interface PracticeLog {
+    date: string;
+    minutes: number;
+  }
+  export type PracticeFrequency = "none" | "daily" | "weekdays" | "weekly";
+  export function practiceScheduled(
+    frequency: PracticeFrequency,
+    start: string,
+    date: string,
+  ): boolean {
+    if (frequency === "none" || date < start) return false;
+    const day = new Date(`${date}T12:00:00`).getDay();
+    return (
+      frequency === "daily" ||
+      (frequency === "weekdays" && day > 0 && day < 6) ||
+      (frequency === "weekly" && day === new Date(`${start}T12:00:00`).getDay())
+    );
+  }
+  /** Manual logs record outside-timer work; linked completed sessions count once. */
+  export function practiceMinutes(
+    taskId: string,
+    date: string,
+    logs: PracticeLog[],
+    sessions: { date: string; minutes: number; taskId?: string | null }[],
+  ): number {
+    return (
+      logs
+        .filter((log) => log.date === date)
+        .reduce((sum, log) => sum + log.minutes, 0) +
+      sessions
+        .filter((session) => session.taskId === taskId && session.date === date)
+        .reduce((sum, session) => sum + session.minutes, 0)
+    );
+  }
+
   export interface CalendarItem {
     id: string;
     title: string;
