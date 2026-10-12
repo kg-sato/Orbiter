@@ -23,7 +23,7 @@ for name in ['sync_app.py', 'sync_preview.py']:
 # A content-based shell version lets hosted offline clients discover each build.
 worker = root / 'sw.js'
 if worker.exists():
-    digest = hashlib.sha256(app.read_bytes() + (root / 'web/account-sync.js').read_bytes()).hexdigest()[:16]
+    digest = hashlib.sha256(app.read_bytes() + (root / 'web/account-sync.js').read_bytes() + (root / 'web/study-companion.html').read_bytes() + (root / 'web/study-companion.js').read_bytes()).hexdigest()[:16]
     text = worker.read_text(encoding='utf-8')
     text = re.sub(r'const SHELL_VERSION = "[^"]*";', 'const SHELL_VERSION = "' + digest + '";', text)
     worker.write_text(text, encoding='utf-8')

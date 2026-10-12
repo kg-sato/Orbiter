@@ -159,3 +159,30 @@ See `design/MOTION-OCT10.md` for timings, sources, implementation decisions, and
 - [x] Add account UI and pre-download local backup.
 - [ ] Choose HTTPS hosting and production authentication/recovery strategy for actual cross-device sync.
 - [ ] Complete server-side event schema validation, automated auth/sync security tests, recovery/deletion flows and deployment review.
+
+
+## Sculpted popup and morphing pass
+
+- [x] Redesign Event, Capture, Search and Workspace preference panels with a shared glass header and clearer grouping.
+- [x] Add interaction-driven liquid sigils, focus surface morphs and button corner changes alongside the existing highlights.
+- [x] Move optional event notes/repeat controls into a disclosure while preserving saved values.
+- [x] Inspect desktop Event and phone Capture frames; correct header spacing and preserve reduced-motion behavior.
+- [ ] Review actual iPhone/Firefox form entry, native time/date pickers and keyboard interactions before release.
+
+- [x] Sidebar-inspired top command tabs; running timer wave tracks; original WebGL ribbon constellation with satellites and orbital arcs.
+- [ ] Review the new sculpture and running waves on physical iPhone and Firefox before release.
+
+- [x] Reserve popup header space and strengthen borders.
+- [x] Derive five-stage orbit evolution from saved courses, unique events, tasks, completed steps and focus time; apply to My Day, Atlas and companion UI.
+- [ ] Review popup layout and orbit growth on Firefox and phone before release.
+
+- [x] Unique task artifacts and transparent Atlas assignment titles.
+- [x] Repeating assignments with daily targets, outside-timer logging and linked focus history.
+- [x] Connected Orbit companion browser mini-window.
+- [ ] Validate practice/date rollover and companion controls on Firefox and phone.
+- [ ] Package an OS desktop companion for always-on-top behavior.
+
+- [x] Review-popup body insets and old overlapping ornament cleanup.
+- [x] Distinct exams, one test date, daily preparation visibility, and decreasing study budgets.
+- [x] Precession, nutation and depth motion for the 3D eclipse, with an orbital fallback.
+- [ ] Review exam budgets and popup spacing on desktop and phone before release.

@@ -9058,6 +9058,13 @@
         filter: drop-shadow(0 15px 12px #030d1b70);
         pointer-events: none;
       }
+      /* The retired ring's radial mask clipped the new 3D sculpture's centre. */
+      #now-card .orbit-art,
+      #now-card:hover .orbit-art {
+        mask: none;
+        -webkit-mask: none;
+        transform: none;
+      }
       #now-card .orbit-art::before,
       #now-card .orbit-art::after {
         display: none;
@@ -9743,6 +9750,1119 @@
           width: 240%;
           left: -70%;
         }
+      }
+    </style>
+    <style id="morphing-popup-collection">
+      dialog.popup-lab {
+        width: min(560px, calc(100vw - 32px));
+        max-height: min(90dvh, 940px);
+        padding: 0;
+        border-radius: 32px;
+        overflow: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #a6c9ca66 transparent;
+      }
+      dialog.popup-lab .dialog-header,
+      dialog.popup-lab .jump-heading {
+        position: relative;
+        padding: 30px 30px 24px;
+        margin: 0;
+        border-bottom: 1px solid #d2ebe61f;
+        background: radial-gradient(
+          ellipse at 85% 0%,
+          #b4d4d939,
+          transparent 68%
+        );
+        min-height: 120px;
+        align-items: start;
+      }
+      dialog.popup-lab .dialog-header h2,
+      dialog.popup-lab .jump-heading h2 {
+        max-width: calc(100% - 104px);
+        margin: 21px 0 0;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.12;
+        letter-spacing: -1.2px;
+      }
+      .popup-kicker {
+        position: absolute;
+        left: 30px;
+        top: 26px;
+        margin: 0;
+        color: #bdd9d5;
+        font-size: 8px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      dialog.popup-lab .jump-heading .eyebrow {
+        margin: 0;
+        font-size: 8px;
+      }
+      dialog.popup-lab .jump-heading h2 {
+        margin-top: 14px;
+        max-width: 100%;
+      }
+      dialog.popup-lab .close,
+      dialog.popup-lab #jump-close {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 36px;
+        height: 36px;
+        min-height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        border: 1px solid #d3ece32c;
+        background: #d0e9e314;
+        color: #e9f4f0;
+        box-shadow: none;
+      }
+      .popup-sigil {
+        position: absolute;
+        right: 61px;
+        top: 25px;
+        width: 80px;
+        height: 80px;
+        pointer-events: none;
+        opacity: 0.92;
+      }
+      dialog.popup-lab form {
+        padding: 24px 30px 26px;
+      }
+      dialog.popup-lab .field {
+        margin-bottom: 16px;
+        min-width: 0;
+      }
+      dialog.popup-lab label {
+        font-size: 11px;
+        color: #d4e6e4;
+        font-weight: 500;
+      }
+      dialog.popup-lab .popup-main-input > label {
+        font-size: 12px;
+        color: #d6e9e4;
+        margin-bottom: 10px;
+      }
+      body:not(.solid-glass):not([data-material="quiet"])
+        dialog.popup-lab
+        :is(
+          input:not([type="checkbox"]):not([type="color"]),
+          select,
+          textarea
+        ) {
+        min-height: 46px;
+        padding: 11px 13px;
+        border-radius: 15px;
+        background: #d5ece610;
+        border-color: #d8eae52e;
+        box-shadow: inset 0 1px #f5fff014;
+        transition:
+          border-radius 380ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          background-color 240ms ease,
+          border-color 240ms ease;
+      }
+      body:not(.solid-glass):not([data-material="quiet"])
+        dialog.popup-lab
+        :is(input, select, textarea):focus-visible {
+        border-radius: 22px 12px 22px 12px;
+        background-color: #cbeae41c;
+        border-color: #bcdfd59c;
+        outline: 2px solid #bde5d86e;
+        outline-offset: 2px;
+      }
+      body:not(.solid-glass):not([data-material="quiet"])
+        dialog.popup-lab
+        .popup-main-input
+        input {
+        min-height: 72px;
+        font-size: 21px;
+        font-weight: 400;
+        letter-spacing: -0.45px;
+        background: #e2f5ed08;
+      }
+      dialog.popup-lab input::placeholder {
+        color: #b4c9cc;
+        opacity: 0.8;
+      }
+      .popup-group {
+        padding: 16px 17px 3px;
+        margin: 18px 0;
+        border-radius: 22px;
+        border: 1px solid #d1e9e626;
+        background: #bad7dc0a;
+      }
+      .popup-group-heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 18px;
+      }
+      .popup-group-heading h3 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 550;
+        color: #e1eeeb;
+      }
+      .popup-group-heading > span:last-child:not(.popup-step) {
+        margin-left: auto;
+        font-size: 9px;
+        color: #afc4c8;
+      }
+      .popup-step {
+        font-size: 9px;
+        color: #a7d7cb;
+        font-variant-numeric: tabular-nums;
+      }
+      .popup-details {
+        margin: 18px 0;
+        border: 1px solid #cee8e526;
+        border-radius: 20px;
+        background: #cbe4e90b;
+        padding: 14px 16px;
+      }
+      .popup-details summary {
+        cursor: pointer;
+        font-size: 12px;
+        color: #e0ece9;
+      }
+      .popup-details summary span {
+        float: right;
+        font-size: 10px;
+        color: #acc4c8;
+      }
+      .popup-details[open] summary {
+        margin-bottom: 20px;
+      }
+      dialog.popup-lab .row {
+        gap: 14px;
+      }
+      dialog.popup-lab .dialog-actions {
+        margin-top: 20px;
+        padding-top: 17px;
+        border-top: 1px solid #cbe7df24;
+        gap: 10px;
+      }
+      dialog.popup-lab .dialog-actions button {
+        min-height: 46px;
+        border-radius: 99px;
+        padding: 10px 18px;
+        font-size: 12px;
+        transition:
+          border-radius 320ms ease,
+          background-color 240ms ease;
+      }
+      dialog.popup-lab .dialog-actions button:active {
+        border-radius: 18px;
+      }
+      dialog.popup-lab .dialog-actions .primary {
+        background: linear-gradient(135deg, #c3e7d8, #98c9c3);
+        color: #173537;
+        border: 1px solid #def7e65e;
+        box-shadow:
+          inset 0 1px #ffffff6b,
+          0 5px 14px #0717232b;
+      }
+      dialog.popup-lab .dialog-actions .cancel {
+        background: #d7e9e210;
+        border: 1px solid #d7e9e229;
+        box-shadow: none;
+      }
+      #settings-editor.popup-lab {
+        width: min(610px, calc(100vw - 32px));
+      }
+      #settings-editor.popup-lab .account-entry {
+        margin: 22px 30px 0;
+      }
+      #capture-editor.popup-lab {
+        width: min(520px, calc(100vw - 32px));
+      }
+      #jump-dialog.popup-lab {
+        width: min(640px, calc(100vw - 32px));
+      }
+      #jump-dialog.popup-lab > #jump-query {
+        width: calc(100% - 60px);
+        margin: 24px 30px 10px;
+        min-height: 60px;
+        font-size: 18px;
+      }
+      #jump-dialog.popup-lab > #jump-count,
+      #jump-dialog.popup-lab > .jump-hint {
+        margin: 12px 30px;
+      }
+      #jump-dialog.popup-lab > .jump-results {
+        margin: 0 20px;
+        padding: 0 10px;
+        max-height: 44dvh;
+      }
+      #jump-dialog.popup-lab .jump-results button {
+        border-radius: 18px;
+        padding: 14px 16px;
+      }
+      #jump-dialog.popup-lab .jump-results button:focus-visible {
+        border-radius: 24px 12px 24px 12px;
+      }
+      .reduced-motion dialog.popup-lab :is(input, select, textarea, button) {
+        transition: none !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        dialog.popup-lab :is(input, select, textarea, button) {
+          transition: none !important;
+        }
+      }
+      @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+        dialog.popup-lab .popup-group {
+          background: #304653;
+        }
+        body:not(.solid-glass):not([data-material="quiet"])
+          dialog.popup-lab
+          :is(
+            input:not([type="checkbox"]):not([type="color"]),
+            select,
+            textarea
+          ) {
+          background: #223746;
+        }
+      }
+      @media (max-width: 720px) {
+        dialog.popup-lab {
+          max-height: 88dvh;
+          border-radius: 26px;
+        }
+        dialog.popup-lab .dialog-header,
+        dialog.popup-lab .jump-heading {
+          padding: 26px 22px 20px;
+          min-height: 112px;
+        }
+        dialog.popup-lab .dialog-header h2,
+        dialog.popup-lab .jump-heading h2 {
+          font-size: 26px;
+        }
+        .popup-kicker {
+          left: 22px;
+          top: 22px;
+        }
+        .popup-sigil {
+          width: 68px;
+          height: 68px;
+          right: 55px;
+          top: 25px;
+        }
+        dialog.popup-lab form {
+          padding: 20px 22px 24px;
+        }
+        .popup-group {
+          padding: 14px 12px 2px;
+        }
+        .popup-group-heading > span:last-child:not(.popup-step) {
+          width: 100%;
+          margin: 0 0 0 23px;
+        }
+        #settings-editor.popup-lab .account-entry {
+          margin-inline: 22px;
+        }
+        #jump-dialog.popup-lab > #jump-query {
+          width: calc(100% - 44px);
+          margin-inline: 22px;
+        }
+        #jump-dialog.popup-lab > #jump-count,
+        #jump-dialog.popup-lab > .jump-hint {
+          margin-inline: 22px;
+        }
+      }
+    </style>
+    <style id="popup-morph-polish">
+      dialog.popup-lab .dialog-header {
+        display: block;
+      }
+      dialog.popup-lab .dialog-header h2 {
+        width: calc(100% - 100px);
+        max-width: none;
+        overflow-wrap: normal;
+      }
+      dialog.popup-lab .jump-heading > div {
+        max-width: calc(100% - 100px);
+      }
+      dialog.popup-lab .popup-group {
+        transition:
+          border-radius 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          background-color 300ms ease,
+          border-color 300ms ease;
+      }
+      dialog.popup-lab .popup-group:focus-within {
+        border-radius: 30px 16px 30px 16px;
+        border-color: #ceeae75c;
+        background-color: #c5e4df12;
+      }
+      dialog.popup-lab .popup-details {
+        transition: border-radius 420ms ease;
+      }
+      dialog.popup-lab .popup-details[open] {
+        border-radius: 26px 16px 26px 16px;
+      }
+      .reduced-motion dialog.popup-lab :is(.popup-group, .popup-details) {
+        transition: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        dialog.popup-lab :is(.popup-group, .popup-details) {
+          transition: none;
+        }
+      }
+      @media (max-width: 720px) {
+        dialog.popup-lab .dialog-header h2 {
+          width: calc(100% - 82px);
+        }
+      }
+    </style>
+    <style id="popup-writing-space">
+      #capture-editor.popup-lab #capture-title,
+      #editor.popup-lab #title {
+        min-height: 72px;
+        font-size: 20px;
+      }
+      @media (max-width: 720px) {
+        dialog.popup-lab .dialog-header h2 {
+          width: calc(100% - 110px);
+        }
+      }
+    </style>
+
+    <style id="spatial-observatory">
+      /* Command tabs share the sidebar's raised glass and small mint signals. */
+      .masthead {
+        padding: 9px 10px 9px 16px;
+        border-radius: 25px;
+        background: linear-gradient(
+          125deg,
+          #bcb2df23,
+          #b9e6dd12 55%,
+          #172c3840
+        );
+      }
+      .masthead .actions {
+        gap: 8px;
+      }
+      .masthead .actions button,
+      .masthead #jump-open,
+      .masthead #add {
+        position: relative;
+        border-radius: 17px;
+        border: 1px solid #e4f6ef24;
+        background: linear-gradient(135deg, #dae4f01a, #a5cddc08);
+        box-shadow:
+          inset 0 1px #ffffff20,
+          0 5px 12px #07131f25;
+        color: #e3eeed;
+        min-height: 46px;
+      }
+      .masthead .actions button:hover {
+        background: linear-gradient(135deg, #d7def52c, #b0e2d61a);
+        border-color: #cbeadd70;
+      }
+      .masthead #add {
+        background: linear-gradient(130deg, #bce8d837, #9cc9d820);
+        color: #e4fff4;
+        padding-right: 26px;
+      }
+      .masthead #add::after {
+        content: "";
+        position: absolute;
+        right: 12px;
+        top: calc(50% - 2px);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #c0f4dc;
+        box-shadow: 0 0 8px #b9e6d6;
+      }
+      .masthead #quick-capture {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .masthead #quick-capture::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border: 1px solid #bcd9da;
+        border-radius: 3px;
+        transform: rotate(-12deg);
+      }
+      .breadcrumb {
+        padding: 10px 12px;
+        border-radius: 15px;
+        background: #d9e9f009;
+        border: 1px solid #edf8f014;
+      }
+      .sculpture-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      .orbit-art .sculpture-canvas {
+        position: absolute;
+        inset: 0;
+      }
+      .orbit-art.sculpture-ready .fluid-knot {
+        visibility: hidden;
+        animation: none;
+      }
+      .atlas-sculpture {
+        position: relative;
+        height: clamp(210px, 26vw, 320px);
+        margin: -12px 0 18px;
+        border-radius: 32px;
+        overflow: hidden;
+        border: 1px solid #d8e9eb24;
+        background:
+          radial-gradient(ellipse at 50% 60%, #aca4e91c, transparent 65%),
+          linear-gradient(120deg, #c9b4ed10, #aee1dc08);
+      }
+      .atlas-sculpture::after {
+        content: "";
+        position: absolute;
+        left: 26%;
+        right: 26%;
+        bottom: 16%;
+        height: 12%;
+        border-radius: 50%;
+        background: #09152255;
+        filter: blur(18px);
+        z-index: 0;
+      }
+      .atlas-sculpture .sculpture-canvas {
+        position: relative;
+        z-index: 1;
+      }
+      .atlas-sculpture:not(.sculpture-ready)::before {
+        content: "";
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        left: calc(50% - 70px);
+        top: calc(50% - 70px);
+        border: 14px solid #bbb8e6;
+        border-radius: 42% 58% 62% 38%;
+        transform: rotate(-25deg);
+        box-shadow:
+          inset 6px 4px 12px #edffff66,
+          12px 10px 24px #06131b55;
+      }
+      /* An unbroken duplicated wave track loops beneath readable timer numerals. */
+      .timer-tides {
+        position: absolute;
+        inset: 17px;
+        border-radius: 50%;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.18;
+        transition: opacity 600ms;
+      }
+      .timer-face .timer-tides svg {
+        position: absolute;
+        width: 200%;
+        height: 100%;
+        inset: 0 auto auto 0;
+        transform: none;
+        filter: none;
+        animation: focus-current 9s linear infinite paused;
+      }
+      .timer-face .timer-tides svg:nth-child(2) {
+        top: 8%;
+        animation-duration: 13s;
+        animation-direction: reverse;
+        opacity: 0.75;
+      }
+      .timer-face[data-mode="running"] .timer-tides {
+        opacity: 0.65;
+      }
+      .timer-face[data-mode="running"] .timer-tides svg {
+        animation-play-state: running;
+      }
+      .timer-face .timer-digits {
+        z-index: 2;
+        text-shadow: 0 2px 12px #071924;
+      }
+      @keyframes focus-current {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .reduced-motion .timer-face .timer-tides svg,
+      body[data-material="quiet"] .timer-face .timer-tides svg,
+      body.motion-hidden .timer-face .timer-tides svg {
+        animation-play-state: paused;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .timer-face .timer-tides svg {
+          animation: none;
+        }
+      }
+      @media (max-width: 600px) {
+        .masthead {
+          padding: 8px;
+        }
+        .masthead .actions {
+          gap: 6px;
+        }
+        .masthead #quick-capture::before {
+          display: none;
+        }
+        .atlas-sculpture {
+          height: 220px;
+        }
+      }
+      .solid-glass .masthead {
+        background: #273846;
+      }
+      @media (prefers-contrast: more) {
+        .masthead .actions button {
+          background: #223541;
+          border-color: #c8e4db;
+        }
+        .timer-tides {
+          display: none;
+        }
+      }
+    </style>
+    <style id="eclipse-identity">
+      .mark.eclipse-mark {
+        border: 0;
+        background: none;
+        box-shadow: none;
+        padding: 0;
+        transform: none;
+      }
+      .mark.eclipse-mark::before,
+      .mark.eclipse-mark::after {
+        display: none;
+      }
+      .mark.eclipse-mark svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        filter: drop-shadow(0 2px 6px #080d2040);
+      }
+      .sidebar .mark.eclipse-mark {
+        width: 42px;
+        height: 42px;
+      }
+      .mobile-brand .mark.eclipse-mark {
+        width: 32px;
+        height: 32px;
+      }
+      .atlas-sculpture:not(.sculpture-ready)::before {
+        background: #090e20;
+        border-width: 3px;
+        border-color: #c6b8ef;
+        border-radius: 50%;
+        box-shadow: 0 0 24px #9c8cd840;
+      }
+    </style>
+    <style id="course-eclipse-collection">
+      /* Course-specific celestial seals replace the separate legacy planet art. */
+      .course-planet .planet-sculpture {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #b2a5df12, transparent 70%);
+        border-radius: 50%;
+        box-shadow: none;
+        overflow: visible;
+      }
+      .course-planet .planet-sculpture::before {
+        display: none;
+      }
+      .course-planet .planet-sculpture::after {
+        inset: -7px;
+        opacity: 0.55;
+      }
+      .course-eclipse {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        filter: drop-shadow(0 8px 9px #030a1850);
+      }
+      .course-eclipse-ring {
+        transform-origin: 70px 70px;
+        transform: rotate(-22deg);
+      }
+      .course-planet:nth-child(3n + 2) .course-eclipse-ring {
+        transform: rotate(18deg);
+      }
+      .course-planet:nth-child(3n) .course-eclipse-ring {
+        transform: rotate(-38deg);
+      }
+      .course-planet:hover .course-eclipse-ring {
+        filter: drop-shadow(0 0 3px #c6b6ef45);
+      }
+      @media (prefers-contrast: more) {
+        .course-eclipse {
+          filter: none;
+        }
+        .course-planet .planet-sculpture::after {
+          opacity: 1;
+        }
+      }
+    </style>
+    <style id="popup-space-and-evolution">
+      dialog {
+        border-width: 2px;
+        border-color: #d5e9eb60;
+      }
+      dialog.popup-lab,
+      :is(
+        #mobile-menu,
+        #window-dialog,
+        #export-dialog,
+        #review-dialog
+      ).popup-lab {
+        width: min(640px, calc(100vw - 32px));
+        padding: 0;
+        border: 2px solid #d5e9eb60;
+        border-radius: 36px;
+      }
+      dialog.popup-lab :is(.dialog-header, .jump-heading) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 64px 44px;
+        grid-template-rows: auto auto;
+        column-gap: 16px;
+        row-gap: 12px;
+        padding: 30px 32px 28px;
+        min-height: 142px;
+        align-items: center;
+      }
+      dialog.popup-lab :is(.dialog-header, .jump-heading) h2 {
+        width: auto;
+        max-width: none;
+        margin: 0;
+        min-width: 0;
+        grid-column: 1;
+        grid-row: 2;
+        overflow-wrap: anywhere;
+      }
+      dialog.popup-lab :is(.dialog-header, .jump-heading) > div {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        max-width: none;
+        min-width: 0;
+      }
+      dialog.popup-lab .jump-heading > div h2 {
+        margin-top: 12px;
+      }
+      dialog.popup-lab .popup-kicker {
+        position: static;
+        grid-column: 1;
+        grid-row: 1;
+        align-self: end;
+      }
+      dialog.popup-lab .popup-sigil {
+        position: static;
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        width: 64px;
+        height: 64px;
+        align-self: center;
+      }
+      dialog.popup-lab :is(.dialog-header, .jump-heading) > button {
+        position: static;
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: start;
+        width: 44px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0;
+        border: 1px solid #e3f2eb44;
+        border-radius: 15px;
+        background: #d3e8e916;
+        box-shadow: inset 0 1px #ffffff16;
+        color: #edf7f4;
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+      }
+      #mobile-menu.popup-lab .mobile-menu-actions {
+        margin: 24px 32px 18px;
+      }
+      #mobile-menu.popup-lab > .atlas-muted {
+        margin: 0 32px 30px;
+      }
+      dialog.popup-lab form {
+        padding-inline: 32px;
+      }
+      .orbit-evolution {
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        color: #c8bee7;
+        display: block;
+        margin-top: 7px;
+      }
+      body {
+        --orbit-energy: 0;
+        --orbit-dust-size: 72px;
+      }
+      .orbit-dust {
+        background-size: var(--orbit-dust-size) var(--orbit-dust-size);
+        opacity: calc(0.06 + var(--orbit-energy) * 0.13);
+      }
+      body[data-orbit-level="3"] .mark.eclipse-mark svg,
+      body[data-orbit-level="4"] .mark.eclipse-mark svg {
+        filter: drop-shadow(0 0 6px #b2a1e655);
+      }
+      .timer-tides::before {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border: 1px solid #b6a6ed;
+        border-radius: 50%;
+        opacity: calc(var(--orbit-energy) * 0.3);
+        z-index: 1;
+      }
+      .course-eclipse .evolution-detail {
+        opacity: 0;
+        transition: opacity 700ms;
+      }
+      .course-planet[data-evolution="1"] .detail-one,
+      .course-planet[data-evolution="2"] :is(.detail-one, .detail-two),
+      .course-planet[data-evolution="3"]
+        :is(.detail-one, .detail-two, .detail-three),
+      .course-planet[data-evolution="4"] .evolution-detail {
+        opacity: 1;
+      }
+      .orbit-art .fallback-evolution {
+        opacity: calc(var(--orbit-energy) * 0.7);
+      }
+      @media (max-width: 720px) {
+        dialog.popup-lab :is(.dialog-header, .jump-heading) {
+          padding: 26px 22px 24px;
+          grid-template-columns: minmax(0, 1fr) 46px 40px;
+          column-gap: 10px;
+          min-height: 138px;
+        }
+        dialog.popup-lab .popup-sigil {
+          width: 46px;
+          height: 46px;
+        }
+        dialog.popup-lab :is(.dialog-header, .jump-heading) > button {
+          width: 40px;
+          height: 40px;
+          min-height: 40px;
+        }
+        dialog.popup-lab form {
+          padding-inline: 22px;
+        }
+        #mobile-menu.popup-lab .mobile-menu-actions {
+          margin-inline: 22px;
+        }
+        #mobile-menu.popup-lab > .atlas-muted {
+          margin-inline: 22px;
+        }
+      }
+      @media (max-width: 380px) {
+        dialog.popup-lab :is(.dialog-header, .jump-heading) {
+          grid-template-columns: minmax(0, 1fr) 40px;
+        }
+        dialog.popup-lab .popup-sigil {
+          display: none;
+        }
+        dialog.popup-lab :is(.dialog-header, .jump-heading) > button {
+          grid-column: 2;
+        }
+      }
+      .reduced-motion .course-eclipse .evolution-detail {
+        transition: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .course-eclipse .evolution-detail {
+          transition: none;
+        }
+      }
+    </style>
+    <style id="task-artifacts-and-practice">
+      #atlas-assignments .atlas-task-link,
+      .task-item .task-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 5px 0;
+        text-align: left;
+        color: #edf2f4;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      #atlas-assignments .atlas-task-link:hover,
+      .task-item .task-title:hover {
+        background: transparent;
+        color: #e0d2f7;
+      }
+      #atlas-assignments .atlas-task-link:focus-visible,
+      .task-item .task-title:focus-visible {
+        outline: 2px solid #c6b9e8;
+        outline-offset: 4px;
+        border-radius: 8px;
+      }
+      .task-emblem {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        color: hsl(var(--emblem-hue) 50% 77%);
+        display: inline-block;
+      }
+      .task-emblem svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 3px 5px #040b1844);
+      }
+      #atlas-assignments .atlas-assignment {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 14px;
+        padding: 14px 0;
+      }
+      #atlas-assignments .atlas-assignment small {
+        grid-column: 1;
+        padding-left: 50px;
+      }
+      .daily-practice {
+        margin: 24px var(--assignment-inset, 30px);
+        padding-block: 10px 20px;
+        border-bottom: 1px solid #d7e9e51c;
+      }
+      #practice-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+        gap: 16px;
+      }
+      .practice-card {
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px solid #d6e5f022;
+        background: linear-gradient(135deg, #c1b4e912, #a4d0d60d);
+        min-width: 0;
+      }
+      .practice-card .task-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        border: 0;
+        background: none;
+        box-shadow: none;
+        text-align: left;
+      }
+      .practice-status {
+        font-size: 12px;
+        color: #d1dedf;
+      }
+      .practice-card progress {
+        width: 100%;
+        height: 5px;
+        accent-color: #b8aadf;
+      }
+      .practice-history {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 18px 0 12px;
+      }
+      .practice-day {
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        font-size: 11px;
+        color: #c8d2df;
+      }
+      .practice-day i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #c7b9e8;
+        box-shadow: 0 0 8px #b9a5dc25;
+      }
+      .practice-day i.rest-day {
+        background: #a9b8be;
+      }
+      .practice-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .practice-actions button {
+        min-height: 40px;
+        font-size: 11px;
+      }
+    </style>
+    <style id="review-insets-and-exam-prep">
+      #review-dialog.popup-lab {
+        border-radius: 32px;
+        overflow: auto;
+      }
+      #review-dialog .review-sculpture {
+        display: none;
+      }
+      #review-dialog.popup-lab
+        :is(.review-totals, .review-bars, .review-prompts, .review-footer) {
+        margin-inline: 30px;
+        width: auto;
+        max-width: none;
+        box-sizing: border-box;
+      }
+      #review-dialog.popup-lab .review-totals {
+        margin-top: 26px;
+        gap: 24px;
+      }
+      #review-dialog.popup-lab .review-bars {
+        margin-block: 24px;
+        padding: 22px 16px 16px;
+        border-radius: 22px;
+        background: #b9d1df0d;
+        border: 1px solid #d5e8ea22;
+        box-shadow: none;
+      }
+      #review-dialog.popup-lab .review-prompts {
+        gap: 20px;
+      }
+      #review-dialog.popup-lab .review-prompts label {
+        display: grid;
+        gap: 10px;
+      }
+      #review-dialog.popup-lab .review-prompts textarea {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        border-radius: 16px;
+        padding: 14px;
+        background: #d0e8e80c;
+        border: 1px solid #d8e9ed30;
+        box-shadow: none;
+      }
+      #review-dialog.popup-lab .review-footer {
+        margin-block: 24px 28px;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .exam-preparation {
+        margin: 24px 0;
+      }
+      #tasks-main .exam-preparation {
+        margin-inline: var(--assignment-inset, 30px);
+      }
+      .exam-prep-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: 16px;
+      }
+      .exam-prep-card {
+        min-width: 0;
+        border-radius: 26px;
+        padding: 22px;
+        background: linear-gradient(125deg, #cbb9e71b, #bad3de0b);
+        border: 1px solid #d5e2e62b;
+      }
+      .exam-prep-card .task-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: none;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+        text-align: left;
+      }
+      .exam-prep-card progress {
+        width: 100%;
+        height: 5px;
+        accent-color: #c0a8de;
+      }
+      .exam-prep-card p {
+        font-size: 12px;
+        color: #c5d6de;
+        line-height: 1.5;
+      }
+      .exam-prep-card strong.exam-remaining {
+        font-size: 24px;
+        font-weight: 400;
+        display: block;
+        margin: 18px 0 6px;
+      }
+      .exam-prep-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+      }
+      .exam-prep-actions button {
+        min-height: 40px;
+        font-size: 11px;
+      }
+      @media (max-width: 720px) {
+        #review-dialog.popup-lab
+          :is(.review-totals, .review-bars, .review-prompts, .review-footer) {
+          margin-inline: 22px;
+        }
+        #review-dialog.popup-lab .review-footer {
+          margin-bottom: 24px;
+        }
+      }
+    </style>
+    <style id="orbital-fallback-motion">
+      .fluid-knot {
+        animation-name: eclipse-orbital-pose;
+        animation-duration: 32s;
+        animation-timing-function: ease-in-out;
+      }
+      @keyframes eclipse-orbital-pose {
+        0%,
+        100% {
+          transform: translateY(2px) rotateX(14deg) rotateY(-24deg)
+            rotateZ(-8deg) scale(0.96);
+        }
+        35% {
+          transform: translateY(-6px) rotateX(-10deg) rotateY(28deg)
+            rotateZ(12deg) scale(1);
+        }
+        70% {
+          transform: translateY(5px) rotateX(22deg) rotateY(9deg)
+            rotateZ(-16deg) scale(0.97);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fluid-knot {
+          animation: none;
+        }
+      }
+    </style>
+    <style id="exam-date-signals">
+      .exam-date-marker {
+        display: block;
+        font-size: 9px;
+        font-weight: 500;
+        color: #ddc4ec;
+        letter-spacing: 0.02em;
+      }
+      .date-button {
+        position: relative;
+      }
+      .date-button .exam-date-marker {
+        position: absolute;
+        right: 7px;
+        top: 7px;
+        font-size: 8px;
+        max-width: 45%;
+        line-height: 1.1;
+      }
+      .day-heading .exam-date-marker {
+        margin-top: 2px;
       }
     </style>
   </head>
@@ -10981,7 +12101,61 @@
     <main class="app">
       <aside class="sidebar" aria-label="Workspace navigation">
         <div class="identity">
-          <div class="mark" aria-hidden="true"><i></i></div>
+          <div class="mark eclipse-mark" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 64 64"
+              fill="none"
+            >
+              <defs>
+                <linearGradient
+                  id="eclipse-light-0"
+                  x1="12"
+                  y1="12"
+                  x2="51"
+                  y2="51"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stop-color="#ece7ff" />
+                  <stop offset=".4" stop-color="#ada5ed" />
+                  <stop offset=".72" stop-color="#819de1" />
+                  <stop offset="1" stop-color="#f0c5a6" />
+                </linearGradient>
+              </defs>
+              <circle cx="31" cy="32" r="17.5" fill="#0b1021" />
+              <path
+                d="M16 23A17.5 17.5 0 0 1 47 25"
+                stroke="url(#eclipse-light-0)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M47 40A17.5 17.5 0 0 1 17 42"
+                stroke="#9cabe1"
+                stroke-opacity=".7"
+                stroke-width="1.2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M8 40C1 31 17 20 34 18C52 16 64 22 56 30"
+                stroke="url(#eclipse-light-0)"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M8 40C16 47 36 44 49 37C55 34 58 31 56 30"
+                stroke="url(#eclipse-light-0)"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <path
+                d="M51 8V15M47.5 11.5H54.5"
+                stroke="#f4d5bd"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
           <div>
             <div class="brand-name">Scheduler</div>
             <div class="brand-caption">STUDY OBSERVATORY</div>
@@ -11040,7 +12214,61 @@
             ><span aria-hidden="true">/</span><b id="page-crumb">My day</b>
           </div>
           <div class="mobile-brand">
-            <div class="mark" aria-hidden="true"><i></i></div>
+            <div class="mark eclipse-mark" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 64 64"
+                fill="none"
+              >
+                <defs>
+                  <linearGradient
+                    id="eclipse-light-1"
+                    x1="12"
+                    y1="12"
+                    x2="51"
+                    y2="51"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#ece7ff" />
+                    <stop offset=".4" stop-color="#ada5ed" />
+                    <stop offset=".72" stop-color="#819de1" />
+                    <stop offset="1" stop-color="#f0c5a6" />
+                  </linearGradient>
+                </defs>
+                <circle cx="31" cy="32" r="17.5" fill="#0b1021" />
+                <path
+                  d="M16 23A17.5 17.5 0 0 1 47 25"
+                  stroke="url(#eclipse-light-1)"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M47 40A17.5 17.5 0 0 1 17 42"
+                  stroke="#9cabe1"
+                  stroke-opacity=".7"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M8 40C1 31 17 20 34 18C52 16 64 22 56 30"
+                  stroke="url(#eclipse-light-1)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M8 40C16 47 36 44 49 37C55 34 58 31 56 30"
+                  stroke="url(#eclipse-light-1)"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M51 8V15M47.5 11.5H54.5"
+                  stroke="#f4d5bd"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
             Scheduler
           </div>
           <div class="actions">
@@ -11100,1211 +12328,67 @@
               <div class="orbit-art" aria-hidden="true">
                 <svg
                   class="fluid-knot"
-                  viewBox="0 0 300 300"
-                  fill="none"
-                  stroke-linecap="round"
                   aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 64 64"
+                  fill="none"
                 >
-                  <path
-                    d="M107.30,83.48 L109.18,79.85"
-                    stroke="#597072"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M105.77,86.83 L107.48,83.10"
-                    stroke="#5a7072"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M108.98,80.22 L111.02,76.70"
-                    stroke="#597172"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M104.39,90.27 L105.93,86.44"
-                    stroke="#5a7072"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M110.80,77.06 L113.00,73.67"
-                    stroke="#597172"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M103.18,93.78 L104.54,89.87"
-                    stroke="#5b7073"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M112.76,74.01 L115.10,70.76"
-                    stroke="#5a7273"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M102.14,97.36 L103.31,93.38"
-                    stroke="#5b7174"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M114.86,71.08 L117.33,67.97"
-                    stroke="#5a7373"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M101.27,101.00 L102.25,96.95"
-                    stroke="#5c7175"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M117.07,68.29 L119.67,65.33"
-                    stroke="#5b7574"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M100.57,104.69 L101.36,100.58"
-                    stroke="#5e7276"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M119.40,65.62 L122.12,62.82"
-                    stroke="#5c7675"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M100.06,108.42 L100.64,104.27"
-                    stroke="#5f7378"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M121.84,63.10 L124.66,60.47"
-                    stroke="#5d7877"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M99.72,112.19 L100.11,107.99"
-                    stroke="#60757a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M124.37,60.74 L127.29,58.29"
-                    stroke="#5e7a78"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M99.57,115.97 L99.75,111.75"
-                    stroke="#62767c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M126.99,58.53 L130.00,56.26"
-                    stroke="#5f7c7a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M99.61,119.77 L99.58,115.54"
-                    stroke="#64787e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M129.69,56.49 L132.78,54.42"
-                    stroke="#617e7c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M132.46,54.62 L135.62,52.75"
-                    stroke="#62817e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M99.84,123.58 L99.60,119.34"
-                    stroke="#667a81"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M225.42,145.21 L229.11,148.07"
-                    stroke="#716887"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M221.93,142.70 L225.81,145.50"
-                    stroke="#716887"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M228.74,147.77 L232.22,150.68"
-                    stroke="#716888"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M218.28,140.25 L222.34,142.99"
-                    stroke="#716888"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M231.87,150.38 L235.14,153.32"
-                    stroke="#716888"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M214.47,137.87 L218.71,140.53"
-                    stroke="#726988"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M234.82,153.02 L237.87,155.99"
-                    stroke="#726989"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M210.51,135.56 L214.92,138.14"
-                    stroke="#726a89"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M135.29,52.93 L138.50,51.27"
-                    stroke="#648380"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M237.57,155.68 L240.41,158.68"
-                    stroke="#73698a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M100.26,127.39 L99.81,123.15"
-                    stroke="#687c83"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M206.41,133.34 L210.97,135.82"
-                    stroke="#736a8a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M240.13,158.37 L242.73,161.37"
-                    stroke="#746a8b"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M202.19,131.21 L206.89,133.59"
-                    stroke="#746b8b"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M242.48,161.06 L244.85,164.07"
-                    stroke="#756b8c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M138.17,51.43 L141.43,49.98"
-                    stroke="#658683"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M100.87,131.19 L100.20,126.96"
-                    stroke="#6b7e86"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M197.84,129.17 L202.68,131.45"
-                    stroke="#756d8d"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M244.62,163.76 L246.75,166.76"
-                    stroke="#766d8e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M193.37,127.25 L198.34,129.40"
-                    stroke="#766e8e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M141.09,50.12 L144.38,48.90"
-                    stroke="#678985"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M246.54,166.45 L248.44,169.43"
-                    stroke="#786e8f"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M101.67,134.97 L100.79,130.76"
-                    stroke="#6d8089"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M188.81,125.43 L193.89,127.46"
-                    stroke="#787090"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M248.25,169.13 L249.90,172.09"
-                    stroke="#797091"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M144.04,49.01 L147.36,48.01"
-                    stroke="#698b87"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M184.16,123.74 L189.34,125.64"
-                    stroke="#7a7192"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M102.66,138.73 L101.57,134.54"
-                    stroke="#70838c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M249.74,171.79 L251.14,174.71"
-                    stroke="#7b7194"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M147.02,48.10 L150.34,47.33"
-                    stroke="#6b8e8a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M179.43,122.18 L184.70,123.93"
-                    stroke="#7b7394"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M251.01,174.41 L252.16,177.30"
-                    stroke="#7d7396"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M103.83,142.46 L102.53,138.30"
-                    stroke="#738590"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M174.63,120.75 L179.98,122.35"
-                    stroke="#7d7596"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M150.00,47.40 L153.32,46.87"
-                    stroke="#6d918d"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M252.05,177.01 L252.95,179.85"
-                    stroke="#7f7599"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M169.77,119.46 L175.18,120.90"
-                    stroke="#7f7799"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M120.00,223.74 L115.53,225.12"
-                    stroke="#719090"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M115.99,224.99 L111.54,226.10"
-                    stroke="#718f90"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M105.19,146.15 L103.69,142.03"
-                    stroke="#768893"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M124.01,222.26 L119.54,223.90"
-                    stroke="#719090"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M112.00,226.00 L107.58,226.85"
-                    stroke="#728f91"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M128.01,220.56 L123.55,222.45"
-                    stroke="#719190"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M152.98,46.91 L156.29,46.61"
-                    stroke="#6f958f"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M108.04,226.78 L103.66,227.37"
-                    stroke="#728f91"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M132.00,218.63 L127.55,220.77"
-                    stroke="#719191"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M104.11,227.32 L99.79,227.65"
-                    stroke="#738f92"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M135.95,216.47 L131.54,218.86"
-                    stroke="#729291"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M252.87,179.56 L253.51,182.34"
-                    stroke="#81789b"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M100.23,227.63 L95.97,227.70"
-                    stroke="#749093"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M139.87,214.10 L135.50,216.73"
-                    stroke="#729392"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M164.87,118.31 L170.33,119.60"
-                    stroke="#817a9b"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M96.41,227.71 L92.23,227.52"
-                    stroke="#759094"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M143.74,211.52 L139.43,214.39"
-                    stroke="#729593"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M155.96,46.63 L159.24,46.58"
-                    stroke="#719892"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M106.74,149.79 L105.03,145.73"
-                    stroke="#798b97"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M92.65,227.55 L88.57,227.12"
-                    stroke="#769195"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M147.55,208.74 L143.30,211.83"
-                    stroke="#739694"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.46,182.06 L253.85,184.78"
-                    stroke="#847a9e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M159.93,117.32 L165.43,118.43"
-                    stroke="#837c9e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M88.98,227.17 L85.00,226.49"
-                    stroke="#779196"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M151.29,205.76 L147.12,209.07"
-                    stroke="#749895"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M158.91,46.57 L162.16,46.77"
-                    stroke="#739b95"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M85.40,226.57 L81.53,225.64"
-                    stroke="#789298"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M154.96,202.59 L150.87,206.11"
-                    stroke="#759996"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M108.46,153.38 L106.55,149.38"
-                    stroke="#7c8d9a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.82,184.50 L253.96,187.15"
-                    stroke="#867ca1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M154.97,116.48 L160.50,117.42"
-                    stroke="#857ea1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M81.92,225.75 L78.17,224.58"
-                    stroke="#7a939a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M158.53,199.24 L154.54,202.96"
-                    stroke="#769b97"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M161.83,46.73 L165.04,47.17"
-                    stroke="#759e97"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M78.55,224.71 L74.93,223.31"
-                    stroke="#7b949b"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M162.01,195.71 L158.13,199.63"
-                    stroke="#779d99"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M150.00,115.80 L155.54,116.57"
-                    stroke="#8881a3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.96,186.88 L253.85,189.45"
-                    stroke="#897fa4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M110.36,156.92 L108.26,152.97"
-                    stroke="#7f909e"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M75.29,223.46 L71.82,221.84"
-                    stroke="#7d969d"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M165.38,192.03 L161.61,196.12"
-                    stroke="#789f9a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M164.71,47.11 L167.86,47.80"
-                    stroke="#77a19a"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M145.03,115.29 L150.57,115.87"
-                    stroke="#8a83a6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M72.17,222.01 L68.86,220.17"
-                    stroke="#7e979f"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M168.63,188.19 L165.00,192.46"
-                    stroke="#79a19c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.87,189.19 L253.51,191.68"
-                    stroke="#8b81a7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M112.44,160.38 L110.14,156.51"
-                    stroke="#8293a2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M167.54,47.72 L170.62,48.65"
-                    stroke="#79a49c"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M171.76,184.21 L168.27,188.63"
-                    stroke="#7aa39d"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M69.19,220.37 L66.04,218.32"
-                    stroke="#8098a1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M140.07,114.94 L145.60,115.34"
-                    stroke="#8c86a9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.56,191.43 L252.95,193.83"
-                    stroke="#8e84ab"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M174.76,180.10 L171.41,184.67"
-                    stroke="#7ba59f"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M66.35,218.54 L63.37,216.30"
-                    stroke="#829aa4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M170.31,48.54 L173.32,49.73"
-                    stroke="#7ba79f"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M114.68,163.78 L112.19,159.99"
-                    stroke="#8596a6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M135.13,114.76 L140.63,114.97"
-                    stroke="#8e88ac"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M177.63,175.87 L174.43,180.57"
-                    stroke="#7da7a1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M63.67,216.54 L60.87,214.10"
-                    stroke="#849ba6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M173.01,49.59 L175.93,51.02"
-                    stroke="#7da9a1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M253.02,193.59 L252.17,195.89"
-                    stroke="#9187ae"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M180.34,171.53 L177.31,176.36"
-                    stroke="#7ea9a3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M130.23,114.76 L135.69,114.77"
-                    stroke="#908baf"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M61.15,214.36 L58.55,211.75"
-                    stroke="#869da8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M117.09,167.10 L114.42,163.39"
-                    stroke="#8999aa"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M175.63,50.86 L178.45,52.54"
-                    stroke="#7eaca4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M182.91,167.10 L180.04,172.03"
-                    stroke="#7faba4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M252.27,195.66 L251.17,197.86"
-                    stroke="#948ab1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M58.81,212.03 L56.40,209.25"
-                    stroke="#889eaa"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M125.37,114.93 L130.79,114.75"
-                    stroke="#938eb1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M185.32,162.59 L182.62,167.61"
-                    stroke="#80ada6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M178.16,52.36 L180.87,54.27"
-                    stroke="#80afa6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M119.66,170.34 L116.81,166.72"
-                    stroke="#8c9cae"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M56.64,209.54 L54.44,206.61"
-                    stroke="#8aa0ad"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M187.56,158.01 L185.05,163.11"
-                    stroke="#82afa8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M251.30,197.64 L249.97,199.73"
-                    stroke="#968db5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M120.57,115.28 L125.92,114.90"
-                    stroke="#9590b4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M180.60,54.06 L183.19,56.22"
-                    stroke="#82b1a8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M189.64,153.37 L187.31,158.53"
-                    stroke="#83b2a9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M54.66,206.92 L52.67,203.85"
-                    stroke="#8ca2af"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M122.37,173.49 L119.35,169.97"
-                    stroke="#8f9eb1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M182.93,55.99 L185.39,58.38"
-                    stroke="#83b4aa"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M115.84,115.80 L121.12,115.23"
-                    stroke="#9793b7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M191.54,148.69 L189.41,153.90"
-                    stroke="#84b3ab"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M250.12,199.52 L248.55,201.50"
-                    stroke="#9990b8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M52.87,204.17 L51.10,200.96"
-                    stroke="#8ea3b2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M185.14,58.12 L187.47,60.75"
-                    stroke="#85b6ac"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M193.26,143.98 L191.33,149.22"
-                    stroke="#85b5ad"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M111.19,116.50 L116.38,115.73"
-                    stroke="#9995b9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M125.24,176.55 L122.05,173.13"
-                    stroke="#92a1b5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M51.27,201.30 L49.74,197.98"
-                    stroke="#90a5b4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M187.24,60.47 L189.41,63.32"
-                    stroke="#86b8ae"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M194.81,139.25 L193.07,144.52"
-                    stroke="#86b7ae"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M248.73,201.30 L246.94,203.16"
-                    stroke="#9c93bc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M196.17,134.52 L194.64,139.79"
-                    stroke="#87b9b0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M189.20,63.02 L191.22,66.09"
-                    stroke="#87bab0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M106.63,117.37 L111.72,116.41"
-                    stroke="#9b98bc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M49.88,198.33 L48.58,194.90"
-                    stroke="#93a6b7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M128.24,179.51 L124.90,176.20"
-                    stroke="#95a4b9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M197.34,129.80 L196.02,135.06"
-                    stroke="#88bab1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M191.02,65.76 L192.89,69.04"
-                    stroke="#88bbb1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M247.13,202.98 L245.13,204.71"
-                    stroke="#9f95bf"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M48.70,195.26 L47.63,191.74"
-                    stroke="#95a8b9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M102.16,118.42 L107.14,117.27"
-                    stroke="#9d9abe"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M198.33,125.10 L197.22,130.34"
-                    stroke="#89bcb2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M192.70,68.70 L194.40,72.19"
-                    stroke="#89bdb2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M199.13,120.44 L198.23,125.64"
-                    stroke="#8abdb3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M194.23,71.82 L195.75,75.50"
-                    stroke="#8abeb3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M47.73,192.11 L46.90,188.52"
-                    stroke="#97a9bb"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M131.37,182.37 L127.89,179.18"
-                    stroke="#99a6bd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M199.74,115.83 L199.05,120.97"
-                    stroke="#8bbeb4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M97.81,119.65 L102.67,118.30"
-                    stroke="#9e9dc0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M245.34,204.54 L243.12,206.15"
-                    stroke="#a198c2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M195.61,75.11 L196.95,78.99"
-                    stroke="#8bbfb4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M200.16,111.29 L199.68,116.36"
-                    stroke="#8bbfb5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M196.82,78.58 L197.97,82.64"
-                    stroke="#8bc0b5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M200.39,106.81 L200.12,111.80"
-                    stroke="#8cc0b5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.98,188.89 L46.40,185.24"
-                    stroke="#99aabd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M197.86,82.21 L198.82,86.43"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M200.43,102.43 L200.37,107.32"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M198.73,85.99 L199.50,90.37"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M93.59,121.04 L98.31,119.50"
-                    stroke="#a09fc2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M200.28,98.14 L200.43,102.93"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M199.43,89.91 L199.99,94.44"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M199.94,93.97 L200.30,98.63"
-                    stroke="#8cc1b6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M134.62,185.12 L131.00,182.05"
-                    stroke="#9ca9c0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M243.36,205.99 L240.93,207.48"
-                    stroke="#a49bc5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.44,185.61 L46.11,181.91"
-                    stroke="#9aabc0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M89.49,122.60 L94.06,120.87"
-                    stroke="#a2a1c4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.13,182.29 L46.04,178.55"
-                    stroke="#9cadc2"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M85.53,124.33 L89.95,122.41"
-                    stroke="#a3a3c6"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M137.99,187.77 L134.24,184.81"
-                    stroke="#9fabc4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M241.19,207.33 L238.57,208.68"
-                    stroke="#a69ec8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.04,178.94 L46.21,175.18"
-                    stroke="#9eaec4"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M81.72,126.21 L85.97,124.12"
-                    stroke="#a4a5c8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.18,175.57 L46.60,171.80"
-                    stroke="#a0aec5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M238.85,208.55 L236.03,209.75"
-                    stroke="#a8a1cb"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M141.47,190.30 L137.60,187.47"
-                    stroke="#a1adc7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M78.07,128.25 L82.15,125.99"
-                    stroke="#a5a7c9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M46.54,172.19 L47.21,168.42"
-                    stroke="#a1afc7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M74.58,130.43 L78.48,128.01"
-                    stroke="#a6a8cb"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M47.13,168.81 L48.05,165.07"
-                    stroke="#a2b0c8"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M71.26,132.76 L74.97,130.18"
-                    stroke="#a7aacc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M236.33,209.64 L233.33,210.70"
-                    stroke="#aba3ce"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M145.04,192.72 L141.06,190.02"
-                    stroke="#a4afca"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M47.95,165.45 L49.12,161.74"
-                    stroke="#a4b0ca"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M68.13,135.23 L71.63,132.49"
-                    stroke="#a7abcc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M48.99,162.12 L50.42,158.45"
-                    stroke="#a5b0cb"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M65.18,137.82 L68.48,134.94"
-                    stroke="#a8adcd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M50.26,158.83 L51.93,155.22"
-                    stroke="#a6b0cc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M62.43,140.53 L65.51,137.51"
-                    stroke="#a8aece"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M51.75,155.59 L53.67,152.05"
-                    stroke="#a6b0cd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M233.65,210.60 L230.48,211.53"
-                    stroke="#ada6d1"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M59.87,143.36 L62.73,140.21"
-                    stroke="#a8afce"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M53.46,152.41 L55.62,148.95"
-                    stroke="#a7b0cd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M148.71,195.01 L144.63,192.45"
-                    stroke="#a7b1cd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M57.52,146.28 L60.16,143.03"
-                    stroke="#a8afce"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M55.38,149.30 L57.78,145.94"
-                    stroke="#a8b0ce"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M230.81,211.44 L227.48,212.21"
-                    stroke="#afa8d3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M152.45,197.18 L148.28,194.75"
-                    stroke="#a9b3d0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M227.83,212.14 L224.34,212.77"
-                    stroke="#b1abd5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M156.26,199.23 L152.01,196.94"
-                    stroke="#acb4d3"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M224.71,212.71 L221.07,213.19"
-                    stroke="#b2add7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M160.13,201.14 L155.82,199.00"
-                    stroke="#aeb6d5"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M221.45,213.15 L217.69,213.47"
-                    stroke="#b4afd9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M164.05,202.93 L159.68,200.93"
-                    stroke="#b0b7d7"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M218.08,213.45 L214.19,213.62"
-                    stroke="#b5b1db"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M168.00,204.58 L163.60,202.73"
-                    stroke="#b1b8d9"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M214.60,213.61 L210.60,213.62"
-                    stroke="#b6b2dc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M171.99,206.10 L167.55,204.40"
-                    stroke="#b3b8db"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M211.02,213.63 L206.92,213.49"
-                    stroke="#b7b4de"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M175.99,207.48 L171.53,205.94"
-                    stroke="#b4b9dc"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M207.35,213.51 L203.16,213.21"
-                    stroke="#b7b5df"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M180.00,208.73 L175.53,207.33"
-                    stroke="#b5b9dd"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M203.59,213.25 L199.33,212.80"
-                    stroke="#b8b7df"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M184.01,209.83 L179.54,208.59"
-                    stroke="#b6b9de"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M199.77,212.85 L195.44,212.24"
-                    stroke="#b8b8e0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M188.00,210.80 L183.55,209.71"
-                    stroke="#b7b9df"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M195.89,212.31 L191.51,211.54"
-                    stroke="#b8b8e0"
-                    stroke-width="27"
-                  />
-                  <path
-                    d="M191.96,211.62 L187.54,210.70"
-                    stroke="#b8b9e0"
-                    stroke-width="27"
-                  />
+                  <defs>
+                    <linearGradient
+                      id="eclipse-light-hero"
+                      x1="12"
+                      y1="12"
+                      x2="51"
+                      y2="51"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#ece7ff" />
+                      <stop offset=".4" stop-color="#ada5ed" />
+                      <stop offset=".72" stop-color="#819de1" />
+                      <stop offset="1" stop-color="#f0c5a6" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="31" cy="32" r="17.5" fill="#0b1021" />
+                  <path
+                    d="M16 23A17.5 17.5 0 0 1 47 25"
+                    stroke="url(#eclipse-light-hero)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M47 40A17.5 17.5 0 0 1 17 42"
+                    stroke="#9cabe1"
+                    stroke-opacity=".7"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8 40C1 31 17 20 34 18C52 16 64 22 56 30"
+                    stroke="url(#eclipse-light-hero)"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8 40C16 47 36 44 49 37C55 34 58 31 56 30"
+                    stroke="url(#eclipse-light-hero)"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M51 8V15M47.5 11.5H54.5"
+                    stroke="#f4d5bd"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <g class="fallback-evolution">
+                    <path
+                      d="M8 28C6 6 45 0 57 21"
+                      stroke="#b9a6df"
+                      stroke-width=".5"
+                    />
+                    <circle cx="8" cy="49" r=".8" fill="#dccde9" />
+                    <circle cx="56" cy="43" r=".7" fill="#edc8b3" />
+                  </g>
                 </svg>
               </div>
               <div>
@@ -12357,6 +12441,18 @@
                 ↗
               </button>
             </section>
+            <section
+              class="exam-preparation"
+              id="exam-day"
+              aria-labelledby="exam-day-heading"
+              hidden
+            >
+              <div class="section-heading">
+                <h2 id="exam-day-heading">On the horizon</h2>
+                <button id="exam-day-add">+ Test</button>
+              </div>
+              <div class="exam-prep-list" id="exam-day-list"></div>
+            </section>
             <section class="planner" id="planner" aria-label="Your schedule">
               <div class="toolbar">
                 <div>
@@ -12381,8 +12477,8 @@
                 </div>
               </div>
               <p class="rhythm-note" id="rhythm-note" hidden>
-                This is your recurring rhythm. Edits here shape new weeks. Weeks
-                you have already opened keep their own plans.
+                Your weekly rhythm. Edits apply to this week and future weeks.
+                Earlier weeks keep their own plans.
               </p>
               <div
                 class="week-strip"
@@ -12441,8 +12537,12 @@
                   <p class="eyebrow">YOUR KNOWLEDGE, IN ORBIT</p>
                   <h2>Your constellation</h2>
                 </div>
-                <span class="atlas-count" id="atlas-count"></span>
+                <div>
+                  <span class="atlas-count" id="atlas-count"></span
+                  ><span class="orbit-evolution" id="orbit-evolution"></span>
+                </div>
               </div>
+              <div class="atlas-sculpture" aria-hidden="true"></div>
               <div class="atlas-courses" id="atlas-courses"></div>
               <p id="atlas-empty" class="atlas-muted">
                 Add a course to begin. Courses from your calendar and
@@ -12523,6 +12623,26 @@
                   ><span>completed</span>
                 </div>
               </section>
+              <section
+                class="exam-preparation"
+                aria-labelledby="exam-prep-heading"
+              >
+                <div class="section-heading">
+                  <h2 id="exam-prep-heading">Upcoming tests</h2>
+                  <button id="exam-add">+ Test</button>
+                </div>
+                <div class="exam-prep-list" id="exam-prep-list"></div>
+              </section>
+              <section
+                class="daily-practice"
+                aria-labelledby="practice-heading"
+              >
+                <div class="section-heading">
+                  <h2 id="practice-heading">Daily practice</h2>
+                  <button id="practice-add">+ Repeating assignment</button>
+                </div>
+                <div id="practice-list"></div>
+              </section>
               <div class="section-heading">
                 <h2>Assignments</h2>
                 <button class="primary" data-new-task>+ Assignment</button>
@@ -12560,6 +12680,26 @@
               </div>
               <p class="focus-caption">A small start is still a start.</p>
               <div class="timer-face">
+                <div class="timer-tides" aria-hidden="true">
+                  <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+                    <path
+                      d="M0 112 C25 82 75 82 100 112 S175 142 200 112 C225 82 275 82 300 112 S375 142 400 112 V200 H0Z"
+                      fill="#9bddcf"
+                      fill-opacity=".55"
+                      stroke="#d1fff0"
+                      stroke-width="1"
+                    />
+                  </svg>
+                  <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+                    <path
+                      d="M0 112 C25 82 75 82 100 112 S175 142 200 112 C225 82 275 82 300 112 S375 142 400 112 V200 H0Z"
+                      fill="#b6b4ec"
+                      fill-opacity=".5"
+                      stroke="#d9d8ff"
+                      stroke-width="1"
+                    />
+                  </svg>
+                </div>
                 <svg viewBox="0 0 172 172" aria-hidden="true">
                   <circle cx="86" cy="86" r="74" />
                   <circle
@@ -12695,7 +12835,7 @@
       <div class="jump-heading">
         <div>
           <p class="eyebrow">FIND YOUR NEXT MOVE</p>
-          <h2 id="jump-heading">Jump to</h2>
+          <h2 id="jump-heading">Follow a thought.</h2>
         </div>
         <button id="jump-close" type="button" aria-label="Close search">
           ×
@@ -12806,7 +12946,8 @@
         </button>
       </div>
       <div class="mobile-menu-actions">
-        <button id="mobile-import">Import backup <span>JSON</span></button
+        <button id="companion-open">Open Orbit companion <span>↗</span></button
+        ><button id="mobile-import">Import backup <span>JSON</span></button
         ><button id="mobile-export">Export &amp; install <span>↗</span></button
         ><button id="mobile-personalize">Preferences <span>↗</span></button
         ><button id="mobile-review">Week in orbit <span>↗</span></button>
@@ -12911,99 +13052,110 @@
       <form id="event-form" novalidate>
         <p class="sr-only" id="dialog-context">
           Changes affect this week only unless Also update my rhythm is checked.
-          In My rhythm, changes affect only the template for new weeks.
+          In My rhythm, changes update this week and future weeks.
         </p>
-        <div class="field">
-          <label for="title">Title</label
+        <div class="field popup-main-input">
+          <label for="title">What are you making time for?</label
           ><input
             id="title"
             name="title"
+            placeholder="A class, a study session, a little space..."
             required
             autocomplete="off"
             aria-describedby="title-error"
           />
           <p class="field-error" id="title-error"></p>
         </div>
-        <div class="row">
-          <div class="field">
-            <label for="event-course">Course (optional)</label
-            ><input
-              id="event-course"
-              maxlength="60"
-              placeholder="e.g. BIO 201"
-              list="course-suggestions"
-            />
+        <section class="popup-group" aria-labelledby="event-time-label">
+          <div class="popup-group-heading">
+            <span class="popup-step" aria-hidden="true">01</span>
+            <h3 id="event-time-label">Give it a place</h3>
+            <span>Course &amp; time</span>
           </div>
-          <div class="field">
-            <label for="event-kind">Type</label
-            ><select id="event-kind">
-              <option value="event">Event</option>
-              <option value="class">Class</option>
-              <option value="study">Study</option>
-              <option value="work">Work</option>
-              <option value="personal">Personal</option>
-            </select>
+          <div class="row">
+            <div class="field">
+              <label for="event-course">Course (optional)</label
+              ><input
+                id="event-course"
+                maxlength="60"
+                placeholder="e.g. BIO 201"
+                list="course-suggestions"
+              />
+            </div>
+            <div class="field">
+              <label for="event-kind">Type</label
+              ><select id="event-kind">
+                <option value="event">Event</option>
+                <option value="class">Class</option>
+                <option value="study">Study</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label for="day">Day</label
-            ><select id="day" name="day"></select>
+          <div class="row">
+            <div class="field">
+              <label for="day">Day</label
+              ><select id="day" name="day"></select>
+            </div>
+            <div class="field">
+              <label for="color">Color</label
+              ><input id="color" name="color" type="color" value="#507dac" />
+            </div>
           </div>
-          <div class="field">
-            <label for="color">Color</label
-            ><input id="color" name="color" type="color" value="#507dac" />
+          <div class="row">
+            <div class="field">
+              <label for="start">Start</label
+              ><input
+                id="start"
+                name="start"
+                type="time"
+                min="06:00"
+                max="22:30"
+                step="1800"
+                required
+                aria-describedby="time-error"
+              />
+            </div>
+            <div class="field">
+              <label for="end">End</label
+              ><input
+                id="end"
+                name="end"
+                type="time"
+                min="06:30"
+                max="23:00"
+                step="1800"
+                required
+                aria-describedby="time-error"
+              />
+            </div>
           </div>
-        </div>
-        <div class="row">
+          <p
+            class="field-error"
+            id="time-error"
+            style="margin-top: -8px; margin-bottom: 15px"
+          ></p>
+        </section>
+        <details class="popup-details">
+          <summary>A little more detail <span>Notes</span></summary>
           <div class="field">
-            <label for="start">Start</label
-            ><input
-              id="start"
-              name="start"
-              type="time"
-              min="06:00"
-              max="22:30"
-              step="1800"
-              required
-              aria-describedby="time-error"
-            />
+            <label for="notes"
+              >Notes
+              <span style="font-weight: 400; color: var(--muted)"
+                >(optional)</span
+              ></label
+            ><textarea id="notes" name="notes"></textarea>
           </div>
-          <div class="field">
-            <label for="end">End</label
-            ><input
-              id="end"
-              name="end"
-              type="time"
-              min="06:30"
-              max="23:00"
-              step="1800"
-              required
-              aria-describedby="time-error"
-            />
-          </div>
-        </div>
-        <p
-          class="field-error"
-          id="time-error"
-          style="margin-top: -8px; margin-bottom: 15px"
-        ></p>
-        <div class="field">
-          <label for="notes"
-            >Notes
-            <span style="font-weight: 400; color: var(--muted)"
-              >(optional)</span
-            ></label
-          ><textarea id="notes" name="notes"></textarea>
-        </div>
+        </details>
         <div class="template-option">
           <label class="check"
-            ><input type="checkbox" id="update-template" />Also update my
-            rhythm</label
+            ><input type="checkbox" id="update-template" />Repeat every
+            week</label
           >
-          <p>
-            Update this event for new weeks too. Previously saved weeks stay as
-            they are.
+          <p id="event-repeat-help">
+            Same day and time, from this week onward. Turn off to keep only this
+            week.
           </p>
         </div>
         <p class="field-error" id="save-error" role="alert"></p>
@@ -13026,6 +13178,47 @@
         </button>
       </div>
       <form id="task-form">
+        <div class="field">
+          <label for="task-kind">What are you preparing?</label
+          ><select id="task-kind">
+            <option value="assignment">Assignment / project</option>
+            <option value="exam">Test / exam</option>
+          </select>
+        </div>
+        <section class="popup-group" id="exam-fields" hidden>
+          <div class="row">
+            <div class="field">
+              <label for="exam-target">Total study budget (hours)</label
+              ><input
+                id="exam-target"
+                type="number"
+                min="0.5"
+                max="200"
+                step="0.5"
+                value="6"
+              />
+            </div>
+            <div class="field">
+              <label for="exam-start">Prepare from</label
+              ><input id="exam-start" type="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="exam-manual">Outside-timer minutes today</label
+            ><input
+              id="exam-manual"
+              type="number"
+              min="0"
+              max="1440"
+              step="1"
+              value="0"
+            />
+          </div>
+          <p class="dialog-description">
+            Preparation stays visible until the test date. Recorded study
+            reduces the budget; the test keeps one date.
+          </p>
+        </section>
         <p class="dialog-description">
           Capture the deadline. Then make room to work on it.
         </p>
@@ -13051,7 +13244,7 @@
         </div>
         <div class="row">
           <div class="field">
-            <label for="task-due">Due date</label
+            <label for="task-due" id="task-due-label">Due date</label
             ><input id="task-due" type="date" required />
           </div>
           <div class="field">
@@ -13064,6 +13257,51 @@
             </select>
           </div>
         </div>
+        <section
+          class="popup-group"
+          id="repeat-config"
+          aria-label="Repeating assignment"
+        >
+          <div class="field">
+            <label for="task-repeat">Repeat</label
+            ><select id="task-repeat">
+              <option value="none">One-time assignment</option>
+              <option value="daily">Every day</option>
+              <option value="weekdays">Weekdays</option>
+              <option value="weekly">Weekly on the start day</option>
+            </select>
+          </div>
+          <div id="practice-fields" hidden>
+            <div class="row">
+              <div class="field">
+                <label for="practice-target">Minutes per scheduled day</label
+                ><input
+                  id="practice-target"
+                  type="number"
+                  min="5"
+                  max="720"
+                  step="5"
+                  value="60"
+                />
+              </div>
+              <div class="field">
+                <label for="practice-manual">Outside-timer minutes today</label
+                ><input
+                  id="practice-manual"
+                  type="number"
+                  min="0"
+                  max="1440"
+                  step="1"
+                  value="0"
+                />
+              </div>
+            </div>
+            <p class="dialog-description">
+              Completed Focus sessions count automatically. Only log work done
+              outside the timer here.
+            </p>
+          </div>
+        </section>
         <details id="breakdown-fields">
           <summary>Study steps</summary>
           <p class="dialog-description">
@@ -13088,7 +13326,7 @@
     </dialog>
     <dialog id="settings-editor" aria-labelledby="settings-title">
       <div class="dialog-header">
-        <h2 id="settings-title">Preferences</h2>
+        <h2 id="settings-title">Your workspace.</h2>
         <button
           class="close"
           data-close="settings-editor"
@@ -13102,94 +13340,116 @@
         <button type="button" id="open-account">Account &amp; sync</button>
       </section>
       <form id="settings-form">
-        <div class="field">
-          <label for="setting-name">Name</label
-          ><input
-            id="setting-name"
-            maxlength="40"
-            placeholder="Your first name"
-            autocomplete="given-name"
-          />
-        </div>
-        <div class="field">
-          <label for="setting-goal">Weekly focus goal (hours)</label
-          ><input
-            id="setting-goal"
-            type="number"
-            min="1"
-            max="80"
-            step="1"
-            required
-            value="10"
-          />
-        </div>
-        <label class="preference-check"
-          ><input id="setting-motion" type="checkbox" />Use calmer motion</label
-        ><label class="preference-check"
-          ><input id="setting-glass" type="checkbox" />Use solid surfaces
-          instead of glass</label
-        >
-        <p class="dialog-description">
-          Device accessibility settings take priority.
-        </p>
-        <p
-          id="system-appearance-note"
-          class="system-appearance-note"
-          role="status"
-        ></p>
-        <div class="row">
-          <div class="field">
-            <label for="setting-accent">Accent</label
-            ><select id="setting-accent">
-              <option value="mint">Mint</option>
-              <option value="lilac">Lilac</option>
-              <option value="apricot">Apricot</option>
-            </select>
+        <section class="popup-group" aria-labelledby="personal-label">
+          <div class="popup-group-heading">
+            <span class="popup-step" aria-hidden="true">01</span>
+            <h3 id="personal-label">Your pace</h3>
+            <span>Name &amp; weekly goal</span>
           </div>
           <div class="field">
-            <label for="setting-material">Material</label
-            ><select id="setting-material">
-              <option value="sculpted">Sculpted</option>
-              <option value="glass">Glass</option>
-              <option value="quiet">Quiet</option>
-            </select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label for="setting-study-start">Study hours from</label
+            <label for="setting-name">Name</label
             ><input
-              id="setting-study-start"
-              type="time"
-              min="06:00"
-              max="22:30"
-              step="1800"
-              required
+              id="setting-name"
+              maxlength="40"
+              placeholder="Your first name"
+              autocomplete="given-name"
             />
           </div>
           <div class="field">
-            <label for="setting-study-end">Until</label
+            <label for="setting-goal">Weekly focus goal (hours)</label
             ><input
-              id="setting-study-end"
-              type="time"
-              min="06:30"
-              max="23:00"
-              step="1800"
+              id="setting-goal"
+              type="number"
+              min="1"
+              max="80"
+              step="1"
+              required
+              value="10"
+            />
+          </div>
+        </section>
+        <section class="popup-group" aria-labelledby="appearance-label">
+          <div class="popup-group-heading">
+            <span class="popup-step" aria-hidden="true">02</span>
+            <h3 id="appearance-label">Make it feel like you</h3>
+            <span>Look &amp; motion</span>
+          </div>
+          <label class="preference-check"
+            ><input id="setting-motion" type="checkbox" />Use calmer
+            motion</label
+          ><label class="preference-check"
+            ><input id="setting-glass" type="checkbox" />Use solid surfaces
+            instead of glass</label
+          >
+          <p class="dialog-description">
+            Device accessibility settings take priority.
+          </p>
+          <p
+            id="system-appearance-note"
+            class="system-appearance-note"
+            role="status"
+          ></p>
+          <div class="row">
+            <div class="field">
+              <label for="setting-accent">Accent</label
+              ><select id="setting-accent">
+                <option value="mint">Mint</option>
+                <option value="lilac">Lilac</option>
+                <option value="apricot">Apricot</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="setting-material">Material</label
+              ><select id="setting-material">
+                <option value="sculpted">Sculpted</option>
+                <option value="glass">Glass</option>
+                <option value="quiet">Quiet</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        <section class="popup-group" aria-labelledby="hours-label">
+          <div class="popup-group-heading">
+            <span class="popup-step" aria-hidden="true">03</span>
+            <h3 id="hours-label">Room in your day</h3>
+            <span>Study hours</span>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="setting-study-start">Study hours from</label
+              ><input
+                id="setting-study-start"
+                type="time"
+                min="06:00"
+                max="22:30"
+                step="1800"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="setting-study-end">Until</label
+              ><input
+                id="setting-study-end"
+                type="time"
+                min="06:30"
+                max="23:00"
+                step="1800"
+                required
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="setting-daily-target">Daily study target (hours)</label
+            ><input
+              id="setting-daily-target"
+              type="number"
+              min="0.5"
+              max="12"
+              step="0.5"
               required
             />
           </div>
-        </div>
-        <div class="field">
-          <label for="setting-daily-target">Daily study target (hours)</label
-          ><input
-            id="setting-daily-target"
-            type="number"
-            min="0.5"
-            max="12"
-            step="0.5"
-            required
-          />
-        </div>
+        </section>
         <div id="native-preferences" hidden>
           <label class="preference-check"
             ><input id="setting-haptics" type="checkbox" />Tactile feedback on
@@ -13223,29 +13483,37 @@
         </button>
       </div>
       <form id="capture-form">
-        <div class="field">
-          <label for="capture-title">Assignment</label
+        <div class="field popup-main-input">
+          <label for="capture-title">What is on your mind?</label
           ><input
             id="capture-title"
+            placeholder="Catch an idea..."
             maxlength="160"
             required
             autocomplete="off"
           />
         </div>
-        <div class="row">
-          <div class="field">
-            <label for="capture-course">Course (optional)</label
-            ><input
-              id="capture-course"
-              maxlength="60"
-              list="course-suggestions"
-            />
+        <section class="popup-group" aria-label="Capture destination">
+          <div class="popup-group-heading">
+            <span class="popup-step" aria-hidden="true">01</span>
+            <h3>Put it in orbit</h3>
+            <span>Course &amp; due date</span>
           </div>
-          <div class="field">
-            <label for="capture-due">Due</label
-            ><input id="capture-due" type="date" required />
+          <div class="row">
+            <div class="field">
+              <label for="capture-course">Course (optional)</label
+              ><input
+                id="capture-course"
+                maxlength="60"
+                list="course-suggestions"
+              />
+            </div>
+            <div class="field">
+              <label for="capture-due">Due</label
+              ><input id="capture-due" type="date" required />
+            </div>
           </div>
-        </div>
+        </section>
         <p class="dialog-description">
           Starts with a one-hour estimate. Add steps in Assignments.
         </p>
@@ -13371,6 +13639,25 @@ var StudyCore;
         return { placements, unplaced };
     }
     StudyCore.planSteps = planSteps;
+    function practiceScheduled(frequency, start, date) {
+        if (frequency === "none" || date < start)
+            return false;
+        const day = new Date(`${date}T12:00:00`).getDay();
+        return (frequency === "daily" ||
+            (frequency === "weekdays" && day > 0 && day < 6) ||
+            (frequency === "weekly" && day === new Date(`${start}T12:00:00`).getDay()));
+    }
+    StudyCore.practiceScheduled = practiceScheduled;
+    /** Manual logs record outside-timer work; linked completed sessions count once. */
+    function practiceMinutes(taskId, date, logs, sessions) {
+        return (logs
+            .filter((log) => log.date === date)
+            .reduce((sum, log) => sum + log.minutes, 0) +
+            sessions
+                .filter((session) => session.taskId === taskId && session.date === date)
+                .reduce((sum, session) => sum + session.minutes, 0));
+    }
+    StudyCore.practiceMinutes = practiceMinutes;
     /** RFC 5545 TEXT escaping prevents notes from becoming calendar properties. */
     function calendarText(value) {
         return value
@@ -13495,55 +13782,56 @@ var StudyCore;
 
         // State: each saved week is a deep copy. Stable event IDs link occurrences to the template.
         function initialData() {
-          return {
-            template: [
-              {
-                id: "starter-class",
-                title: "Class",
-                day: 0,
-                start: "09:00",
-                end: "10:30",
-                color: "#507dac",
-                notes: "",
-              },
-              {
-                id: "starter-study",
-                title: "Study block",
-                day: 1,
-                start: "10:00",
-                end: "12:00",
-                color: "#6b8d75",
-                notes: "",
-              },
-              {
-                id: "starter-work",
-                title: "Work",
-                day: 3,
-                start: "13:00",
-                end: "16:00",
-                color: "#9877a8",
-                notes: "",
-              },
-              {
-                id: "starter-personal",
-                title: "Personal time",
-                day: 5,
-                start: "10:00",
-                end: "11:00",
-                color: "#b3844d",
-                notes: "",
-              },
-            ],
-            weeks: {},
-          };
+          return { template: [], weeks: {} };
         }
-        // Materialize a template once per week. Later template edits do not rewrite existing weekly plans.
+        // Remove only unchanged legacy fixtures; custom or edited events survive.
+        function removeStarterEvents(data) {
+          const fixtures = {
+            "starter-class": ["Class", 0, "09:00", "10:30", "#507dac"],
+            "starter-study": ["Study block", 1, "10:00", "12:00", "#6b8d75"],
+            "starter-work": ["Work", 3, "13:00", "16:00", "#9877a8"],
+            "starter-personal": [
+              "Personal time",
+              5,
+              "10:00",
+              "11:00",
+              "#b3844d",
+            ],
+          };
+          let removed = 0;
+          const keep = (item) => {
+            const fixture = fixtures[item.id];
+            const untouched =
+              fixture &&
+              !item.notes &&
+              !item.course &&
+              !item.kind &&
+              JSON.stringify([
+                item.title,
+                item.day,
+                item.start,
+                item.end,
+                item.color,
+              ]) === JSON.stringify(fixture);
+            if (untouched) removed++;
+            return !untouched;
+          };
+          data.template = data.template.filter(keep);
+          for (const key of Object.keys(data.weeks))
+            data.weeks[key] = data.weeks[key].filter(keep);
+          return removed;
+        }
+        // Weekly repeats begin in their chosen week, including newly opened weeks.
         function ensureWeek(data, key) {
           if (!Object.hasOwn(data.weeks, key))
-            data.weeks[key] = clone(data.template);
+            data.weeks[key] = clone(
+              data.template.filter(
+                (item) => !item.repeatFrom || key >= item.repeatFrom,
+              ),
+            );
           return data.weeks[key];
         }
-        // Stable IDs connect template events to weekly occurrences; updating the template is an explicit choice.
+        // Stable IDs link weekly repeats. Past saved weeks are historical records.
         function updateOccurrence(
           data,
           week,
@@ -13551,19 +13839,37 @@ var StudyCore;
           alsoTemplate,
           remove = false,
         ) {
-          const change = (list) => {
+          const previous = data.template.find((item) => item.id === event.id);
+          const change = (list, value = event) => {
             const index = list.findIndex((item) => item.id === event.id);
             if (remove) {
               if (index >= 0) list.splice(index, 1);
-            } else if (index >= 0) list[index] = clone(event);
-            else list.push(clone(event));
+            } else if (index >= 0) list[index] = clone(value);
+            else list.push(clone(value));
           };
-          if (state.page === "rhythm") {
-            change(data.template);
-            return;
+          if (alsoTemplate || state.page === "rhythm") {
+            const repeating = {
+              ...event,
+              repeatFrom: previous?.repeatFrom || week,
+            };
+            change(data.template, repeating);
+            for (const [key, list] of Object.entries(data.weeks)) {
+              if (key >= week && key >= repeating.repeatFrom)
+                change(list, repeating);
+            }
+            if (state.page !== "rhythm")
+              change(ensureWeek(data, week), repeating);
+          } else {
+            change(ensureWeek(data, week));
           }
-          change(ensureWeek(data, week));
-          if (alsoTemplate) change(data.template);
+        }
+        // Turning repeat off keeps this occurrence and removes only future copies.
+        function stopWeeklyRepeat(data, week, id) {
+          data.template = data.template.filter((item) => item.id !== id);
+          for (const [key, list] of Object.entries(data.weeks)) {
+            if (key > week)
+              data.weeks[key] = list.filter((item) => item.id !== id);
+          }
         }
         function eventErrors(event) {
           const errors = {};
@@ -13617,6 +13923,7 @@ var StudyCore;
                   "notes",
                   ...("course" in event ? ["course"] : []),
                   ...("kind" in event ? ["kind"] : []),
+                  ...("repeatFrom" in event ? ["repeatFrom"] : []),
                 ]) ||
                 ("course" in event &&
                   (typeof event.course !== "string" ||
@@ -13625,6 +13932,12 @@ var StudyCore;
                   !["class", "study", "work", "personal", "event"].includes(
                     event.kind,
                   )) ||
+                ("repeatFrom" in event &&
+                  (!/^\d{4}-\d{2}-\d{2}$/.test(event.repeatFrom) ||
+                    !Number.isFinite(parseDate(event.repeatFrom).getTime()) ||
+                    localISO(parseDate(event.repeatFrom)) !==
+                      event.repeatFrom ||
+                    parseDate(event.repeatFrom).getDay() !== 1)) ||
                 typeof event.id !== "string" ||
                 !event.id ||
                 ids.has(event.id) ||
@@ -13811,6 +14124,23 @@ var StudyCore;
             name.className = "weekday";
             name.textContent = DAYS[day].slice(0, 3);
             heading.append(number, name);
+            const exams =
+              state.page === "rhythm"
+                ? 0
+                : studyData().tasks.filter(
+                    (t) =>
+                      isExam(t) &&
+                      !t.done &&
+                      t.due === shiftDate(state.week, day),
+                  ).length;
+            if (exams)
+              heading.append(
+                el(
+                  "span",
+                  "exam-date-marker",
+                  `${exams} test${exams === 1 ? "" : "s"}`,
+                ),
+              );
             grid.append(heading);
           }
           const times = document.createElement("div");
@@ -13904,12 +14234,21 @@ var StudyCore;
           $("notes").value = event?.notes || "";
           $("event-course").value = event?.course || "";
           $("event-kind").value = event?.kind || "event";
-          $("update-template").checked = state.page === "rhythm";
+          $("update-template").checked =
+            state.page === "rhythm" ||
+            (!!event &&
+              state.data.template.some((item) => item.id === event.id));
+          $("event-repeat-help").textContent =
+            state.page === "rhythm"
+              ? "Repeats every week. Changes apply to this week and future weeks."
+              : "Same day and time, from this week onward. Turn off to keep only this week.";
           $("update-template").disabled = state.page === "rhythm";
           $("dialog-title").textContent =
             (event ? "Edit " : "New ") +
             (state.page === "rhythm" ? "rhythm event" : "event");
           $("delete").hidden = !event;
+          const extras = $("editor").querySelector(".popup-details");
+          if (extras) extras.open = !!event?.notes || state.page === "rhythm";
           $("editor").showModal();
           $("title").focus();
         }
@@ -13977,6 +14316,8 @@ var StudyCore;
             return;
           }
           const next = clone(state.data);
+          if (!$("update-template").checked && state.page !== "rhythm")
+            stopWeeklyRepeat(next, state.week, item.id);
           updateOccurrence(
             next,
             state.week,
@@ -13994,7 +14335,7 @@ var StudyCore;
             state.page === "rhythm"
               ? "Rhythm updated for future weeks."
               : $("update-template").checked
-                ? "Event and rhythm saved."
+                ? "Event repeats every week from this week onward."
                 : "Event saved for this week.",
           );
         }
@@ -14024,7 +14365,7 @@ var StudyCore;
             state.page === "rhythm"
               ? "Event removed from your rhythm."
               : $("update-template").checked
-                ? "Event deleted from this week and rhythm."
+                ? "Repeating event deleted from this week and future weeks."
                 : "Event deleted from this week.",
           );
         }
@@ -14628,6 +14969,68 @@ var StudyCore;
               typeof task.done !== "boolean"
             )
               throw new Error("An assignment is invalid.");
+            if (
+              task.kind !== undefined &&
+              !["assignment", "exam"].includes(task.kind)
+            )
+              throw new Error("Invalid study item type.");
+            if (task.kind === "exam" && !task.exam)
+              throw new Error("Missing exam study budget.");
+            if (task.exam !== undefined) {
+              const e = task.exam;
+              if (
+                !obj(e) ||
+                !Number.isInteger(e.targetMinutes) ||
+                e.targetMinutes < 30 ||
+                e.targetMinutes > 12000 ||
+                !date(e.startDate) ||
+                (task.kind === "exam" && e.startDate > task.due) ||
+                !Array.isArray(e.logs) ||
+                e.logs.length > 366
+              )
+                throw new Error("Invalid exam preparation.");
+              const dates = new Set();
+              for (const log of e.logs) {
+                if (
+                  !obj(log) ||
+                  !date(log.date) ||
+                  dates.has(log.date) ||
+                  !Number.isInteger(log.minutes) ||
+                  log.minutes < 1 ||
+                  log.minutes > 1440
+                )
+                  throw new Error("Invalid exam study log.");
+                dates.add(log.date);
+              }
+            }
+            if (task.repeat !== undefined) {
+              const r = task.repeat;
+              if (
+                !obj(r) ||
+                !["none", "daily", "weekdays", "weekly"].includes(
+                  r.frequency,
+                ) ||
+                !Number.isInteger(r.targetMinutes) ||
+                r.targetMinutes < 5 ||
+                r.targetMinutes > 720 ||
+                !Array.isArray(r.logs) ||
+                r.logs.length > 366
+              )
+                throw new Error("Invalid repeating assignment.");
+              const dates = new Set();
+              for (const log of r.logs) {
+                if (
+                  !obj(log) ||
+                  !date(log.date) ||
+                  dates.has(log.date) ||
+                  !Number.isInteger(log.minutes) ||
+                  log.minutes < 1 ||
+                  log.minutes > 1440
+                )
+                  throw new Error("Invalid practice log.");
+                dates.add(log.date);
+              }
+            }
             if (task.steps !== undefined) {
               if (!Array.isArray(task.steps) || task.steps.length > 20)
                 throw new Error("Invalid assignment steps.");
@@ -14732,7 +15135,9 @@ var StudyCore;
           const next = clone(state.data);
           next.study ||= blankStudy();
           change(next.study);
-          return commit(next);
+          const saved = commit(next);
+          if (saved) updateOrbitEvolution();
+          return saved;
         }
         function eventsForView() {
           return state.page === "rhythm"
@@ -14847,6 +15252,10 @@ var StudyCore;
           finishWaveWipe();
           for (const animation of activeMotion.values()) animation.cancel();
           activeMotion.clear();
+          if (calm())
+            document
+              .querySelectorAll(".popup-sigil animate")
+              .forEach((animation) => animation.endElement());
           document
             .querySelectorAll(
               ".motion-halo,.motion-glint,.control-flash,.tide-light",
@@ -15137,6 +15546,384 @@ var StudyCore;
             fade.addEventListener("cancel", remove, { once: true });
           } else remove();
         }
+
+        // Parametric ribbon mesh, perspective projection and per-pixel lighting.
+        // Kept inline so the offline/file and native builds need no CDN or modules.
+        function bindSpatialSculptures() {
+          const vertex = `attribute vec3 position; attribute vec3 normal;
+            uniform float phase; uniform vec2 tilt; uniform float aspect;
+            varying vec3 N; varying vec3 P; varying float bodyRadius;
+            void main() {
+              float precession=phase*.09, inclination=.55+.18*sin(phase*.14)+tilt.y;
+              float yaw=.32*sin(phase*.18)+tilt.x, roll=.12*sin(phase*.11);
+              mat3 rz=mat3(cos(precession+roll),sin(precession+roll),0.,-sin(precession+roll),cos(precession+roll),0.,0.,0.,1.);
+              mat3 ry=mat3(cos(yaw),0.,-sin(yaw),0.,1.,0.,sin(yaw),0.,cos(yaw));
+              mat3 rx=mat3(1.,0.,0.,0.,cos(inclination),sin(inclination),0.,-sin(inclination),cos(inclination));
+              mat3 model=ry*rz*rx;
+              vec3 orbit=vec3(.11*cos(phase*.16),.07*sin(phase*.16),.16*sin(phase*.16));
+              vec3 p=model*position+orbit; N=model*normal; P=p; bodyRadius=length(position);
+              float z=5.6-p.z;
+              gl_Position=vec4(p.x*2.6/aspect,p.y*2.6,z*.4-1.,z);
+            }`;
+          // Opaline aurora: deep blue folds, lilac rim light and rare warm glints.
+          // Colour moves with the view and time, like light inside a polished stone.
+          const fragment = `precision mediump float; varying vec3 N; varying vec3 P; varying float bodyRadius;
+            uniform float phase; uniform float growth;
+            void main() {
+              vec3 n=normalize(N),v=normalize(vec3(0.,0.,5.6)-P);
+              vec3 l=normalize(vec3(-2.,3.,4.));
+              float diffuse=max(dot(n,l),0.);
+              float rim=pow(1.-abs(dot(n,v)),2.2);
+              float spec=pow(max(dot(n,normalize(l+v)),0.),48.);
+              float hue=.5+.5*sin(P.y*1.35+P.z*1.2+n.x*1.6+phase*.11);
+              vec3 midnight=vec3(.12,.16,.34), violet=vec3(.48,.37,.72);
+              vec3 opal=vec3(.73,.79,.94), rose=vec3(.94,.69,.62);
+              vec3 base=mix(midnight,violet,smoothstep(.08,.85,hue));
+              base=mix(base,opal,pow(hue,5.)*.55);
+              vec3 color=base*(.42+.68*diffuse)+opal*spec*.85;
+              vec3 edge=mix(vec3(.48,.55,.92),rose,pow(1.-hue,3.));
+              color+=edge*rim*(.35+growth*.4);
+              // The central sphere stays dark: the visible rim is an artistic horizon.
+              if(bodyRadius<.65) color=vec3(.018,.022,.047)+vec3(.12,.09,.23)*rim*.25;
+              // Detached lights read as sparse celestial glints rather than atoms.
+              if(length(P)>1.6) color=mix(color,opal,.35)+rose*.12;
+              gl_FragColor=vec4(color,1.);
+            }`;
+          const normalize = (a) => {
+            const length = Math.hypot(...a) || 1;
+            return a.map((x) => x / length);
+          };
+          const cross = (a, b) => [
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0],
+          ];
+          const center = (t) => [
+            (1.08 + 0.06 * Math.sin(3 * t)) * Math.cos(t),
+            (1.08 + 0.06 * Math.sin(3 * t)) * Math.sin(t),
+            0.12 * Math.sin(2 * t),
+          ];
+          const positions = [],
+            normals = [];
+          const emit = (p, n) => {
+            positions.push(...p);
+            normals.push(...n);
+          };
+          const ring = (t, a) => {
+            const c = center(t),
+              next = center(t + 0.001);
+            const tangent = normalize(next.map((v, i) => v - c[i]));
+            const side = normalize(cross(tangent, [0, 0, 1]));
+            const up = normalize(cross(side, tangent));
+            const n = side.map((v, i) => v * Math.cos(a) + up[i] * Math.sin(a));
+            // Flattened cross section reads as a folded ribbon rather than a donut.
+            const offset = side.map(
+              (v, i) => v * Math.cos(a) * 0.24 + up[i] * Math.sin(a) * 0.035,
+            );
+            return [c.map((v, i) => v + offset[i]), n];
+          };
+          for (let i = 0; i < 160; i++)
+            for (let j = 0; j < 16; j++) {
+              const t = (i / 160) * Math.PI * 2,
+                u = ((i + 1) / 160) * Math.PI * 2,
+                a = (j / 16) * Math.PI * 2,
+                b = ((j + 1) / 16) * Math.PI * 2;
+              const q = [ring(t, a), ring(u, a), ring(u, b), ring(t, b)];
+              [0, 1, 2, 0, 2, 3].forEach((k) => emit(...q[k]));
+            }
+          // A real depth-tested sphere lets the ribbon pass behind and in front.
+          const horizon = (u, v) => {
+            const n = [
+              Math.sin(v) * Math.cos(u),
+              Math.cos(v),
+              Math.sin(v) * Math.sin(u),
+            ];
+            return [n.map((x) => x * 0.56), n];
+          };
+          for (let i = 0; i < 40; i++)
+            for (let j = 0; j < 24; j++) {
+              const u = (i / 40) * Math.PI * 2,
+                w = ((i + 1) / 40) * Math.PI * 2,
+                v = (j / 24) * Math.PI,
+                z = ((j + 1) / 24) * Math.PI;
+              const q = [
+                horizon(u, v),
+                horizon(w, v),
+                horizon(w, z),
+                horizon(u, z),
+              ];
+              [0, 1, 2, 0, 2, 3].forEach((k) => emit(...q[k]));
+            }
+          const baseVertexCount = positions.length / 3,
+            arcRanges = [],
+            starRanges = [];
+          // Layers are uploaded once, then exposed as the saved workspace grows.
+          for (let orbit = 0; orbit < 4; orbit++) {
+            const first = positions.length / 3;
+            const point = (t, a) => {
+              const r = 1.46 + orbit * 0.12,
+                lean = 0.5 + orbit * 0.28;
+              const c = [
+                r * Math.cos(t),
+                r * Math.sin(t) * Math.cos(lean),
+                r * Math.sin(t) * Math.sin(lean),
+              ];
+              const radial = [
+                Math.cos(t),
+                Math.sin(t) * Math.cos(lean),
+                Math.sin(t) * Math.sin(lean),
+              ];
+              const axis = [0, -Math.sin(lean), Math.cos(lean)];
+              const n = radial.map(
+                (v, i) => v * Math.cos(a) + axis[i] * Math.sin(a),
+              );
+              return [c.map((v, i) => v + n[i] * 0.009), n];
+            };
+            for (let i = 0; i < 100; i++)
+              for (let j = 0; j < 6; j++) {
+                const t = (i / 100) * Math.PI * 0.85 + orbit,
+                  u = ((i + 1) / 100) * Math.PI * 0.85 + orbit;
+                const a = (j / 6) * Math.PI * 2,
+                  b = ((j + 1) / 6) * Math.PI * 2;
+                const q = [point(t, a), point(u, a), point(u, b), point(t, b)];
+                [0, 1, 2, 0, 2, 3].forEach((k) => emit(...q[k]));
+              }
+            arcRanges.push({ first, count: positions.length / 3 - first });
+          }
+          // Asymmetric, small glints keep the volume without a molecular arrangement.
+          for (let k = 0; k < 12; k++) {
+            const first = positions.length / 3;
+            const a = k * 2.39996,
+              c = [
+                1.75 * Math.cos(a),
+                1.4 * Math.sin(a),
+                0.65 * Math.sin(a * 2),
+              ];
+            const sphere = (u, v) => {
+              const n = [
+                Math.sin(v) * Math.cos(u),
+                Math.cos(v),
+                Math.sin(v) * Math.sin(u),
+              ];
+              return [
+                n.map((x, i) => c[i] + x * (k % 3 === 0 ? 0.034 : 0.018)),
+                n,
+              ];
+            };
+            for (let i = 0; i < 12; i++)
+              for (let j = 0; j < 8; j++) {
+                const u = (i / 12) * Math.PI * 2,
+                  v = (j / 8) * Math.PI,
+                  w = ((i + 1) / 12) * Math.PI * 2,
+                  z = ((j + 1) / 8) * Math.PI;
+                const q = [
+                  sphere(u, v),
+                  sphere(w, v),
+                  sphere(w, z),
+                  sphere(u, z),
+                ];
+                [0, 1, 2, 0, 2, 3].forEach((n) => emit(...q[n]));
+              }
+            starRanges.push({ first, count: positions.length / 3 - first });
+          }
+          document
+            .querySelectorAll(".orbit-art, .atlas-sculpture")
+            .forEach((host) => {
+              const canvas = document.createElement("canvas");
+              canvas.className = "sculpture-canvas";
+              canvas.setAttribute("aria-hidden", "true");
+              host.append(canvas);
+              const gl = canvas.getContext("webgl", {
+                alpha: true,
+                antialias: true,
+                premultipliedAlpha: false,
+              });
+              if (!gl) {
+                canvas.remove();
+                return;
+              }
+              const compile = (type, source) => {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+                  throw new Error("Sculpture shader unavailable");
+                return shader;
+              };
+              let program;
+              try {
+                program = gl.createProgram();
+                gl.attachShader(program, compile(gl.VERTEX_SHADER, vertex));
+                gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragment));
+                gl.linkProgram(program);
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+                  throw new Error("Sculpture program unavailable");
+              } catch {
+                canvas.remove();
+                return;
+              }
+              gl.useProgram(program);
+              gl.enable(gl.DEPTH_TEST);
+              for (const [name, data] of [
+                ["position", positions],
+                ["normal", normals],
+              ]) {
+                const buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(
+                  gl.ARRAY_BUFFER,
+                  new Float32Array(data),
+                  gl.STATIC_DRAW,
+                );
+                const location = gl.getAttribLocation(program, name);
+                gl.enableVertexAttribArray(location);
+                gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+              }
+              const phase = gl.getUniformLocation(program, "phase"),
+                tilt = gl.getUniformLocation(program, "tilt"),
+                aspect = gl.getUniformLocation(program, "aspect"),
+                growthUniform = gl.getUniformLocation(program, "growth");
+              let frame = 0,
+                last = 0,
+                time = 1,
+                visible = false,
+                lost = false,
+                px = 0,
+                py = 0,
+                tx = 0,
+                ty = 0;
+              const draw = () => {
+                const rect = host.getBoundingClientRect(),
+                  dpr = Math.min(devicePixelRatio || 1, 1.5);
+                const width = Math.max(1, Math.round(rect.width * dpr)),
+                  height = Math.max(1, Math.round(rect.height * dpr));
+                if (canvas.width !== width || canvas.height !== height) {
+                  canvas.width = width;
+                  canvas.height = height;
+                }
+                gl.viewport(0, 0, width, height);
+                gl.clearColor(0, 0, 0, 0);
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                gl.uniform1f(phase, time);
+                gl.uniform2f(tilt, px, py);
+                gl.uniform1f(aspect, width / height);
+                const growth = Number(document.body.dataset.orbitLevel || 0);
+                gl.uniform1f(growthUniform, growth / 4);
+                gl.drawArrays(gl.TRIANGLES, 0, baseVertexCount);
+                // Contiguous unlocked layers need at most three draw calls.
+                if (growth > 0) {
+                  const arc = arcRanges[growth - 1],
+                    star = starRanges[growth * 3 - 1];
+                  gl.drawArrays(
+                    gl.TRIANGLES,
+                    arcRanges[0].first,
+                    arc.first + arc.count - arcRanges[0].first,
+                  );
+                  gl.drawArrays(
+                    gl.TRIANGLES,
+                    starRanges[0].first,
+                    star.first + star.count - starRanges[0].first,
+                  );
+                }
+                host.classList.add("sculpture-ready");
+              };
+              const moving = () =>
+                visible &&
+                !document.hidden &&
+                !lost &&
+                !calm() &&
+                document.body.dataset.material !== "quiet";
+              const loop = (now) => {
+                frame = 0;
+                if (!moving()) return;
+                if (now - last >= 40) {
+                  time += Math.min((now - last) / 1000, 0.06);
+                  last = now;
+                  px += (tx - px) * 0.05;
+                  py += (ty - py) * 0.05;
+                  draw();
+                }
+                frame = requestAnimationFrame(loop);
+              };
+              const sync = () => {
+                if (frame) cancelAnimationFrame(frame);
+                frame = 0;
+                if (visible && !lost) draw();
+                if (moving()) {
+                  last = performance.now();
+                  frame = requestAnimationFrame(loop);
+                }
+              };
+              new IntersectionObserver(
+                (entries) => {
+                  visible = entries[0].isIntersecting;
+                  sync();
+                },
+                { threshold: 0.1 },
+              ).observe(host);
+              new ResizeObserver(sync).observe(host);
+              document.addEventListener("visibilitychange", sync);
+              document.addEventListener("orbit-evolution", () => {
+                sync();
+                if (visible && !lost)
+                  playMotion(
+                    canvas,
+                    [
+                      { opacity: 0.5, scale: ".98" },
+                      { opacity: 1, scale: "1" },
+                    ],
+                    { duration: 720 },
+                  );
+              });
+              matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
+                "change",
+                sync,
+              );
+              new MutationObserver(sync).observe(document.body, {
+                attributes: true,
+                attributeFilter: ["class", "data-material", "data-scene"],
+              });
+              // Listen on the card: decorative canvas never steals its click targets.
+              host.parentElement.addEventListener(
+                "pointermove",
+                (event) => {
+                  if (event.pointerType === "touch" || calm()) return;
+                  const rect = host.getBoundingClientRect();
+                  tx = Math.max(
+                    -0.3,
+                    Math.min(
+                      0.3,
+                      (event.clientX - rect.left) / rect.width - 0.5,
+                    ),
+                  );
+                  ty = Math.max(
+                    -0.2,
+                    Math.min(
+                      0.2,
+                      (event.clientY - rect.top) / rect.height - 0.5,
+                    ),
+                  );
+                },
+                { passive: true },
+              );
+              host.parentElement.addEventListener("pointerleave", () => {
+                tx = ty = 0;
+              });
+              canvas.addEventListener("webglcontextlost", (event) => {
+                event.preventDefault();
+                lost = true;
+                cancelAnimationFrame(frame);
+                host.classList.remove("sculpture-ready");
+                canvas.style.visibility = "hidden";
+              });
+              // Context loss keeps the existing static artwork available until reload.
+              draw();
+            });
+          document.addEventListener("visibilitychange", () =>
+            document.body.classList.toggle("motion-hidden", document.hidden),
+          );
+        }
+
         function bindLiquidBackground() {
           const artwork = $("liquid-landscape");
           if (!artwork) return;
@@ -15389,6 +16176,57 @@ var StudyCore;
           motion?.addEventListener("cancel", finish, { once: true });
           activeWaveWipe.timeout = setTimeout(finish, 1200);
         }
+        function decoratePopup(dialog) {
+          const header = dialog.querySelector(".dialog-header,.jump-heading");
+          if (!header || dialog.classList.contains("popup-lab")) return;
+          dialog.classList.add("popup-lab");
+          const names = {
+            editor: "MAKE SPACE / YOUR WEEK",
+            "capture-editor": "A THOUGHT / A PLACE",
+            "settings-editor": "YOUR SPACE / YOUR PACE",
+            "task-editor": "SMALL STEPS / REAL PROGRESS",
+            "plan-editor": "SHAPE YOUR NEXT MOVE",
+          };
+          if (!header.querySelector(".eyebrow"))
+            header.append(
+              el("p", "popup-kicker", names[dialog.id] || "IN YOUR ORBIT"),
+            );
+          const emblem = el("span", "popup-sigil");
+          emblem.setAttribute("aria-hidden", "true");
+          emblem.innerHTML = `<svg viewBox="0 0 100 100" fill="none" aria-hidden="true" focusable="false">
+            <path d="M50 12 C78 12 88 32 88 50 C88 78 66 88 50 88 C22 88 12 66 12 50 C12 22 32 12 50 12Z" fill="#c7e9df" fill-opacity=".18" stroke="#d8f3e8" stroke-opacity=".66">
+              <animate attributeName="d" begin="indefinite" dur="900ms" values="M50 12 C78 12 88 32 88 50 C88 78 66 88 50 88 C22 88 12 66 12 50 C12 22 32 12 50 12Z;M50 8 C88 8 68 36 91 50 C91 87 64 66 50 91 C13 91 34 65 8 50 C8 14 36 34 50 8Z;M50 12 C78 12 88 32 88 50 C88 78 66 88 50 88 C22 88 12 66 12 50 C12 22 32 12 50 12Z" keyTimes="0;.5;1" calcMode="spline" keySplines=".2 .8 .2 1;.2 .8 .2 1"/>
+            </path>
+            <path d="M28 34 C60 18 79 48 65 72 C42 89 15 59 28 34Z" stroke="#c6b4e8" stroke-opacity=".72" fill="#b8a4d6" fill-opacity=".12"/>
+            <circle cx="64" cy="34" r="4" fill="#d0f2e3"/>
+          </svg>`;
+          header.append(emblem);
+          let lastGroup = null;
+          const morph = (event) => {
+            if (calm() || document.hidden) return;
+            const group =
+              event.target.closest(".field,.popup-group,.popup-details") ||
+              event.target;
+            if (group === lastGroup) return;
+            lastGroup = group;
+            emblem.querySelector("animate").beginElement();
+            playMotion(
+              emblem,
+              [
+                { rotate: "-9deg", scale: ".92" },
+                { rotate: "12deg", scale: "1.06", offset: 0.55 },
+                { rotate: "0deg", scale: "1" },
+              ],
+              { duration: 700 },
+            );
+          };
+          dialog.addEventListener("focusin", morph);
+          dialog.addEventListener("close", () => {
+            lastGroup = null;
+            emblem.querySelector("animate").endElement();
+            stopMotion(emblem);
+          });
+        }
         function bindTidalPanels() {
           // Any keyboard input skips the visual wipe; native Escape and typing still work.
           document.addEventListener("keydown", finishWaveWipe, true);
@@ -15397,6 +16235,7 @@ var StudyCore;
           const bind = (dialog) => {
             if (known.has(dialog)) return;
             known.add(dialog);
+            decoratePopup(dialog);
             dialog.classList.add("tide-dialog");
             new MutationObserver(() => {
               if (dialog.open && !dialog.classList.contains("closing"))
@@ -15500,6 +16339,7 @@ var StudyCore;
           bindSelectionLenses();
           bindTidalPanels();
           bindLiquidBackground();
+          bindSpatialSculptures();
           sweepHero();
         }
         function selectedDate() {
@@ -15688,6 +16528,28 @@ var StudyCore;
             const dot = el("i", "day-dot");
             if (!eventsForDay(day).length) dot.style.visibility = "hidden";
             button.append(dot);
+            const exams =
+              state.page === "rhythm"
+                ? 0
+                : studyData().tasks.filter(
+                    (t) =>
+                      isExam(t) &&
+                      !t.done &&
+                      t.due === shiftDate(state.week, day),
+                  ).length;
+            if (exams) {
+              const badge = el(
+                "span",
+                "exam-date-marker",
+                `${exams} test${exams === 1 ? "" : "s"}`,
+              );
+              badge.title = "Tests on this date";
+              button.append(badge);
+              button.setAttribute(
+                "aria-label",
+                `${button.getAttribute("aria-label")}, ${exams} test${exams === 1 ? "" : "s"}`,
+              );
+            }
             strip.append(button);
           }
         }
@@ -15936,16 +16798,320 @@ var StudyCore;
                 ? "Due tomorrow"
                 : `Due ${parseDate(key).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
         }
-        function renderTasks() {
-          const tasks = [...studyData().tasks].sort(
-            (a, b) =>
-              a.due.localeCompare(b.due) || a.title.localeCompare(b.title),
+        function taskEmblem(task) {
+          let seed = 2166136261;
+          for (const character of task.id)
+            seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
+          const emblem = el("span", "task-emblem");
+          emblem.setAttribute("aria-hidden", "true");
+          const lobes = 3 + (seed % 5),
+            points = [];
+          for (let i = 0; i <= 72; i++) {
+            const a = (i / 72) * Math.PI * 2,
+              r = 12 + 3.4 * Math.sin(lobes * a + (seed % 17));
+            points.push(
+              `${i ? "L" : "M"}${(20 + r * Math.cos(a)).toFixed(2)},${(20 + r * Math.sin(a)).toFixed(2)}`,
+            );
+          }
+          emblem.style.setProperty("--emblem-hue", `${230 + (seed % 70)}`);
+          emblem.innerHTML = `<svg viewBox="0 0 40 40" fill="none"><path d="${points.join(" ")}Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1"/><ellipse cx="20" cy="20" rx="17" ry="7" transform="rotate(${(seed % 120) - 60} 20 20)" stroke="#e3d3f1" stroke-opacity=".6" stroke-width=".7"/><circle cx="20" cy="20" r="4" fill="#10192b" stroke="currentColor" stroke-width=".8"/></svg>`;
+          return emblem;
+        }
+        function isExam(task) {
+          return task.kind === "exam" && !!task.exam;
+        }
+        function examProgress(task, date = localISO(nowDate())) {
+          const studied =
+            (task.exam.logs || []).reduce((n, l) => n + l.minutes, 0) +
+            studyData()
+              .sessions.filter((s) => s.taskId === task.id)
+              .reduce((n, s) => n + s.minutes, 0);
+          const remaining = Math.max(0, task.exam.targetMinutes - studied);
+          const days = Math.max(
+            1,
+            Math.round((parseDate(task.due) - parseDate(date)) / 86400000) + 1,
           );
+          return { studied, remaining, daily: Math.ceil(remaining / days) };
+        }
+        function setExamLog(task, date, minutes) {
+          const logs = (task.exam.logs || []).filter((l) => l.date !== date);
+          if (minutes > 0) logs.push({ date, minutes });
+          task.exam.logs = logs
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .slice(-366);
+        }
+        function syncTaskKind() {
+          const exam = $("task-kind").value === "exam";
+          $("exam-fields").hidden = !exam;
+          $("repeat-config").hidden = exam;
+          for (const id of ["exam-target", "exam-start", "exam-manual"])
+            $(id).disabled = !exam;
+          if (exam) $("task-repeat").value = "none";
+          syncPracticeFields();
+          if (exam) $("task-due-label").textContent = "Test date";
+          document.querySelector('label[for="task-title"]').textContent = exam
+            ? "Test / exam"
+            : "Assignment";
+        }
+        function renderExamPrep() {
+          const exams = studyData()
+            .tasks.filter((t) => isExam(t) && !t.done)
+            .sort((a, b) => a.due.localeCompare(b.due));
+          const day = selectedDate(),
+            daily = exams.filter(
+              (t) => day >= t.exam.startDate && day <= t.due,
+            );
+          $("exam-day").hidden = state.page !== "desk" || !daily.length;
+          for (const [id, items, key] of [
+            ["exam-prep-list", exams, localISO(nowDate())],
+            ["exam-day-list", daily, day],
+          ]) {
+            const list = $(id);
+            list.replaceChildren();
+            if (!items.length && id === "exam-prep-list")
+              list.append(
+                el(
+                  "p",
+                  "atlas-muted",
+                  "One test date. A little preparation each day.",
+                ),
+              );
+            for (const task of items) {
+              const p = examProgress(task, key),
+                card = el("article", "exam-prep-card"),
+                title = el("button", "task-title", task.title);
+              title.prepend(taskEmblem(task));
+              title.onclick = () => openTask(task);
+              card.append(title);
+              card.append(
+                el(
+                  "p",
+                  "",
+                  `${task.course ? task.course + " / " : ""}Test ${parseDate(task.due).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+                ),
+              );
+              card.append(
+                el(
+                  "strong",
+                  "exam-remaining",
+                  p.remaining
+                    ? `${durationText(p.remaining)} left to prepare`
+                    : "Study budget met",
+                ),
+              );
+              const progress = el("progress");
+              progress.max = task.exam.targetMinutes;
+              progress.value = Math.min(p.studied, progress.max);
+              progress.setAttribute(
+                "aria-label",
+                `${task.title}: ${p.studied} of ${task.exam.targetMinutes} study minutes recorded`,
+              );
+              card.append(progress);
+              const note =
+                key > task.due
+                  ? "Test date has passed. Mark it finished when ready."
+                  : key < task.exam.startDate
+                    ? `Preparation begins ${task.exam.startDate}`
+                    : p.remaining
+                      ? `${durationText(p.daily)} suggested for this day. Recorded work reduces the budget.`
+                      : "You can still review. The test keeps its own date.";
+              card.append(el("p", "", note));
+              const actions = el("div", "exam-prep-actions"),
+                focus = el("button", "", "Study"),
+                log = el("button", "", "+15 min studied"),
+                finish = el("button", "", "Test finished");
+              focus.onclick = () => chooseFocusTask(task);
+              log.onclick = () => {
+                const date = localISO(nowDate()),
+                  old =
+                    (task.exam.logs || []).find((l) => l.date === date)
+                      ?.minutes || 0;
+                if (
+                  changeStudy((study) =>
+                    setExamLog(
+                      study.tasks.find((t) => t.id === task.id),
+                      date,
+                      Math.min(1440, old + 15),
+                    ),
+                  )
+                ) {
+                  render();
+                  announce(
+                    "15 outside-timer study minutes recorded. Edit the test to correct today\u2019s log.",
+                  );
+                }
+              };
+              finish.onclick = () => {
+                if (
+                  changeStudy((study) => {
+                    study.tasks.find((t) => t.id === task.id).done = true;
+                  })
+                ) {
+                  render();
+                  announce(
+                    "Test marked finished. You can reopen it from Completed.",
+                  );
+                }
+              };
+              actions.append(focus, log, finish);
+              card.append(actions);
+              list.append(card);
+            }
+          }
+        }
+
+        function isPractice(task) {
+          return !!task.repeat && task.repeat.frequency !== "none";
+        }
+        function practiceMinutes(task, date = localISO(nowDate())) {
+          return StudyCore.practiceMinutes(
+            task.id,
+            date,
+            task.repeat?.logs || [],
+            studyData().sessions,
+          );
+        }
+        function practiceToday(task, date = localISO(nowDate())) {
+          return (
+            isPractice(task) &&
+            StudyCore.practiceScheduled(task.repeat.frequency, task.due, date)
+          );
+        }
+        function taskDueLabel(task) {
+          if (isExam(task))
+            return `Test ${parseDate(task.due).toLocaleDateString("en-US", { month: "short", day: "numeric" })} / ${durationText(examProgress(task).remaining)} preparation left`;
+          return isPractice(task)
+            ? `${{ daily: "Daily", weekdays: "Weekdays", weekly: "Weekly" }[task.repeat.frequency]} \u00b7 ${durationText(practiceMinutes(task))} / ${durationText(task.repeat.targetMinutes)} today`
+            : dueLabel(task.due);
+        }
+        function setPracticeLog(task, date, minutes) {
+          const logs = (task.repeat.logs || []).filter(
+            (log) => log.date !== date,
+          );
+          if (minutes > 0) logs.push({ date, minutes });
+          task.repeat.logs = logs
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .slice(-366);
+        }
+        function syncPracticeFields() {
+          const active = $("task-repeat").value !== "none";
+          $("practice-fields").hidden = !active;
+          $("practice-target").disabled = $("practice-manual").disabled =
+            !active;
+          $("task-due-label").textContent = active ? "Start date" : "Due date";
+        }
+        function renderPractices() {
+          const list = $("practice-list");
+          list.replaceChildren();
+          const today = localISO(nowDate()),
+            tasks = studyData().tasks.filter(isPractice);
+          if (!tasks.length)
+            list.append(
+              el(
+                "p",
+                "atlas-muted",
+                "Make a little space for something you return to.",
+              ),
+            );
+          for (const task of tasks) {
+            const row = el("article", "practice-card"),
+              title = el("button", "task-title", task.title);
+            title.prepend(taskEmblem(task));
+            title.onclick = () => openTask(task);
+            const minutes = practiceMinutes(task),
+              scheduled = practiceToday(task);
+            row.append(
+              title,
+              el(
+                "p",
+                "practice-status",
+                `${durationText(minutes)} / ${durationText(task.repeat.targetMinutes)}${scheduled ? " today" : " \u00b7 not scheduled today"}`,
+              ),
+            );
+            const progress = el("progress");
+            progress.max = task.repeat.targetMinutes;
+            progress.value = Math.min(minutes, progress.max);
+            progress.setAttribute(
+              "aria-label",
+              `${task.title}: ${minutes} of ${task.repeat.targetMinutes} minutes today`,
+            );
+            row.append(progress);
+            const history = el("div", "practice-history");
+            let total = 0;
+            for (let offset = -6; offset <= 0; offset++) {
+              const date = shiftDate(today, offset),
+                amount = practiceMinutes(task, date);
+              total += amount;
+              const day = el("span", "practice-day");
+              day.title = `${date}: ${amount} minutes`;
+              day.append(
+                el(
+                  "small",
+                  "",
+                  parseDate(date).toLocaleDateString("en-US", {
+                    weekday: "narrow",
+                  }),
+                ),
+              );
+              const dot = el("i");
+              dot.style.opacity = String(
+                0.15 + 0.85 * Math.min(1, amount / task.repeat.targetMinutes),
+              );
+              if (!practiceToday(task, date)) dot.classList.add("rest-day");
+              day.append(dot);
+              history.append(day);
+            }
+            row.append(
+              history,
+              el(
+                "small",
+                "atlas-muted",
+                `${durationText(total)} in the last 7 days`,
+              ),
+            );
+            const actions = el("div", "practice-actions"),
+              focus = el("button", "", "Focus"),
+              log = el("button", "", "+15 min outside timer");
+            focus.onclick = () => chooseFocusTask(task);
+            log.onclick = () => {
+              const old =
+                (task.repeat.logs || []).find((v) => v.date === today)
+                  ?.minutes || 0;
+              if (
+                changeStudy((study) =>
+                  setPracticeLog(
+                    study.tasks.find((t) => t.id === task.id),
+                    today,
+                    Math.min(1440, old + 15),
+                  ),
+                )
+              ) {
+                render();
+                announce(
+                  "15 outside-timer minutes recorded. Edit the assignment to correct today\u2019s log.",
+                );
+              }
+            };
+            actions.append(focus, log);
+            row.append(actions);
+            list.append(row);
+          }
+        }
+
+        function renderTasks() {
+          renderPractices();
+          renderExamPrep();
+          const tasks = studyData()
+            .tasks.filter((task) => !isPractice(task))
+            .sort(
+              (a, b) =>
+                a.due.localeCompare(b.due) || a.title.localeCompare(b.title),
+            );
           // Summaries derive from real assignments; the orbit never implies invented progress.
           const open = tasks.filter((task) => !task.done);
           const completed = tasks.length - open.length;
           $("assignment-headline").textContent = open.length
-            ? `${open.length} ${open.length === 1 ? "assignment" : "assignments"} in orbit.`
+            ? `${open.length} ${open.length === 1 ? "item" : "items"} in orbit.`
             : "A clear orbit.";
           $("assignment-effort").textContent = open.length
             ? `${durationText(open.reduce((sum, task) => sum + taskEffort(task), 0))} estimated remaining`
@@ -15961,10 +17127,17 @@ var StudyCore;
             `${completed} of ${tasks.length} assignments completed`,
           );
           for (const [id, items] of [
-            ["tasks-rail", tasks.filter((t) => !t.done).slice(0, 3)],
+            [
+              "tasks-rail",
+              tasks.filter((t) => !t.done && !isExam(t)).slice(0, 3),
+            ],
             [
               "tasks-full",
-              tasks.filter((t) => t.done === (taskFilter === "done")),
+              tasks.filter(
+                (t) =>
+                  t.done === (taskFilter === "done") &&
+                  (taskFilter === "done" || !isExam(t)),
+              ),
             ],
           ]) {
             const list = $(id);
@@ -16072,6 +17245,7 @@ var StudyCore;
               };
               const content = el("div", "task-content");
               const title = el("button", "task-title", task.title);
+              title.prepend(taskEmblem(task));
               title.onclick = () => openTask(task);
               content.append(title);
               const meta = el("div", "task-meta");
@@ -16091,7 +17265,7 @@ var StudyCore;
                 el(
                   "span",
                   task.due < localISO(nowDate()) && !task.done ? "overdue" : "",
-                  dueLabel(task.due),
+                  taskDueLabel(task),
                 ),
               );
               content.append(meta);
@@ -16154,7 +17328,7 @@ var StudyCore;
           auxiliaryFocus = document.activeElement;
           $(id).showModal();
         }
-        function openTask(task = null) {
+        function openTask(task = null, repeating = false, exam = false) {
           editingTask = task?.id || null;
           $("task-form").reset();
           $("task-error").textContent = "";
@@ -16165,6 +17339,19 @@ var StudyCore;
           $("task-course").value = task?.course || "";
           $("task-due").value = task?.due || localISO(nowDate());
           $("task-estimate").value = task?.estimate || 60;
+          $("task-kind").value = task?.kind || (exam ? "exam" : "assignment");
+          $("exam-target").value = (task?.exam?.targetMinutes || 360) / 60;
+          $("exam-start").value = task?.exam?.startDate || localISO(nowDate());
+          $("exam-manual").value =
+            task?.exam?.logs?.find((l) => l.date === localISO(nowDate()))
+              ?.minutes || 0;
+          $("task-repeat").value =
+            task?.repeat?.frequency || (repeating ? "daily" : "none");
+          $("practice-target").value = task?.repeat?.targetMinutes || 60;
+          $("practice-manual").value =
+            task?.repeat?.logs?.find((log) => log.date === localISO(nowDate()))
+              ?.minutes || 0;
+          syncTaskKind();
           $("task-delete").hidden = !task;
           $("task-steps").replaceChildren();
           for (const step of task?.steps || []) appendStepRow(step);
@@ -16197,6 +17384,61 @@ var StudyCore;
               studyData().tasks.find((t) => t.id === editingTask)?.done ||
               false,
           };
+          const previous = studyData().tasks.find((t) => t.id === editingTask),
+            frequency = $("task-repeat").value;
+          if (frequency !== "none" || previous?.repeat) {
+            const target = Number($("practice-target").value),
+              manual = Number($("practice-manual").value);
+            if (
+              !Number.isInteger(target) ||
+              target < 5 ||
+              target > 720 ||
+              !Number.isInteger(manual) ||
+              manual < 0 ||
+              manual > 1440
+            ) {
+              $("task-error").textContent =
+                "Use 5-720 target minutes and 0-1440 outside-timer minutes.";
+              return;
+            }
+            task.repeat = {
+              frequency,
+              targetMinutes: target,
+              logs: clone(previous?.repeat?.logs || []),
+            };
+            if (frequency !== "none") {
+              task.done = false;
+              setPracticeLog(task, localISO(nowDate()), manual);
+            }
+          }
+          task.kind = $("task-kind").value;
+          if (task.kind === "exam") {
+            const target = Number($("exam-target").value) * 60,
+              start = $("exam-start").value,
+              manual = Number($("exam-manual").value);
+            if (
+              !Number.isInteger(target) ||
+              target < 30 ||
+              target > 12000 ||
+              !start ||
+              localISO(parseDate(start)) !== start ||
+              start > due ||
+              !Number.isInteger(manual) ||
+              manual < 0 ||
+              manual > 1440
+            ) {
+              $("task-error").textContent =
+                "Use 0.5-200 study hours, a preparation start on or before the test, and 0-1440 logged minutes.";
+              return;
+            }
+            task.exam = {
+              targetMinutes: target,
+              startDate: start,
+              logs: clone(previous?.exam?.logs || []),
+            };
+            setExamLog(task, localISO(nowDate()), manual);
+            if (task.repeat) task.repeat.frequency = "none";
+          } else if (previous?.exam) task.exam = clone(previous.exam);
           const before = rememberTaskPositions();
           if (
             changeStudy((s) => {
@@ -16247,7 +17489,8 @@ var StudyCore;
           $("event-course").value = task.course;
           $("event-kind").value = "study";
           $("color").value = courseColor(task.course);
-          $("notes").value = `Work toward: ${task.title}\nDue ${task.due}`;
+          $("notes").value =
+            `Work toward: ${task.title}\n${isPractice(task) ? "Recurring practice" : "Due " + task.due}`;
         }
         function updateSystemAppearanceNote() {
           const reducedTransparency = matchMedia(
@@ -16291,7 +17534,95 @@ var StudyCore;
           $("settings-error").textContent = "";
           showAuxiliary("settings-editor");
         }
+        // Visual complexity is derived from saved workspace data; no XP or new schema.
+        // Repeated instances of a recurring event count once across template and weeks.
+        function orbitEvolution(course = null) {
+          const study = studyData(),
+            tasks = study.tasks.filter((t) => !course || t.course === course);
+          const eventKeys = new Set();
+          for (const events of [
+            state.data.template,
+            ...Object.values(state.data.weeks),
+          ]) {
+            for (const e of events)
+              if (!course || e.course === course)
+                eventKeys.add(
+                  JSON.stringify([
+                    e.course || "",
+                    e.title,
+                    e.day,
+                    e.start,
+                    e.end,
+                    e.kind || "event",
+                  ]),
+                );
+          }
+          const ids = new Set(tasks.map((t) => t.id));
+          const sessions = study.sessions.filter(
+            (s) => !course || ids.has(s.taskId),
+          );
+          const minutes =
+            sessions.reduce((total, s) => total + s.minutes, 0) +
+            tasks.reduce(
+              (sum, t) =>
+                sum +
+                (t.repeat?.logs || []).reduce((n, log) => n + log.minutes, 0) +
+                (t.exam?.logs || []).reduce((n, log) => n + log.minutes, 0),
+              0,
+            );
+          const done = tasks.filter((t) => t.done).length;
+          const steps = tasks.reduce(
+            (total, t) =>
+              total + (t.steps || []).filter((step) => step.done).length,
+            0,
+          );
+          const courses = course ? 0 : atlasCourses().length;
+          const score =
+            courses * 2 +
+            eventKeys.size * 0.5 +
+            tasks.length +
+            done * 4 +
+            steps * 0.75 +
+            minutes / 90;
+          const thresholds = course ? [0, 3, 9, 20, 40] : [0, 8, 24, 55, 110];
+          const level = thresholds.reduce(
+            (result, threshold, index) => (score >= threshold ? index : result),
+            0,
+          );
+          return {
+            level,
+            energy: Math.min(1, score / (course ? 40 : 110)),
+            courses,
+            items: eventKeys.size + tasks.length,
+            done,
+            steps,
+            minutes,
+          };
+        }
+        function updateOrbitEvolution() {
+          const growth = orbitEvolution(),
+            names = ["Seed", "Awakening", "Flow", "Radiance", "Cosmos"];
+          const previous = document.body.dataset.orbitLevel;
+          document.body.dataset.orbitLevel = String(growth.level);
+          document.body.style.setProperty(
+            "--orbit-energy",
+            String(growth.energy),
+          );
+          document.body.style.setProperty(
+            "--orbit-dust-size",
+            `${72 - growth.level * 6}px`,
+          );
+          const label = $("orbit-evolution");
+          if (label) {
+            label.textContent = names[growth.level];
+            label.title = `${growth.courses} courses, ${growth.items} unique items, ${growth.done} completed assignments, ${growth.steps} completed steps and ${Math.round(growth.minutes)} focused minutes shape your orbit. Saved workspace changes can simplify it too.`;
+          }
+          if (previous !== String(growth.level))
+            document.dispatchEvent(new Event("orbit-evolution"));
+        }
+
         function renderGoal() {
+          updateOrbitEvolution();
           const week = mondayOf(nowDate()),
             s = studyData(),
             total = s.sessions
@@ -16390,7 +17721,8 @@ var StudyCore;
             ? `${durationText(focused)} focused${linkedTask ? " on this assignment" : " · archived assignment"}`
             : "";
           $("focus-next").hidden = r !== 0 || !!t.endAt;
-          $("focus-complete-task").hidden = !linkedTask || linkedTask.done;
+          $("focus-complete-task").hidden =
+            !linkedTask || linkedTask.done || isPractice(linkedTask);
           document.querySelectorAll("[data-duration]").forEach((b) => {
             b.setAttribute(
               "aria-pressed",
@@ -16415,6 +17747,9 @@ var StudyCore;
             });
             if (ok) {
               renderGoal();
+              renderPractices();
+              renderExamPrep();
+              renderAtlas();
               $("focus-announcement").textContent =
                 "Focus session complete. Take a break when you need one.";
               announce("Focus session complete. A little progress, recorded.");
@@ -16569,7 +17904,7 @@ var StudyCore;
           $("space-title").textContent = durationText(720 - busy);
           $("space-detail").textContent = "Unscheduled. Yours to shape.";
           const next = [...studyData().tasks]
-            .filter((t) => !t.done)
+            .filter((t) => !t.done && !isPractice(t))
             .sort((a, b) => a.due.localeCompare(b.due))[0];
           $("deadline-title").textContent = next
             ? dueLabel(next.due).replace("Due ", "")
@@ -16698,6 +18033,12 @@ var StudyCore;
                 settleTaskPositions(before);
               }),
           );
+          $("task-kind").onchange = syncTaskKind;
+          $("exam-add").onclick = $("exam-day-add").onclick = () =>
+            openTask(null, false, true);
+          $("task-repeat").onchange = syncPracticeFields;
+          $("practice-add").onclick = () => openTask(null, true);
+          bindCompanion();
           $("task-form").onsubmit = saveTask;
           $("task-delete").onclick = () => {
             const before = clone(state.data);
@@ -16855,6 +18196,11 @@ var StudyCore;
           };
         }
         function taskEffort(task) {
+          if (isExam(task)) return examProgress(task).remaining;
+          if (isPractice(task))
+            return practiceToday(task)
+              ? Math.max(0, task.repeat.targetMinutes - practiceMinutes(task))
+              : 0;
           return task.steps?.length
             ? task.steps
                 .filter((step) => !step.done)
@@ -16954,7 +18300,9 @@ var StudyCore;
             prefs = studyPreferences();
           const days = [];
           const lastDay =
-            task.due < shiftDate(today, 29) ? task.due : shiftDate(today, 29);
+            !isPractice(task) && task.due < shiftDate(today, 29)
+              ? task.due
+              : shiftDate(today, 29);
           const scheduled = steps
             .map((step) => ({ step, booking: scheduledStep(task.id, step.id) }))
             .filter((item) => item.booking);
@@ -17043,7 +18391,7 @@ var StudyCore;
               start: timeText(placement.start),
               end: timeText(placement.end),
               color: courseColor(task.course),
-              notes: `Assignment: ${task.title}\nDue ${task.due}`,
+              notes: `Assignment: ${task.title}\n${isPractice(task) ? "Recurring practice" : "Due " + task.due}`,
               course: task.course,
               kind: "study",
             });
@@ -17086,7 +18434,7 @@ var StudyCore;
             );
             const free = Math.max(0, prefs.studyEnd - prefs.studyStart - busy);
             const due = studyData().tasks.filter(
-              (task) => !task.done && task.due === key,
+              (task) => !task.done && !isPractice(task) && task.due === key,
             ).length;
             const button = el(
               "button",
@@ -17099,7 +18447,7 @@ var StudyCore;
             );
             button.setAttribute(
               "aria-label",
-              `${DAYS[day]}: ${durationText(busy)} planned, ${durationText(free)} free, ${durationText(study)} studying${study > prefs.dailyTarget ? ", above study target" : ""}${due ? `, ${due} assignment(s) due` : ""}. Open day`,
+              `${DAYS[day]}: ${durationText(busy)} planned, ${durationText(free)} free, ${durationText(study)} studying${study > prefs.dailyTarget ? ", above study target" : ""}${due ? `, ${due} item(s) due` : ""}. Open day`,
             );
             button.append(
               el("span", "", DAYS[day].slice(0, 3)),
@@ -17149,7 +18497,157 @@ var StudyCore;
             endAt: study.preferences.reminders ? study.timer.endAt : null,
           });
         }
+        // A connected browser mini-window; no global input monitoring or account secrets.
+        function bindCompanion() {
+          const button = $("companion-open");
+          let companion = null,
+            token = "",
+            lastCommand = 0;
+          const origin = location.origin,
+            targetOrigin = origin === "null" ? "*" : origin;
+          const send = () => {
+            if (!companion || companion.closed) return;
+            const timer = studyData().timer,
+              growth = orbitEvolution();
+            const minutes =
+              studyData()
+                .sessions.filter((s) => s.date === localISO(nowDate()))
+                .reduce((n, s) => n + s.minutes, 0) +
+              studyData().tasks.reduce(
+                (n, t) =>
+                  n +
+                  [...(t.repeat?.logs || []), ...(t.exam?.logs || [])]
+                    .filter((l) => l.date === localISO(nowDate()))
+                    .reduce((a, l) => a + l.minutes, 0),
+                0,
+              );
+            companion.postMessage(
+              {
+                kind: "orbit-state",
+                token,
+                remaining: timerRemaining(timer),
+                endAt: timer.endAt || null,
+                duration: timer.duration,
+                title: timer.title || "A little room to focus",
+                level: growth.level,
+                minutesToday: minutes,
+                calm: calm() || document.body.dataset.material === "quiet",
+                practice: studyData()
+                  .tasks.filter((t) => (isPractice(t) || isExam(t)) && !t.done)
+                  .slice(0, 30)
+                  .map((t) => ({
+                    id: t.id,
+                    title: t.title,
+                    minutes: isExam(t)
+                      ? examProgress(t).studied
+                      : practiceMinutes(t),
+                    target: isExam(t)
+                      ? t.exam.targetMinutes
+                      : t.repeat.targetMinutes,
+                  })),
+              },
+              targetOrigin,
+            );
+          };
+          button.onclick = () => {
+            if (location.protocol === "file:") {
+              announce(
+                "Open Scheduler through your local server to use the companion window.",
+                true,
+              );
+              return;
+            }
+            if (window.webkit?.messageHandlers?.scheduleFiles) {
+              announce(
+                "The companion window is currently available in the desktop browser version.",
+              );
+              return;
+            }
+            if (companion && !companion.closed) {
+              companion.focus();
+              send();
+              return;
+            }
+            token = Array.from(
+              crypto.getRandomValues(new Uint8Array(24)),
+              (byte) => byte.toString(16).padStart(2, "0"),
+            ).join("");
+            const url = new URL(
+              isDemo
+                ? "../../web/study-companion.html"
+                : "./web/study-companion.html",
+              location.href,
+            );
+            url.hash = token;
+            companion = window.open(
+              url.href,
+              isDemo ? "scheduler-demo-companion" : "scheduler-companion",
+              "popup=yes,width=340,height=480,resizable=yes",
+            );
+            if (!companion) {
+              announce(
+                "Your browser blocked the companion window. Allow popups for this Scheduler address.",
+                true,
+              );
+              return;
+            }
+            $("mobile-menu").close();
+          };
+          window.addEventListener("message", (event) => {
+            if (
+              !companion ||
+              event.source !== companion ||
+              event.origin !== origin ||
+              event.data?.token !== token ||
+              event.data?.kind !== "orbit-command"
+            )
+              return;
+            const action = event.data.action;
+            if (action === "hello") {
+              send();
+              return;
+            }
+            if (Date.now() - lastCommand < 600) return;
+            lastCommand = Date.now();
+            if (action === "timer-toggle") toggleTimer();
+            else if (action === "return") {
+              window.focus();
+              selectPage("focus");
+            } else if (action === "focus-practice") {
+              const task = studyData().tasks.find(
+                (t) =>
+                  t.id === event.data.taskId &&
+                  (isPractice(t) || isExam(t)) &&
+                  !t.done,
+              );
+              if (task) chooseFocusTask(task);
+            }
+            send();
+          });
+          setInterval(send, 1000);
+          window.addEventListener("pagehide", () => {
+            if (companion && !companion.closed)
+              companion.postMessage(
+                { kind: "orbit-disconnect", token },
+                targetOrigin,
+              );
+          });
+        }
+
         function bindStudyFeatures() {
+          let practiceDay = localISO(nowDate());
+          const refreshPracticeDay = () => {
+            const date = localISO(nowDate());
+            if (date !== practiceDay) {
+              practiceDay = date;
+              renderTasks();
+              renderAtlas();
+            }
+          };
+          setInterval(refreshPracticeDay, 30000);
+          document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) refreshPracticeDay();
+          });
           document.addEventListener("click", (event) => {
             if (
               event.isTrusted &&
@@ -17340,9 +18838,32 @@ var StudyCore;
               "--planet-progress",
               `${tasks.length ? (done / tasks.length) * 100 : 0}%`,
             );
+            const evolution = orbitEvolution(name);
+            card.dataset.evolution = String(evolution.level);
             const sculpture = el("span", "planet-sculpture");
             sculpture.setAttribute("aria-hidden", "true");
-            sculpture.append(el("i", "planet-satellite"));
+            const emblemId = `course-eclipse-${names.indexOf(name)}`;
+            sculpture.innerHTML = `<svg class="course-eclipse" viewBox="0 0 140 140" fill="none" aria-hidden="true">
+              <defs><linearGradient id="${emblemId}" x1="20" y1="20" x2="115" y2="112" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#e5dcfa"/><stop offset=".45" stop-color="#a5a4e1"/>
+                <stop offset=".8" style="stop-color:var(--planet-color)"/><stop offset="1" stop-color="#efd1b3"/>
+              </linearGradient><radialGradient id="${emblemId}-core" cx=".32" cy=".24" r=".85">
+                <stop stop-color="#25203b"/><stop offset=".6" stop-color="#0d1324"/><stop offset="1" stop-color="#060c18"/>
+              </radialGradient></defs>
+              <g class="course-eclipse-ring">
+                <ellipse cx="70" cy="70" rx="59" ry="23" stroke="url(#${emblemId})" stroke-opacity=".45" stroke-width="2"/>
+                <circle cx="70" cy="70" r="35" fill="url(#${emblemId}-core)"/>
+                <path d="M39 54A35 35 0 0 1 102 55" stroke="url(#${emblemId})" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M14 78C23 99 95 96 123 70" stroke="url(#${emblemId})" stroke-width="5" stroke-linecap="round"/>
+                <path d="M16 82C39 104 100 92 120 77" stroke="#e9dcfa" stroke-opacity=".28" stroke-width="1" stroke-linecap="round"/>
+              </g>
+              <path d="M112 14V24M107 19H117" stroke="#f1dac5" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="25" cy="108" r="1.5" fill="#c1b4e8" opacity=".6"/>
+              <g class="evolution-detail detail-one"><path d="M26 100C65 123 119 89 124 52" stroke="url(#${emblemId})" stroke-width=".8" stroke-linecap="round"/><circle cx="25" cy="108" r="1.6" fill="#dccbeb"/></g>
+              <g class="evolution-detail detail-two"><path d="M20 55C24 24 79 7 109 40" stroke="#bcb2ed" stroke-opacity=".6" stroke-width=".7"/><circle cx="21" cy="36" r="1.5" fill="#ead0b5"/></g>
+              <g class="evolution-detail detail-three"><path d="M49 22A49 49 0 0 1 111 102" stroke="url(#${emblemId})" stroke-width="1"/><circle cx="119" cy="103" r="2" fill="#d3c2ee"/></g>
+              <g class="evolution-detail detail-four"><path d="M35 113C-4 64 73 -2 116 29" stroke="#cabde9" stroke-opacity=".5" stroke-width=".6"/><circle cx="69" cy="13" r="1.5" fill="#f0dabf"/><circle cx="45" cy="121" r="1" fill="#cbc7f6"/></g>
+            </svg>`;
             card.append(
               sculpture,
               el("strong", "", name),
@@ -17400,10 +18921,11 @@ var StudyCore;
           for (const task of open.slice(0, 6)) {
             const row = el("div", "atlas-assignment");
             const title = el("button", "atlas-task-link", task.title);
+            title.prepend(taskEmblem(task));
             title.onclick = () => openTask(task);
             const focus = el("button", "atlas-task-focus", "Focus ↗");
             focus.onclick = () => chooseFocusTask(task);
-            row.append(title, el("small", "", dueLabel(task.due)), focus);
+            row.append(title, el("small", "", taskDueLabel(task)), focus);
             $("atlas-assignments").append(row);
           }
           if (open.length > 6)
@@ -17591,7 +19113,7 @@ var StudyCore;
           ))
             entries.push({
               title: task.title,
-              meta: `${task.course || "Assignment"} · ${task.done ? "Done" : dueLabel(task.due)}`,
+              meta: `${task.course || "Assignment"} · ${task.done ? "Done" : taskDueLabel(task)}`,
               action: () => openTask(task),
             });
           // Calendar results intentionally cover the selected week, avoiding duplicate recurring entries.
@@ -17740,7 +19262,10 @@ var StudyCore;
           if ($("export-deadlines").checked)
             for (const task of studyData().tasks.filter(
               (task) =>
-                !task.done && task.due >= state.week && task.due <= weekEnd,
+                !task.done &&
+                !isPractice(task) &&
+                task.due >= state.week &&
+                task.due <= weekEnd,
             ))
               items.push({
                 id: `assignment:${task.id}`,
@@ -17818,7 +19343,8 @@ var StudyCore;
             0,
           );
           const due = study.tasks.filter(
-            (task) => task.due >= reviewWeek && task.due <= end,
+            (task) =>
+              !isPractice(task) && task.due >= reviewWeek && task.due <= end,
           );
           $("review-range").textContent =
             `${parseDate(reviewWeek).toLocaleDateString("en-US", { month: "short", day: "numeric" })} — ${parseDate(end).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
@@ -18210,7 +19736,7 @@ var StudyCore;
                 el(
                   "small",
                   "",
-                  task && key > task.due
+                  task && !isPractice(task) && key > task.due
                     ? "After assignment deadline"
                     : "Review this study block ↗",
                 ),
@@ -18218,7 +19744,7 @@ var StudyCore;
               button.append(art, content);
               button.setAttribute(
                 "aria-label",
-                `${title}, ${timeText(slot.start)} to ${timeText(slot.start + length)}${task && key > task.due ? ", after the assignment deadline" : ""}. Review study block`,
+                `${title}, ${timeText(slot.start)} to ${timeText(slot.start + length)}${task && !isPractice(task) && key > task.due ? ", after the assignment deadline" : ""}. Review study block`,
               );
               button.onclick = () => {
                 // Recheck availability at click time; another action may have changed the calendar.
@@ -18256,7 +19782,7 @@ var StudyCore;
                   $("event-course").value = task?.course || "";
                   if (task?.course) $("color").value = courseColor(task.course);
                   $("notes").value = task
-                    ? `Work toward: ${task.title}\nDue ${task.due}`
+                    ? `Work toward: ${task.title}\n${isPractice(task) ? "Recurring practice" : "Due " + task.due}`
                     : "";
                 });
               };
@@ -18303,6 +19829,26 @@ var StudyCore;
         bindWebApp();
         bindMobileMenu();
         bindStudyWindows();
+        if (!isDemo && state.writable) {
+          const cleaned = clone(state.data);
+          if (removeStarterEvents(cleaned)) {
+            try {
+              localStorage.setItem(
+                "scheduler.before-starter-cleanup",
+                JSON.stringify(state.data),
+              );
+              if (commit(cleaned))
+                announce(
+                  "Sample events removed. Your own events are unchanged.",
+                );
+            } catch {
+              announce(
+                "Could not remove sample events because backup storage is unavailable.",
+                true,
+              );
+            }
+          }
+        }
         const requestedView = new URLSearchParams(location.search).get("view");
         if (
           ["desk", "tasks", "rhythm", "focus", "atlas"].includes(requestedView)
