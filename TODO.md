@@ -1,5 +1,30 @@
 # Scheduler implementation checklist
 
+## October 14 — floating island and growing cats
+
+- [x] Rounded frameless island, wide layout, custom controls, bounded compact size, and temporary expansion.
+- [x] Buddy-only pinning enabled by default following user feedback.
+- [x] Cat face refinement, independent motion, four growth stages, and captured per-course focus ledger.
+- [x] Thirty-minute crates, visible level bars, preview collection, and 36 additional cosmetics/habitats.
+- [x] Full-viewport popup wave wipe and cancellation/reduced-motion checks.
+- [x] Twenty-one Rust tests and isolated browser reward/growth/layout checks.
+- [ ] Complete physical scaling, monitor, sleep/reboot, notification, and uninstall review.
+
+Current evidence: `design/ORBITER-ISLAND-VERIFICATION.md`.
+
+## October 14 — Orbiter unified Windows application
+
+- [x] Bundle planner and buddy into one Tauri window with native controls and preserved drafts.
+- [x] Repair compact layout; add persistent size presets/custom bounds and buddy-only pinning.
+- [x] Add original procedural 3D cats, persistent course traits, fresh-load variation, and independent interactions.
+- [x] Centralize start/resume switching; remove Focus Room destinations while preserving browser timer use.
+- [x] Review GitHub #9–#12 locally; improve shared theme tokens and exam wrapping.
+- [x] Run 15 Rust tests, isolated browser checks, and actual native maximize/restore/minimize checks.
+- [ ] Reach the under-200-MB visible memory target; review full-planner animation cost.
+- [ ] Complete physical lock/sleep/reboot, multiple-monitor/scaling, notification, and uninstall acceptance checks.
+
+See `design/ORBITER-UNIFIED-VERIFICATION.md` for evidence, measurements, and remaining limits.
+
 Canonical project: `C:\Users\kgsat\Documents\Scheduler`.
 Keep changes local and uncommitted until explicitly asked to commit or push.
 
@@ -180,7 +205,7 @@ See `design/MOTION-OCT10.md` for timings, sources, implementation decisions, and
 - [x] Repeating assignments with daily targets, outside-timer logging and linked focus history.
 - [x] Connected Orbit companion browser mini-window.
 - [ ] Validate practice/date rollover and companion controls on Firefox and phone.
-- [ ] Package an OS desktop companion for always-on-top behavior.
+- [x] Package an OS desktop companion for always-on-top behavior (Orbit Windows personal build; see desktop verification report).
 
 - [x] Review-popup body insets and old overlapping ornament cleanup.
 - [x] Distinct exams, one test date, daily preparation visibility, and decreasing study budgets.

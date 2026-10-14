@@ -184,7 +184,7 @@
       const remote = await api("workspace");
       if (!remote.data)
         throw new Error("This account has no saved workspace yet.");
-      bridge.load(JSON.stringify(remote.data), before);
+      await bridge.load(JSON.stringify(remote.data), before);
       revision = remote.revision;
       status(
         "Loaded your account workspace. The previous local copy is available as a backup.",

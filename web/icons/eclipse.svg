@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="eclipse-light" x1="12" y1="12" x2="51" y2="51" gradientUnits="userSpaceOnUse"><stop stop-color="#ece7ff"/><stop offset=".4" stop-color="#ada5ed"/><stop offset=".72" stop-color="#819de1"/><stop offset="1" stop-color="#f0c5a6"/></linearGradient></defs><circle cx="31" cy="32" r="17.5" fill="#0b1021"/><path d="M16 23A17.5 17.5 0 0 1 47 25" stroke="url(#eclipse-light)" stroke-width="2.5" stroke-linecap="round"/><path d="M47 40A17.5 17.5 0 0 1 17 42" stroke="#9cabe1" stroke-opacity=".7" stroke-width="1.2" stroke-linecap="round"/><path d="M8 40C1 31 17 20 34 18C52 16 64 22 56 30" stroke="url(#eclipse-light)" stroke-width="2" stroke-linecap="round"/><path d="M8 40C16 47 36 44 49 37C55 34 58 31 56 30" stroke="url(#eclipse-light)" stroke-width="3" stroke-linecap="round"/><path d="M51 8V15M47.5 11.5H54.5" stroke="#f4d5bd" stroke-width="1.5" stroke-linecap="round"/></svg>
+<svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 150" aria-hidden="true">
+<defs><radialGradient id="orbit-logo-core" cx=".35" cy=".25" r=".8"><stop stop-color="#fff8e6"/><stop offset=".65" stop-color="#f3e3cd"/><stop offset="1" stop-color="#d7bdac"/></radialGradient></defs>
+<g class="wisp-body">
+<ellipse cx="80" cy="137" rx="43" ry="5" fill="#101d32" opacity=".16"/>
+<path class="cat-tail" d="M112 115q31 5 23-24q-4-8-10-3q-4 4 1 12q8 15-17 12" fill="#f0decd" stroke="#9c797d" stroke-width="2.5"/>
+<path d="M59 100q-12 25-6 34q27 10 53-1q6-22-8-34" fill="url(#orbit-logo-core)" stroke="#9c797d" stroke-width="2.5"/>
+<g class="wisp-ears"><path d="M38 54Q31 38 36 16Q39 8 45 14L66 37M94 37l20-23q7-7 10 3q4 22-4 39" fill="url(#orbit-logo-core)" stroke="#9c797d" stroke-width="2.8" stroke-linejoin="round"/><path d="M42 23l4 23l13-8M117 23l-4 23l-12-8" fill="#e6b8bd"/></g>
+<path d="M39 48Q79 21 121 48Q135 62 128 87l-6 2l4 4l-8 2q-14 20-39 20Q51 113 37 96l-6-2l5-5l-5-2Q26 63 39 48Z" fill="url(#orbit-logo-core)" stroke="#9c797d" stroke-width="2.8" stroke-linejoin="round"/>
+<path class="wisp-shine" d="M47 46q25-17 47-8" fill="none" stroke="#fffdf4" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+<g class="wisp-face"><g class="cat-content-eyes"><path d="M49 73q7-7 14 0M97 73q7-7 14 0" fill="none" stroke="#587583" stroke-width="3" stroke-linecap="round"/></g><g class="wisp-gaze"><ellipse cx="56" cy="72" rx="5" ry="6.5" fill="#587583"/><ellipse cx="104" cy="72" rx="5" ry="6.5" fill="#587583"/><circle cx="54.5" cy="70" r="1.2" fill="#fff8e6"/><circle cx="102.5" cy="70" r="1.2" fill="#fff8e6"/></g>
+<g class="wisp-cheeks"><ellipse cx="45" cy="85" rx="9" ry="5" fill="#e7aba2" opacity=".65"/><ellipse cx="115" cy="85" rx="9" ry="5" fill="#e7aba2" opacity=".65"/><path d="M43 82l-2 5m6-4-1 5m65-6-1 5m6-4-1 5" stroke="#fff1df" stroke-width="1.5"/></g>
+<path class="smile" d="M72 87q8 9 16 0" fill="none" stroke="#ac747a" stroke-width="1.8"/>
+<path d="M77 80q3-2 6 0l-3 3Z" fill="#be8b91"/><circle cx="70" cy="80" r="1" fill="#ba8e7e"/><circle cx="89" cy="81" r="1" fill="#ba8e7e"/></g>
+<g class="cat-scarf"><path d="M63 109q17 6 35 0l-2 10q-18 5-33-1Z" fill="#719cba" stroke="#577d9b" stroke-width="1.5"/><path d="M78 117q-18-14-19 0q-1 11 17 3m8-3q18-14 19 0q1 11-17 3" fill="#86b3c8" stroke="#577d9b" stroke-width="1.5"/><circle cx="81" cy="118" r="4" fill="#a5cdbb"/></g>
+<g class="cat-paw paw-left"><path d="M54 118q-11-2-11 6q-1 10 12 9" fill="#f8ecd9" stroke="#9c797d" stroke-width="2.3" stroke-linecap="round"/></g>
+<g class="cat-paw paw-right"><path d="M106 118q11-2 11 6q1 10-12 9" fill="#f8ecd9" stroke="#9c797d" stroke-width="2.3" stroke-linecap="round"/></g>
+<path class="cat-pat-spark" d="M73 10q-8-10-12-2q-4 8 12 17q16-9 12-17q-4-8-12 2Z" fill="#e4aab9"/><g class="cat-decoration halo"><path d="M24 37l2-7l3 7l7 2l-7 2l-3 7l-2-7l-7-2Z" fill="#b8a0ce"/><path d="M139 66l2-5l2 5l5 2l-5 2l-2 5l-2-5l-5-2Z" fill="#b0ceaf"/><circle cx="134" cy="43" r="3" fill="#edb496"/>
+<path d="M19 100q-7 4-3 12m5-8q-4 3-2 6" fill="none" stroke="#d5a59d" stroke-width="2" stroke-linecap="round"/></g>
+</g></svg>
