@@ -1,14 +1,21 @@
 {
-  "name": "scheduler-study",
+  "name": "orbiter-study",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.1",
   "scripts": {
     "build:core": "python scripts/build_core.py",
     "dev:lan": "python scripts/serve_local.py --bind 127.0.0.1",
     "dev": "python scripts/serve_accounts.py",
-    "dev:phone": "python scripts/serve_local.py --bind 192.168.0.22 --port 8004"
+    "dev:phone": "python scripts/serve_local.py --bind 192.168.0.22 --port 8004",
+    "desktop:prepare": "python scripts/prepare_desktop.py",
+    "desktop:dev": "npm run desktop:prepare && cd desktop && tauri dev",
+    "desktop:build": "npm run build:core && npm run desktop:prepare && cd desktop && tauri build"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.12.2",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.58.2",
+    "three": "^0.186.1",
     "typescript": "5.9.3"
   }
 }

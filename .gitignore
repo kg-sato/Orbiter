@@ -24,3 +24,8 @@ node_modules/
 *.db
 *.db-*
 *.pem
+
+# Native desktop generated assets and build output
+desktop/src-tauri/target/
+desktop/src-tauri/assets/
+desktop/src-tauri/gen/

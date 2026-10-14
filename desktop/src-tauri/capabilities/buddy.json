@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "buddy",
+  "description": "Bundled Orbiter planner and compact view only; no remote page native privileges.",
+  "windows": [
+    "buddy"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging",
+    "core:window:allow-set-size",
+    "core:window:allow-set-position",
+    "core:window:allow-set-always-on-top",
+    "autostart:default",
+    "core:window:allow-inner-size",
+    "core:window:allow-scale-factor"
+  ]
+}

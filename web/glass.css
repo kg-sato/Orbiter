@@ -1,0 +1,80 @@
+/* Orbiter's shared control material. Geometry is independent of transparency. */
+:root, body, :host {
+  --control-accent: var(--orbiter-accent, var(--accent, #b4e6d5));
+  --control-glass: linear-gradient(135deg, color-mix(in srgb, var(--control-accent) 18%, transparent), #c2d9ed0d);
+  --control-border: color-mix(in srgb, var(--control-accent) 34%, transparent);
+  --control-text: #edf5f5;
+}
+body[data-scene="desk"], body[data-scene="tasks"], body[data-scene="atlas"], body[data-scene="rhythm"] {
+  --scene-accent: var(--orbiter-accent);
+  --scene-wash: color-mix(in srgb, var(--orbiter-accent) 12%, transparent);
+}
+button:where(:not(.orbit-art):not(#cat)), .primary-button {
+  background: var(--control-glass) !important;
+  color: var(--control-text) !important;
+  border-color: var(--control-border) !important;
+  box-shadow: inset 0 1px #f2ffff26, 0 3px 10px #06142418;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+button.primary, button[id="new-event"], button[id="quick-capture"], button[aria-pressed="true"], button.selected, button.active {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--control-accent) 30%, transparent), #d6e7f215) !important;
+  border-color: color-mix(in srgb, var(--control-accent) 65%, transparent) !important;
+}
+button:where(:not(:disabled):not(.orbit-art):not(#cat)):hover {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--control-accent) 28%, transparent), #c5deef22) !important;
+}
+button:not(:disabled):active { transform: translateY(1px) scale(.98); }
+button:focus-visible { outline: 2px solid var(--control-accent); outline-offset: 3px; }
+button:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+body.solid-glass button, body[data-material="quiet"] button {
+  background: color-mix(in srgb, var(--control-accent) 12%, #263344) !important;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.planner, body.solid-glass .planner, body[data-material="quiet"] .planner {
+  border-radius: 30px;
+  background: linear-gradient(135deg, #b5d5d01b, #829fb514);
+  border: 1px solid #c9e2df30;
+  padding: 22px;
+}
+body.solid-glass .planner, body[data-material="quiet"] .planner {
+  background: color-mix(in srgb, var(--control-accent) 7%, #26303d);
+}
+#atlas-notes {
+  color: #edf5f5;
+  background: linear-gradient(135deg, #cee9e514, #a9bedb0c);
+  border: 1px solid var(--control-border);
+  border-radius: 20px;
+  box-shadow: inset 0 1px #ffffff20;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+#atlas-notes::placeholder { color: #c1d2dc; }
+body.solid-glass #atlas-notes, body[data-material="quiet"] #atlas-notes { background: #283948; backdrop-filter: none; -webkit-backdrop-filter: none; }
+#atlas-confidence { background: transparent; border: 0; box-shadow: none; accent-color: var(--control-accent); padding: 0; }
+#atlas-confidence::-webkit-slider-runnable-track { height: 5px; border-radius: 6px; background: #b9d5d550; box-shadow: none; }
+#atlas-confidence::-webkit-slider-thumb { margin-top: -5px; }
+.section-heading { gap: 16px; }
+#exam-add, #exam-day-add { flex: 0 0 auto; min-width: 82px; white-space: nowrap; padding: 10px 14px; }
+#mobile-menu.popup-lab .mobile-menu-actions {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+}
+#mobile-menu .mobile-menu-actions button {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: 10px; min-width: 0; min-height: 100px; padding: 18px; border-radius: 22px;
+  text-align: left; font-size: 13px; line-height: 1.4;
+}
+#mobile-menu .command-symbol { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: #d4eee812; font-size: 20px; color: var(--control-accent); }
+#mobile-menu .command-label { position: static; color: inherit; font-size: 13px; }
+#mobile-menu .mobile-menu-actions .command-recovery { grid-column: 1 / -1; min-height: 48px; flex-direction: row; align-items: center; justify-content: flex-start; font-size: 12px; }
+dialog.popup-lab, .orb-reward-dialog { border-color: #c8e2df60; }
+body[data-native-mode="planner"] #now-card .orbit-art { pointer-events: auto; cursor: pointer; z-index: 3; }
+.orbit-art[role="button"]:focus-visible { outline: 2px solid var(--control-accent); outline-offset: -12px; border-radius: 28px; }
+.orbit-art[role="button"] > :not(canvas) { pointer-events: none; }
+@media (max-width: 540px) {
+  #mobile-menu.popup-lab .mobile-menu-actions { grid-template-columns: 1fr; margin-inline: 20px; }
+  #mobile-menu .mobile-menu-actions button { min-height: 64px; flex-direction: row; align-items: center; justify-content: flex-start; }
+  .planner, body.solid-glass .planner { padding: 12px; border-radius: 24px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  button:where(:not(.orbit-art):not(#cat)), #atlas-notes, .planner { background: #293b49 !important; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

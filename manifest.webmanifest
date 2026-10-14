@@ -1,7 +1,7 @@
 {
   "id": "./Application.html",
-  "name": "Scheduler \u00b7 Study Observatory",
-  "short_name": "Scheduler",
+  "name": "Orbiter \u00b7 Study Observatory",
+  "short_name": "Orbiter",
   "description": "Your courses, study plans and focus, in orbit.",
   "start_url": "./Application.html",
   "scope": "./",
@@ -28,11 +28,6 @@
       "name": "Course Atlas",
       "short_name": "Atlas",
       "url": "./Application.html?view=atlas"
-    },
-    {
-      "name": "Focus room",
-      "short_name": "Focus",
-      "url": "./Application.html?view=focus"
     }
   ]
 }

@@ -1,0 +1,85 @@
+/* One native window; the island lives in an isolated shadow component. */
+(() => {
+ const {invoke}=window.__TAURI__.core,{listen}=window.__TAURI__.event;
+ const nativeWindow=window.__TAURI__.window.getCurrentWindow(), stage=document.getElementById('native-planner');
+ const suspended=[];window.OrbiterSuspendedDialogs=new WeakSet();
+ let mode='buddy',presentation='compact',state=null,received=0,closing=false,saving=false,busy=false,sizeTimer=0,slot='appearance',previousLevel=0;
+ const R=window.OrbiterRewards;
+ function diagnostics(){return {plannerLoaded:!!window.OrbiterUI,mode,presentation,buddyHidden:buddy.hidden,plannerHidden:stage.hidden,hostPosition:getComputedStyle(buddy).position,errors:window.OrbiterNativeErrors||[],cat:window.OrbiterCats?.stats()};}
+ function notice(e){buddy.$('error').textContent=e?String(e):'';}
+ async function act(action,args={}){try{notice('');const v=await invoke('action',{action,args});accept(v);return v;}catch(e){notice(e);throw e;}}
+ function activeCode(){if(state?.timer.courseProfile)return Number(state.timer.courseProfile);const task=state?.workspace.study.tasks.find(t=>t.id===state.timer.taskId);return task?.course ? state.workspace.study.catProfiles?.[task.course] ?? window.OrbiterCats.main() : window.OrbiterCats.main();}
+ function selectedGrowth(){const code=activeCode(),task=state?.workspace.study.tasks.find(t=>t.id===state.timer.taskId),linked=state?.timer.courseProfile||task?.course;return R.growth(linked?state.rewards.courseMs?.[code]||0:state?.rewards.focusedMs||0);}
+ function mountCat(){if(!state)return;if(mode==='buddy'){if(presentation==='options'){window.OrbiterCats.setVisible(false);return;}const code=activeCode(), linked=state.timer.courseProfile||state.timer.taskId&&state.workspace.study.tasks.find(t=>t.id===state.timer.taskId)?.course;window.OrbiterCats.mount(buddy.$('cat'),code,{focus:state.timer.active,paused:!state.timer.active&&state.timer.remainingMs<state.timer.duration*60000,equipment:state.settings,growthMs:linked?state.rewards.courseMs?.[code]||0:state.rewards.focusedMs||0,stars:state.rewards.stars||0});}else window.OrbiterUI?.refreshCat();}
+ function accept(v){if(!state||v.revision>=state.revision){state=v;received=performance.now();document.body.classList.toggle('calm',!!v.settings.calm);document.body.classList.toggle('quiet',!!v.settings.quiet);buddy.update(v);if(previousLevel&&v.rewards.level>previousLevel)window.OrbiterCats.celebrate();previousLevel=v.rewards.level;mountCat();}}
+ function setView(next){
+  window.dispatchEvent(new CustomEvent('orbiter-mode-change'));mode=next;document.body.dataset.nativeMode=next;presentation='compact';buddy.setPresentation();
+  if(next==='buddy'){
+   for(const dialog of document.querySelectorAll('#native-planner dialog[open]')){window.OrbiterSuspendedDialogs.add(dialog);suspended.push(dialog);dialog.close();}
+   stage.hidden=true;stage.inert=true;buddy.hidden=false;document.body.classList.add('motion-hidden');
+   for(const animation of stage.getAnimations({subtree:true}))animation.pause();
+   buddy.$('toggle').focus();
+  }else{
+   stage.hidden=false;stage.inert=false;buddy.hidden=true;document.body.classList.remove('motion-hidden');
+   for(const animation of stage.getAnimations({subtree:true}))if(animation.playState==='paused')animation.play();
+   for(const dialog of suspended.splice(0)){window.OrbiterSuspendedDialogs.delete(dialog);if(dialog.isConnected&&!dialog.open)dialog.showModal();}
+  }
+  mountCat();setTimeout(()=>invoke('ui_ready',{diagnostics:diagnostics()}).catch(()=>{}),400);
+ }
+ const switchMode=mode=>invoke('switch_mode',{mode}).catch(notice);
+ async function present(kind){presentation=kind;buddy.setPresentation();await invoke('buddy_presentation',{kind}).catch(notice);mountCat();}
+ class OrbiterBuddy extends HTMLElement {
+  constructor(){super();this.attachShadow({mode:'open'});this.shadowRoot.innerHTML=`
+  <link rel="stylesheet" href="./buddy.css" /><link rel="stylesheet" href="./web/rewards.css" /><link rel="stylesheet" href="./web/glass.css" />
+  <div id="island"><div class="island-water" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header id="window-bar"><span id="drag" data-tauri-drag-region>ORBITER <i>✦</i></span><nav aria-label="Window controls"><button id="settings" aria-label="Buddy options">⚙</button><button id="minimize" aria-label="Minimize">−</button><button id="maximize" aria-label="Open planner">↗</button><button id="close" aria-label="Close to tray">×</button></nav></header>
+  <div id="compact"><button id="cat" aria-label="Open full planner"><img src="./web/icons/orbit-192.png" alt="" /></button><div id="instrument"><div id="intention">A little room to focus</div><div id="time">25:00</div><div id="status">Ready when you are</div><div class="actions"><button id="toggle" class="primary">Start</button><button id="finish">Finish</button><button id="planner" aria-label="Open planner">Planner ↗</button></div></div></div>
+  <div id="reward-strip" aria-label="Level and crate progress"></div>
+  <section id="reward-panel" hidden><header><h2 id="reward-heading">Discoveries</h2><button id="reward-back">Done</button></header><div id="reward-content"></div></section>
+  <section id="options" hidden><header><h2>Your little universe.</h2><button id="back">Done</button></header>
+  <label for="task">Intention</label><select id="task"><option value="">Open focus</option></select>
+  <label for="duration">Focus minutes</label><div class="preset"><button data-minutes="25">25</button><button data-minutes="50">50</button><button data-minutes="60">60</button></div><input id="duration" type="number" min="1" max="240" value="25" />
+  <h2>Appearance</h2><label>Island size</label><div class="preset"><button data-size="360,200">Small</button><button data-size="420,220">Default</button><button data-size="520,260">Large</button></div>
+  <div class="row"><label>Width<input id="width" type="number" min="360" max="560" /></label><label>Height<input id="height" type="number" min="200" max="300" /></label></div><button id="apply-size">Apply size</button>
+  <label><input id="pinned" type="checkbox" /> Keep above other windows</label><label><input id="calm" type="checkbox" /> Calmer motion</label><label><input id="quiet" type="checkbox" /> Quiet mode</label><label><input id="reminders" type="checkbox" /> Study reminders</label><label>Reminder hour<input id="reminder-hour" type="number" min="0" max="23" /></label><label><input id="startup" type="checkbox" /> Start with Windows</label>
+  <h2>Discoveries</h2><div id="growth-info"></div><div id="inventory"></div><details><summary>Crate odds</summary><p class="hint">Every 30 focus minutes earns a crate. Common 70% · Rare 25% · Mythic 5%. Only unowned items; unavailable tiers redistribute. Complete collections earn constellation stars.</p></details>
+  <h2>Your workspace</h2><div class="row"><button id="import">Import backup</button><button id="export">Export</button></div><input id="file" type="file" accept=".json,application/json" hidden /><button id="backups">Recovery backups</button><button id="browser">Paired browser ↗</button></section>
+  <button id="resize" aria-label="Resize island">◢</button><p id="error" role="alert"></p><dialog id="close-choice"><h2>Keep your changes?</h2><p>Your planner has unsaved edits.</p><button id="save-close" class="primary">Save and close</button><button id="discard-close">Discard and close</button><button id="cancel-close">Cancel</button></dialog></div>`;}
+  connectedCallback(){const $=id=>this.shadowRoot.getElementById(id);this.$=$;
+   $('cat').onclick=$('planner').onclick=$('maximize').onclick=()=>switchMode('planner');$('settings').onclick=()=>present('options');$('back').onclick=$('reward-back').onclick=()=>present('compact');
+   $('minimize').onclick=()=>invoke('window_control',{action:'minimize'}).catch(notice);$('close').onclick=()=>invoke('window_control',{action:'close'}).catch(notice);
+   $('drag').onpointerdown=e=>{if(e.button===0)nativeWindow.startDragging().catch(notice);};$('drag').ondblclick=()=>switchMode('planner');$('resize').onpointerdown=e=>{if(e.button===0)nativeWindow.startResizeDragging('SouthEast').catch(notice);};
+   $('toggle').onclick=()=>act('toggle').catch(()=>{});$('finish').onclick=()=>act('finish').catch(()=>{});
+   const configure=()=>act('configure',{duration:Number($('duration').value),taskId:$('task').value||null,title:state?.workspace.study.tasks.find(t=>t.id===$('task').value)?.title||'Open focus'}).catch(()=>{});
+   $('duration').onchange=$('task').onchange=configure;this.shadowRoot.querySelectorAll('[data-minutes]').forEach(b=>b.onclick=()=>{$('duration').value=b.dataset.minutes;configure();});
+   const resize=(width,height)=>invoke('buddy_size',{width:Number(width),height:Number(height)}).then(v=>{accept(v);return present('options');}).catch(notice);
+   $('apply-size').onclick=()=>resize($('width').value,$('height').value);this.shadowRoot.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>resize(...b.dataset.size.split(',')));
+   for(const key of ['pinned','calm','quiet','reminders'])$(key).onchange=()=>act('settings',{[key]:$(key).checked}).catch(()=>{});
+   $('reminder-hour').onchange=()=>act('settings',{reminderHour:Number($('reminder-hour').value)}).catch(()=>{});$('startup').onchange=()=>invoke($('startup').checked?'plugin:autostart|enable':'plugin:autostart|disable').catch(notice);invoke('plugin:autostart|is_enabled').then(v=>$('startup').checked=v).catch(notice);
+   $('export').onclick=()=>invoke('export_workspace').catch(notice);$('backups').onclick=()=>invoke('open_backups').catch(notice);$('browser').onclick=()=>invoke('open_browser').catch(notice);
+   $('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const f=$('file').files[0];try{if(!f)return;if(f.size>2*1024*1024)throw Error('Backup exceeds 2 MB.');if(!confirm('Import this backup into Orbiter? This replaces study data and creates a recovery copy.'))return;await window.OrbitDesktop.save(JSON.parse(await f.text()),true);accept(await invoke('snapshot'));await window.OrbiterUI?.reload?.();}catch(e){notice(e);}finally{$('file').value='';}};
+   $('cancel-close').onclick=()=>{$('close-choice').close();closing=false;};$('discard-close').onclick=async()=>{$('close-choice').close();await invoke('close_buddy');};
+   $('save-close').onclick=async()=>{if(saving)return;saving=true;try{$('close-choice').close();await switchMode('planner');await new Promise(r=>setTimeout(r,350));if(await window.OrbiterUI?.saveDrafts())await invoke('close_buddy');else{closing=false;notice('Review the planner fields before closing.');}}finally{saving=false;}};
+  }
+  setPresentation(){this.dataset.presentation=presentation;this.$('options').hidden=presentation!=='options';this.$('reward-panel').hidden=presentation!=='reward';}
+  bindInventory(host){host.querySelectorAll('[data-slot-filter]').forEach(b=>b.onclick=()=>{slot=b.dataset.slotFilter;this.renderInventory();});host.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>act('settings',{[b.dataset.slot]:b.dataset.equip}).catch(()=>{}));}
+  renderInventory(){const host=this.$('inventory');host.innerHTML=R.collection(state,slot);this.bindInventory(host);if(presentation==='reward'&&this.$('reward-panel').dataset.view==='collection'){const content=this.$('reward-content');content.innerHTML=R.collection(state,slot);this.bindInventory(content);}}
+  async openReward(collectionOnly=false){if(busy)return;const panel=this.$('reward-panel'),host=this.$('reward-content');panel.dataset.view=collectionOnly?'collection':'reveal';await present('reward');if(collectionOnly){this.renderInventory();return;}
+   host.innerHTML=R.crateArt();if(!state.rewards.chests){host.innerHTML=R.crateArt()+`<h3>A little more momentum.</h3><p>${Math.ceil((1800000-state.rewards.crateProgressMs)/60000)} focus minutes to your next crate.</p>`;return;}
+   busy=true;host.classList.add('orb-opening');try{const v=await act('chest'),reward=v.reward;await new Promise(r=>setTimeout(r,this.dataset.calm==='true'?0:650));if(presentation!=='reward')return;host.classList.remove('orb-opening');host.innerHTML=R.preview(reward)+`<small class="orb-rarity">${reward.rarity}</small><h3></h3>`+(reward.id?'<button id="equip-reveal" class="primary">Equip discovery</button>':'<p>A new light in your constellation.</p>');host.querySelector('h3').textContent=reward.name;host.querySelector('#equip-reveal')?.addEventListener('click',()=>act('settings',{[reward.slot]:reward.id}).then(()=>notice('Equipped')).catch(()=>{}));window.OrbiterCats.celebrate();}catch(e){notice(e);}finally{busy=false;host.classList.remove('orb-opening');}
+  }
+  update(v){const $=this.$,p=v.workspace.study.preferences,g=selectedGrowth();this.dataset.calm=String(!!(v.settings.calm||v.settings.quiet||p.motion||matchMedia('(prefers-reduced-motion:reduce)').matches));this.dataset.focusing=String(v.timer.active);this.dataset.growth=String(g.stage);this.style.setProperty('--accent',({mint:'#b4e6d5',lilac:'#c8b5eb',apricot:'#edbfa0'})[p.accent]||'#b4e6d5');this.style.setProperty('--orbiter-accent',this.style.getPropertyValue('--accent'));this.dataset.solid=String(!!p.solid||p.material==='quiet');this.style.setProperty('--surface',p.material==='quiet'?'#253344':'#2a4152');this.dataset.habitat=v.settings.habitat||'';
+   $('intention').textContent=v.timer.title||'Open focus';$('toggle').textContent=v.timer.active?'Pause':v.timer.remainingMs<v.timer.duration*60000&&v.timer.remainingMs>0?'Resume':'Start';$('finish').disabled=!v.timer.active&&v.timer.remainingMs>=v.timer.duration*60000;$('status').textContent=v.timer.reason||g.label+' · growing with you';
+   if(this.shadowRoot.activeElement?.tagName!=='INPUT'){ $('width').value=v.settings.buddyWidth;$('height').value=v.settings.buddyHeight;$('duration').value=v.timer.duration;$('reminder-hour').value=v.settings.reminderHour; }
+   for(const k of ['pinned','calm','quiet','reminders'])$(k).checked=v.settings[k];const tasks=v.workspace.study.tasks.filter(t=>!t.done),sig=JSON.stringify(tasks.map(t=>[t.id,t.title]));if(this.taskKey!==sig){this.taskKey=sig;$('task').replaceChildren(new Option('Open focus',''),...tasks.map(t=>new Option(t.title,t.id)));}$('task').value=v.timer.taskId||'';$('task').disabled=$('duration').disabled=v.timer.active;this.shadowRoot.querySelectorAll('[data-minutes]').forEach(b=>b.disabled=v.timer.active);
+   $('reward-strip').innerHTML=R.strip(v,true);$('reward-strip').querySelector('[data-reward-open]').onclick=()=>this.openReward();$('reward-strip').querySelector('[data-reward-collection]').onclick=()=>this.openReward(true);$('growth-info').textContent=g.label+(g.nextAtMs?' · '+Math.ceil((g.nextAtMs-g.focusedMs)/60000)+'m to next stage':' · your journey continues');
+   const key=JSON.stringify([v.rewards.owned,v.settings.appearance,v.settings.halo,v.settings.trail,v.settings.habitat,slot]);if(this.inventoryKey!==key){this.inventoryKey=key;this.renderInventory();}tick();
+  }
+ }
+ customElements.define('orbiter-buddy',OrbiterBuddy);const buddy=document.querySelector('orbiter-buddy');
+ function tick(){if(!state||document.hidden)return;const remaining=Math.max(0,state.timer.remainingMs-(state.timer.active?performance.now()-received:0)),s=Math.ceil(remaining/1000);buddy.$('time').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+ setInterval(tick,1000);window.addEventListener('orbiter-native-state',e=>accept(e.detail));window.addEventListener('orbiter-workspace-rendered',()=>{if(mode==='buddy')mountCat();});listen('orbiter-mode',e=>setView(e.payload));
+ listen('orbiter-close-request',async()=>{if(closing)return;const dirty=window.OrbiterUI?.dirty()||suspended.some(d=>d.querySelector('form input,form textarea'));if(dirty){closing=true;if(mode==='planner')await switchMode('buddy');await present('reward');buddy.$('close-choice').showModal();}else invoke('close_buddy').catch(notice);});
+ nativeWindow.onResized(()=>{clearTimeout(sizeTimer);sizeTimer=setTimeout(async()=>{if(mode==='buddy'&&presentation==='compact'){const sz=await nativeWindow.innerSize(),scale=await nativeWindow.scaleFactor();act('settings',{buddyWidth:Math.round(sz.width/scale),buddyHeight:Math.round(sz.height/scale)}).catch(()=>{});}},500);});
+ window.OrbitDesktop.ready.then(async v=>{accept(v);const initial=await invoke('window_mode');setView(initial.mode);if(new URLSearchParams(location.search).has('expanded'))await switchMode('planner');await invoke('ui_ready',{diagnostics:diagnostics()});}).catch(notice);
+})();

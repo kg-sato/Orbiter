@@ -61,6 +61,29 @@ def digest(token):
     return hashlib.sha256(token.encode('utf-8')).hexdigest()
 
 
+CSP_LOCK = threading.Lock()
+CSP_CACHE = None
+
+
+def current_script_policy():
+    """Refresh approved inline hashes when public HTML changes during development."""
+    global CSP_CACHE
+    pages = (ROOT / 'Application.html', ROOT / 'design/scheduler-ui-preview/index.html')
+    signature = tuple((page.stat().st_mtime_ns, page.stat().st_size) for page in pages)
+    with CSP_LOCK:
+        if CSP_CACHE and CSP_CACHE[0] == signature:
+            return CSP_CACHE[1]
+        hashes = set()
+        for page in pages:
+            for script in re.findall(r'<script\b[^>]*>(.*?)</script>', page.read_text(encoding='utf-8'), re.S):
+                hashes.add("'sha256-" + base64.b64encode(hashlib.sha256(script.encode()).digest()).decode() + "'")
+        policy = ("default-src 'self'; script-src 'self' " + ' '.join(sorted(hashes)) +
+                  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; "
+                  "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
+        CSP_CACHE = (signature, policy)
+        return policy
+
+
 class AccountHandler(AppHandler):
     server_version = 'Scheduler'
     sys_version = ''
@@ -71,7 +94,7 @@ class AccountHandler(AppHandler):
 
     def end_headers(self):
         # Inline scripts are authorized by content hash; event-handler attributes remain blocked.
-        self.send_header('Content-Security-Policy', self.server.csp)
+        self.send_header('Content-Security-Policy', current_script_policy())
         self.send_header('X-Frame-Options', 'DENY')
         self.send_header('Referrer-Policy', 'no-referrer')
         self.send_header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
@@ -260,15 +283,8 @@ def main():
     parser.add_argument('--port', type=int, default=8003)
     args = parser.parse_args()
     initialize()
-    hashes = set()
-    for page in (ROOT / 'Application.html', ROOT / 'design/scheduler-ui-preview/index.html'):
-        for script in re.findall(r'<script\b[^>]*>(.*?)</script>', page.read_text(encoding='utf-8'), re.S):
-            hashes.add("'sha256-" + base64.b64encode(hashlib.sha256(script.encode()).digest()).decode() + "'")
     server = ThreadingHTTPServer(('127.0.0.1', args.port), AccountHandler)
     server.hosts = {f'127.0.0.1:{args.port}', f'localhost:{args.port}'}
-    server.csp = ("default-src 'self'; script-src 'self' " + ' '.join(sorted(hashes)) +
-                  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; "
-                  "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
     print(f'Scheduler accounts: http://127.0.0.1:{args.port}/Application.html', flush=True)
     try:
         server.serve_forever()
