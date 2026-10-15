@@ -63,7 +63,7 @@ function render() {
   if(dialog?.open&&dialog.dataset.view==='collection')renderCollection();
 }
 async function action(type,args={}) {
-  if(!window.OrbitDesktop)throw Error('Connect to Orbiter to earn rewards.');
+  if(!window.OrbitDesktop)return window.OrbiterCloud.rewardAction(type,args);
   return window.OrbitDesktop.actionResult(type,args);
 }
 function renderCollection() {
@@ -88,7 +88,7 @@ async function open(collectionOnly) {
     host.classList.add('orb-opening');
     const result=await action('chest');
     const reward=result?.reward;
-    await new Promise(resolve=>setTimeout(resolve,calm()?0:650));
+    await new Promise(resolve=>setTimeout(resolve,calm()?0:420));
     if(!dialog.open)return;
     host.classList.remove('orb-opening');
     host.innerHTML=reward?`${preview(reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(reward.name)}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';

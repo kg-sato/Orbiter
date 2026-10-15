@@ -1,0 +1,55 @@
+<svg id="liquid-landscape" class="celestial-landscape" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="celestial-mint"><stop class="scene-accent-stop" stop-color="#b4e6d5" stop-opacity=".36"/><stop offset="1" stop-color="#92c4c2" stop-opacity="0"/></radialGradient>
+    <radialGradient id="celestial-lilac"><stop stop-color="#b9a5df" stop-opacity=".30"/><stop offset="1" stop-color="#948ec1" stop-opacity="0"/></radialGradient>
+    <linearGradient id="celestial-ribbon" x1=".1" y1="0" x2=".7" y2="1"><stop stop-color="#d9eee5" stop-opacity=".44"/><stop offset=".22" class="scene-accent-stop" stop-color="#b4e6d5" stop-opacity=".25"/><stop offset=".55" stop-color="#8e9db7" stop-opacity=".06"/><stop offset=".8" stop-color="#b8a3dc" stop-opacity=".24"/><stop offset="1" stop-color="#b4c5df" stop-opacity=".08"/></linearGradient>
+    <linearGradient id="celestial-opal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7d4bc" stop-opacity=".30"/><stop offset=".4" stop-color="#c2b2e3" stop-opacity=".15"/><stop offset="1" stop-color="#92c8c8" stop-opacity=".04"/></linearGradient>
+    <linearGradient id="celestial-edge"><stop stop-color="#e3f3e8" stop-opacity="0"/><stop offset=".45" stop-color="#d2e6df" stop-opacity=".48"/><stop offset="1" stop-color="#b4a4d4" stop-opacity=".03"/></linearGradient>
+    <radialGradient id="celestial-pool"><stop class="scene-accent-stop" stop-color="#b4e6d5" stop-opacity=".24"/><stop offset=".5" stop-color="#9eb8c6" stop-opacity=".09"/><stop offset="1" stop-color="#0d1927" stop-opacity="0"/></radialGradient>
+    <linearGradient id="celestial-shell" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#ecdfcf" stop-opacity=".48"/><stop offset=".12" class="scene-accent-stop" stop-color="#b4e6d5" stop-opacity=".50"/><stop offset=".4" stop-color="#9eafc8" stop-opacity=".16"/><stop offset=".72" stop-color="#3f5772" stop-opacity=".12"/><stop offset=".9" stop-color="#b6a1d6" stop-opacity=".38"/><stop offset="1" stop-color="#e2d8ee" stop-opacity=".32"/></linearGradient>
+  </defs>
+  <rect class="celestial-sky" x="-200" y="-200" width="2000" height="1400" fill="#0d1927"/>
+  <g class="celestial-haze">
+    <ellipse cx="1370" cy="130" rx="740" ry="420" fill="url(#celestial-mint)"/>
+    <ellipse cx="230" cy="160" rx="660" ry="420" fill="url(#celestial-lilac)"/>
+    <ellipse cx="940" cy="900" rx="600" ry="280" fill="url(#celestial-lilac)" opacity=".6"/>
+  </g>
+  <g class="celestial-horizon">
+    <ellipse cx="1140" cy="390" rx="580" ry="210" fill="url(#celestial-pool)"/>
+    <path d="M380 442 Q930 296 1600 430" stroke="url(#celestial-edge)" stroke-width="1"/>
+  </g>
+  <g class="celestial-sculpture">
+    <path d="M1420 155 C1200 280 1220 530 1510 630 C1340 402 1600 294 1680 204 C1590 188 1480 195 1420 155Z" fill="url(#celestial-shell)"/>
+    <path d="M1420 155 C1200 280 1220 530 1510 630" stroke="url(#celestial-edge)" stroke-width="1.2"/>
+    <path d="M1550 206 C1410 300 1380 460 1580 545 C1540 350 1650 365 1760 302 C1720 248 1610 270 1550 206Z" fill="url(#celestial-opal)"/>
+    <path d="M1510 630 C1420 500 1540 392 1660 332" stroke="url(#celestial-edge)" opacity=".5"/>
+  </g>
+  <g class="celestial-ribbon far">
+    <path d="M-200 62 C270 240 360 12 720 80 C1050 142 1060 490 1770 380 L1770 465 C1030 584 981 223 704 172 C373 110 273 342 -200 144Z" fill="url(#celestial-opal)"/>
+    <path d="M-200 62 C270 240 360 12 720 80 C1050 142 1060 490 1770 380" stroke="url(#celestial-edge)" stroke-width="1.2"/>
+  </g>
+  <g class="celestial-ribbon near">
+    <path d="M-180 865 C180 556 368 997 710 825 C1010 674 1060 684 1800 770 L1800 1200 L-180 1200Z" fill="url(#celestial-ribbon)"/>
+    <path d="M-180 865 C180 556 368 997 710 825 C1010 674 1060 684 1800 770" stroke="url(#celestial-edge)" stroke-width="1.4"/>
+    <path d="M-100 963 C285 731 390 1080 790 888 C1090 745 1180 861 1790 878" stroke="url(#celestial-edge)" stroke-width=".6" opacity=".5"/>
+  </g>
+  <g class="scene-tasks">
+    <path d="M1240 1200 C850 800 1520 320 1350 -100 L1610 -100 C1810 610 1300 720 1700 1200Z" fill="url(#celestial-opal)"/>
+    <path d="M1240 1200 C850 800 1520 320 1350 -100" stroke="url(#celestial-edge)"/>
+  </g>
+  <g class="scene-atlas">
+    <ellipse cx="1320" cy="500" rx="210" ry="62" fill="url(#celestial-opal)" transform="rotate(-14 1320 500)"/>
+    <ellipse cx="1160" cy="665" rx="150" ry="42" fill="url(#celestial-ribbon)" transform="rotate(12 1160 665)"/>
+    <ellipse cx="390" cy="440" rx="160" ry="36" fill="url(#celestial-opal)" transform="rotate(14 390 440)"/>
+    <path d="M1110 514 Q1330 390 1515 462" stroke="url(#celestial-edge)"/>
+  </g>
+  <g class="scene-rhythm">
+    <path d="M-100 480 Q530 365 920 500 T1700 468" stroke="url(#celestial-edge)" stroke-width="2"/>
+    <path d="M-100 542 Q530 427 920 562 T1700 530" stroke="url(#celestial-edge)" stroke-width=".8" opacity=".6"/>
+    <path d="M-100 605 Q530 490 920 625 T1700 593" stroke="url(#celestial-edge)" stroke-width=".5" opacity=".4"/>
+  </g>
+  <g class="celestial-stars" fill="#e7e1d6">
+    <circle cx="450" cy="180" r="1.3"/><circle cx="1060" cy="80" r="1.4"/><circle cx="1260" cy="270" r="1"/><circle cx="1400" cy="340" r="1.6"/><circle cx="770" cy="225" r=".8"/><circle cx="200" cy="640" r="1.2"/><circle cx="990" cy="720" r="1"/><circle cx="1450" cy="850" r=".8"/>
+    <path d="M1216 167h8m-4-4v8M586 560h6m-3-3v6" stroke="#d8dce0" stroke-width=".6"/>
+  </g>
+</svg>

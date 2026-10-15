@@ -99,6 +99,8 @@ pub struct Timer {
     pub session_id: String,
     #[serde(default)]
     pub course_profile: Option<String>,
+    #[serde(default)]
+    pub cloud_owner: Option<String>,
 }
 impl Default for Timer {
     fn default() -> Self {
@@ -111,6 +113,7 @@ impl Default for Timer {
             reason: String::new(),
             session_id: format!("{:016x}", rand::random::<u64>()),
             course_profile: None,
+            cloud_owner: None,
         }
     }
 }
@@ -184,6 +187,7 @@ pub struct Store {
     pub started: Option<Instant>,
     pub wall: DateTime<Utc>,
     pub last_reminder: String,
+    pub cloud_events: Vec<Value>,
 }
 pub struct Backend {
     pub store: Mutex<Store>,
@@ -199,8 +203,25 @@ impl Backend {
         let db = Connection::open(dir.join("orbit.sqlite3")).map_err(|e| e.to_string())?;
         db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON;
             CREATE TABLE IF NOT EXISTS state(id INTEGER PRIMARY KEY CHECK(id=1),workspace TEXT NOT NULL,revision INTEGER NOT NULL,timer TEXT NOT NULL,settings TEXT NOT NULL,rewards TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS cloud_binding(id INTEGER PRIMARY KEY CHECK(id=1),owner TEXT NOT NULL,guest TEXT NOT NULL,guest_rewards TEXT NOT NULL DEFAULT '{}');
+            CREATE TABLE IF NOT EXISTS cloud_outbox(owner TEXT PRIMARY KEY,workspace TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS cloud_rewards(owner TEXT PRIMARY KEY,snapshot TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS cloud_focus(owner TEXT NOT NULL,event_id TEXT PRIMARY KEY,data TEXT NOT NULL);
             
 ").map_err(|e|e.to_string())?;
+        let cloud_columns = db
+            .prepare("PRAGMA table_info(cloud_binding)")
+            .map_err(|e| e.to_string())?
+            .query_map([], |r| r.get::<_, String>(1))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())?;
+        if !cloud_columns.iter().any(|c| c == "guest_rewards") {
+            db.execute_batch(
+                "ALTER TABLE cloud_binding ADD COLUMN guest_rewards TEXT NOT NULL DEFAULT '{}';",
+            )
+            .map_err(|e| e.to_string())?;
+        }
         let version: i64 = db
             .query_row("PRAGMA user_version", [], |r| r.get(0))
             .map_err(|e| e.to_string())?;
@@ -285,6 +306,7 @@ impl Backend {
                 started: None,
                 wall: Utc::now(),
                 last_reminder: String::new(),
+                cloud_events: Vec::new(),
             }),
             changes,
             wake: Notify::new(),
@@ -301,6 +323,132 @@ impl Backend {
     pub fn snapshot(&self) -> Value {
         let s = self.store.lock().unwrap();
         s.snapshot(self.local_error.lock().unwrap().clone())
+    }
+    pub fn cloud_bind(&self, owner: &str, guest: &Value) -> Result<(), String> {
+        let s = self.store.lock().unwrap();
+        let backup = self.dir.join("backups").join(format!(
+            "before-cloud-{}.json",
+            Utc::now().timestamp_millis()
+        ));
+        std::fs::write(
+            backup,
+            serde_json::to_vec_pretty(guest).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
+        s.db.execute("INSERT INTO cloud_binding(id,owner,guest,guest_rewards) VALUES(1,?1,?2,?3) ON CONFLICT(id) DO NOTHING",params![owner,guest.to_string(),serde_json::to_string(&s.rewards).map_err(|e|e.to_string())?]).map_err(|e|e.to_string())?;
+        Ok(())
+    }
+    pub fn cloud_unbind(&self) -> Result<(), String> {
+        let mut s = self.store.lock().unwrap();
+        let binding =
+            s.db.query_row(
+                "SELECT owner,guest,guest_rewards FROM cloud_binding WHERE id=1",
+                [],
+                |r| {
+                    Ok((
+                        r.get::<_, String>(0)?,
+                        r.get::<_, String>(1)?,
+                        r.get::<_, String>(2)?,
+                    ))
+                },
+            )
+            .ok();
+        let Some((owner, guest, guest_rewards)) = binding else {
+            return Ok(());
+        };
+        let restored: Value = serde_json::from_str(&guest).map_err(|e| e.to_string())?;
+        validate_workspace(&restored)?;
+        let rewards = serde_json::from_str::<Rewards>(&guest_rewards)
+            .ok()
+            .unwrap_or_else(|| s.rewards.clone());
+        let old = s.workspace.clone();
+        let old_rewards = s.rewards.clone();
+        let old_revision = s.revision;
+        let old_edit = s.edit_revision;
+        s.db.execute("DELETE FROM cloud_binding", [])
+            .map_err(|e| e.to_string())?;
+        s.workspace = restored;
+        s.rewards = rewards;
+        s.edit_revision += 1;
+        s.revision += 1;
+        if let Err(e) = s.persist() {
+            s.workspace = old;
+            s.rewards = old_rewards;
+            s.revision = old_revision;
+            s.edit_revision = old_edit;
+            s.db.execute(
+                "INSERT INTO cloud_binding(id,owner,guest,guest_rewards) VALUES(1,?1,?2,?3)",
+                params![owner, guest, guest_rewards],
+            )
+            .map_err(|e| e.to_string())?;
+            return Err(e);
+        }
+        drop(s);
+        self.changed();
+        Ok(())
+    }
+    pub fn cloud_ack(&self, owner: &str) -> Result<(), String> {
+        self.store
+            .lock()
+            .unwrap()
+            .db
+            .execute("DELETE FROM cloud_outbox WHERE owner=?1", [owner])
+            .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+    pub fn cloud_rewards(&self, owner: &str, rewards: &Value) -> Result<(), String> {
+        let mut s = self.store.lock().unwrap();
+        let raw = rewards.to_string();
+        if s.db
+            .query_row(
+                "SELECT snapshot FROM cloud_rewards WHERE owner=?1",
+                [owner],
+                |r| r.get::<_, String>(0),
+            )
+            .ok()
+            .as_deref()
+            == Some(raw.as_str())
+        {
+            return Ok(());
+        }
+        s.db.execute("INSERT INTO cloud_rewards VALUES(?1,?2) ON CONFLICT(owner) DO UPDATE SET snapshot=excluded.snapshot",params![owner,rewards.to_string()]).map_err(|e|e.to_string())?;
+        s.revision += 1;
+        s.persist()?;
+        drop(s);
+        self.changed();
+        Ok(())
+    }
+    pub fn apply_cloud_workspace(
+        &self,
+        mut incoming: Value,
+        expected: &Value,
+    ) -> Result<(), String> {
+        validate_workspace(&incoming)?;
+        let mut s = self.store.lock().unwrap();
+        if crate::cloud::encode(&s.workspace) != crate::cloud::encode(expected) {
+            return Err(
+                "Local edits arrived during sync; retrying with your draft preserved.".into(),
+            );
+        }
+        if crate::cloud::encode(&s.workspace) == crate::cloud::encode(&incoming) {
+            return Ok(());
+        }
+        incoming["study"]["timer"] = s.workspace["study"]["timer"].clone();
+        let old = s.workspace.clone();
+        let revision = s.revision;
+        let edit = s.edit_revision;
+        s.workspace = incoming;
+        s.revision += 1;
+        s.edit_revision += 1;
+        if let Err(e) = s.persist() {
+            s.workspace = old;
+            s.revision = revision;
+            s.edit_revision = edit;
+            return Err(e);
+        }
+        drop(s);
+        self.changed();
+        Ok(())
     }
     pub fn changed(&self) {
         let revision = self.store.lock().unwrap().revision;
@@ -380,6 +528,15 @@ impl Backend {
     }
     pub fn action(&self, action: &str, args: Value) -> Result<Value, String> {
         let mut s = self.store.lock().unwrap();
+        if action == "chest"
+            && s.db
+                .query_row("SELECT owner FROM cloud_binding WHERE id=1", [], |r| {
+                    r.get::<_, String>(0)
+                })
+                .is_ok()
+        {
+            return Err("Connected crates open online through your account.".into());
+        }
         // In-memory state is restored if the transaction fails.
         let old = (
             s.workspace.clone(),
@@ -390,6 +547,7 @@ impl Backend {
             s.started,
             s.wall,
         );
+        let old_cloud_events = s.cloud_events.clone();
         let tx_result = (|| -> Result<Option<Value>, String> {
             let mut reward = None;
             match action {
@@ -423,6 +581,15 @@ impl Backend {
                                         s.workspace["study"]["catProfiles"][name].as_u64()
                                     })
                                     .map(|code| code.to_string());
+                            }
+                            if s.timer.remaining_ms == s.timer.duration as u64 * 60000 {
+                                s.timer.cloud_owner =
+                                    s.db.query_row(
+                                        "SELECT owner FROM cloud_binding WHERE id=1",
+                                        [],
+                                        |r| r.get::<_, String>(0),
+                                    )
+                                    .ok();
                             }
                             s.timer.active = true;
                             s.timer.reason.clear();
@@ -483,6 +650,7 @@ impl Backend {
                         reason: String::new(),
                         session_id: format!("{:016x}", rand::random::<u64>()),
                         course_profile: None,
+                        cloud_owner: None,
                     };
                 }
                 "settings" => {
@@ -604,6 +772,7 @@ impl Backend {
         })();
         match tx_result {
             Err(e) => {
+                s.cloud_events = old_cloud_events;
                 (
                     s.workspace,
                     s.timer,
@@ -656,6 +825,7 @@ impl Backend {
                     }
                 } else {
                     let mut s = self.store.lock().unwrap();
+                    let before_events = s.cloud_events.clone();
                     let before = (
                         s.workspace.clone(),
                         s.timer.clone(),
@@ -670,6 +840,7 @@ impl Backend {
                         s.wall = Utc::now();
                         s.revision += 1;
                         if s.persist().is_err() {
+                            s.cloud_events = before_events;
                             (
                                 s.workspace,
                                 s.timer,
@@ -730,7 +901,32 @@ impl Store {
         }
         let remaining = self.remaining();
         workspace["study"]["timer"] = json!({"duration":self.timer.duration,"remaining":remaining as f64/1000.0,"endAt":if self.timer.active{Some(Utc::now().timestamp_millis()+remaining as i64)}else{None},"title":self.timer.title,"taskId":self.timer.task_id});
-        json!({"workspace":workspace,"revision":self.revision,"editRevision":self.edit_revision,"timer":{"duration":self.timer.duration,"remainingMs":remaining,"active":self.timer.active,"title":self.timer.title,"taskId":self.timer.task_id,"courseProfile":self.timer.course_profile,"reason":self.timer.reason},"settings":self.settings,"rewards":{"xp":self.rewards.focused_ms/60000,"level":self.rewards.focused_ms/6000000+1,"chests":(self.rewards.focused_ms/1800000).saturating_sub(self.rewards.opened),"owned":self.rewards.owned,"stars":self.rewards.stars,"focusedMs":self.rewards.focused_ms,"crateProgressMs":self.rewards.focused_ms%1800000,"crateIntervalMs":1800000,"courseMs":self.rewards.course_ms,"growth":growth(self.rewards.focused_ms)},"catalog":COSMETICS.iter().map(|c|json!({"id":c.0,"name":c.1,"rarity":c.2,"slot":cosmetic_slot(c.0)})).collect::<Vec<_>>(),"localError":error})
+        let mut result = json!({"workspace":workspace,"revision":self.revision,"editRevision":self.edit_revision,"timer":{"duration":self.timer.duration,"remainingMs":remaining,"active":self.timer.active,"title":self.timer.title,"taskId":self.timer.task_id,"courseProfile":self.timer.course_profile,"reason":self.timer.reason},"settings":self.settings,"rewards":{"xp":self.rewards.focused_ms/60000,"level":self.rewards.focused_ms/6000000+1,"chests":(self.rewards.focused_ms/1800000).saturating_sub(self.rewards.opened),"owned":self.rewards.owned,"stars":self.rewards.stars,"focusedMs":self.rewards.focused_ms,"crateProgressMs":self.rewards.focused_ms%1800000,"crateIntervalMs":1800000,"courseMs":self.rewards.course_ms,"growth":growth(self.rewards.focused_ms)},"catalog":COSMETICS.iter().map(|c|json!({"id":c.0,"name":c.1,"rarity":c.2,"slot":cosmetic_slot(c.0)})).collect::<Vec<_>>(),"localError":error});
+        let account = self
+            .db
+            .query_row("SELECT owner FROM cloud_binding WHERE id=1", [], |r| {
+                r.get::<_, String>(0)
+            })
+            .ok();
+        result["cloudConnected"] = json!(account.is_some());
+        if let Some(owner) = account {
+            if let Ok(raw) = self.db.query_row(
+                "SELECT snapshot FROM cloud_rewards WHERE owner=?1",
+                [owner],
+                |r| r.get::<_, String>(0),
+            ) {
+                if let Ok(mut rewards) = serde_json::from_str::<Value>(&raw) {
+                    rewards["growth"] = growth(rewards["focusedMs"].as_u64().unwrap_or(0));
+                    if let Some(equipment) = rewards["equipment"].as_object() {
+                        for (slot, value) in equipment {
+                            result["settings"][slot] = value.clone();
+                        }
+                    }
+                    result["rewards"] = rewards;
+                }
+            }
+        }
+        result
     }
     fn settle(&mut self) -> Result<(), String> {
         let elapsed = self
@@ -742,6 +938,9 @@ impl Store {
         self.timer.active = false;
         if elapsed == 0 {
             return Ok(());
+        }
+        if let Some(owner) = &self.timer.cloud_owner {
+            self.cloud_events.push(json!({"owner":owner,"id":format!("{}:{}",self.timer.session_id,self.wall.timestamp_millis()),"start":self.wall.timestamp_millis(),"end":self.wall.timestamp_millis()+elapsed as i64,"course":self.timer.course_profile}));
         }
         self.rewards.focused_ms += elapsed;
         if let Some(profile) = &self.timer.course_profile {
@@ -796,14 +995,77 @@ impl Store {
             }
         }
         let tx = self.db.transaction().map_err(|e| e.to_string())?;
+        for event in &self.cloud_events {
+            tx.execute(
+                "INSERT OR IGNORE INTO cloud_focus(owner,event_id,data) VALUES(?1,?2,?3)",
+                params![
+                    event["owner"].as_str(),
+                    event["id"].as_str(),
+                    event.to_string()
+                ],
+            )
+            .map_err(|e| e.to_string())?;
+        }
+        tx.execute("INSERT INTO cloud_outbox(owner,workspace) SELECT owner,?1 FROM cloud_binding WHERE id=1 ON CONFLICT(owner) DO UPDATE SET workspace=excluded.workspace",[self.workspace.to_string()]).map_err(|e|e.to_string())?;
         tx.execute("INSERT INTO state(id,workspace,revision,timer,settings,rewards,edit_revision) VALUES(1,?1,?2,?3,?4,?5,?6) ON CONFLICT(id) DO UPDATE SET workspace=excluded.workspace,revision=excluded.revision,timer=excluded.timer,settings=excluded.settings,rewards=excluded.rewards,edit_revision=excluded.edit_revision",params![self.workspace.to_string(),self.revision as i64,serde_json::to_string(&self.timer).unwrap(),serde_json::to_string(&self.settings).unwrap(),serde_json::to_string(&self.rewards).unwrap(),self.edit_revision as i64]).map_err(|e|e.to_string())?;
-        tx.commit().map_err(|e| e.to_string())
+        tx.commit().map_err(|e| e.to_string())?;
+        self.cloud_events.clear();
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn cloud_focus_is_account_owned_and_guest_progress_is_restored() {
+        let b = backend();
+        let guest = b.snapshot()["workspace"].clone();
+        b.cloud_bind("owner-a", &guest).unwrap();
+        b.action("start", json!({})).unwrap();
+        {
+            let mut s = b.store.lock().unwrap();
+            s.started = Some(Instant::now() - Duration::from_secs(60));
+        }
+        b.action("finish", json!({})).unwrap();
+        let s = b.store.lock().unwrap();
+        let owner: String =
+            s.db.query_row("SELECT owner FROM cloud_focus LIMIT 1", [], |r| r.get(0))
+                .unwrap();
+        assert_eq!(owner, "owner-a");
+        assert_eq!(s.rewards.focused_ms / 60000, 1);
+        drop(s);
+        b.cloud_unbind().unwrap();
+        assert_eq!(b.snapshot()["rewards"]["xp"], 0);
+        assert_eq!(b.snapshot()["cloudConnected"], false);
+        let count: i64 = b
+            .store
+            .lock()
+            .unwrap()
+            .db
+            .query_row(
+                "SELECT count(*) FROM cloud_focus WHERE owner='owner-a'",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(count, 1);
+    }
+    #[test]
+    fn cloud_focus_queue_rolls_back_with_timer_transaction() {
+        let b = backend();
+        b.cloud_bind("owner-a", &b.snapshot()["workspace"]).unwrap();
+        b.action("start", json!({})).unwrap();
+        {
+            let mut s = b.store.lock().unwrap();
+            s.started = Some(Instant::now() - Duration::from_secs(60));
+            s.db.execute_batch("CREATE TRIGGER reject_cloud BEFORE INSERT ON cloud_focus BEGIN SELECT RAISE(ABORT,'disk');END;").unwrap();
+        }
+        assert!(b.action("pause", json!({})).is_err());
+        let s = b.store.lock().unwrap();
+        assert!(s.cloud_events.is_empty());
+        assert_eq!(s.rewards.focused_ms, 0);
+    }
     fn backend() -> Arc<Backend> {
         Backend::open(
             std::env::temp_dir().join(format!("orbit-test-{:016x}", rand::random::<u64>())),

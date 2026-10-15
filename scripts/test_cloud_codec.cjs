@@ -1,0 +1,12 @@
+const esbuild=require('esbuild'),assert=require('assert');
+const code=esbuild.buildSync({entryPoints:['src/sync/codec.js'],bundle:true,format:'cjs',write:false,platform:'node'}).outputFiles[0].text;
+const moduleCopy={exports:{}};new Function('module','exports',code)(moduleCopy,moduleCopy.exports);const {encode,decode,merge,equal}=moduleCopy.exports;
+const w={template:[{id:'a',title:'Recurring'}],weeks:{'2026-10-12':[]},study:{tasks:[{id:'one',title:'Test',exam:{targetMinutes:300,logs:[]}}],courses:[{name:'Physics',notes:'Keep me',confidence:3}],preferences:{name:'Owner',goal:10,motion:false,solid:false},timer:{duration:25,remaining:100,endAt:123,title:'Local only'},sessions:[{date:'2026-10-14',minutes:25,title:'Study',orbitSession:'native-one'}],catProfiles:{Physics:42},reflections:[{week:'2026-10-12',win:'Keep',next:'Next'}]}};
+const records=encode(w);assert(!Object.keys(records).some(k=>k.includes('timer')));assert.deepEqual(decode(records,w),w);
+assert.deepEqual(merge({title:'A',due:'D'},{title:'B',due:'D'},{title:'A',due:'E'}),{value:{title:'B',due:'E'}});
+assert.equal(merge({title:'A'},{title:'B'},{title:'C'}).conflict,true);
+assert.equal(merge({title:'A'},null,{title:'B'}).conflict,true);
+assert(equal(merge({title:'A'},null,{title:'A'}).value,null));
+records[JSON.stringify(['task','one'])]=null;assert.equal(decode(records,w).study.tasks.length,0);
+const unsafe={...records,[JSON.stringify(['profile','__proto__'])]:42};const decoded=decode(unsafe,w);assert.equal(Object.getPrototypeOf(decoded.study.catProfiles),Object.prototype);assert.equal(decoded.study.catProfiles.__proto__,42);
+console.log('Cloud codec: export compatibility, field merge, deletion conflicts, local timers and prototype safety passed.');

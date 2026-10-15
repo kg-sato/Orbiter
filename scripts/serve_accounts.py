@@ -78,7 +78,7 @@ def current_script_policy():
             for script in re.findall(r'<script\b[^>]*>(.*?)</script>', page.read_text(encoding='utf-8'), re.S):
                 hashes.add("'sha256-" + base64.b64encode(hashlib.sha256(script.encode()).digest()).decode() + "'")
         policy = ("default-src 'self'; script-src 'self' " + ' '.join(sorted(hashes)) +
-                  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; "
+                  "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://oymssinpmiqzyyuiwjpn.supabase.co wss://oymssinpmiqzyyuiwjpn.supabase.co; "
                   "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
         CSP_CACHE = (signature, policy)
         return policy

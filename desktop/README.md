@@ -4,7 +4,7 @@ An autonomous study buddy built with Tauri 2, Rust, SQLite and bundled HTML/CSS 
 
 ## First use
 
-Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The installed executable is `C:\Users\kgsat\AppData\Local\Orbiter\orbit-companion.exe`; the simple installer is `build\release\Orbiter Setup.exe` (version 0.3.1).
+Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The installed executable is `C:\Users\kgsat\AppData\Local\Orbiter\orbit-companion.exe`; the simple installer is `build\release\Orbiter Setup.exe` (version 0.4.2).
 
 - Orbiter launches as a rounded 420 × 220 floating island. Click the cat, the doorway action, or the island's ↗ control to open the full scheduler **inside the same app**. The planner has ordinary Windows controls; Restore returns to the island, and minimize uses the taskbar.
 - Starting or resuming focus automatically returns to buddy mode. You can reopen the planner during focus. Focus Room has been replaced by these two modes.
@@ -18,6 +18,10 @@ Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The ins
 - The tray's **Open paired browser (optional)** is the only action that opens an external browser. The bundled planner works offline without Python, Node or the local server.
 
 The animated cat is a real procedural Three.js model. Courses keep unique profiles combining coat, ears, scarf and charm. A new main cat is selected on fresh loads, while mode switches retain it; task-linked focus uses the course cat. Head pats and typing reactions operate only inside Orbiter. Reduced motion stops ambient movement. A static illustration appears if WebGL is unavailable.
+
+## Updates
+
+Open **Check for updates** in planner preferences or buddy settings. Startup checks are optional. Save open edits, then choose **Download and restart** to install a verified release; focus pauses before installation. The first updater-enabled version requires manual installation. The release feed must be published on GitHub before checks can return updates. See [update and signing instructions](../docs/UPDATES.md).
 
 ## Time and progress
 
@@ -66,3 +70,9 @@ Current acceptance evidence is in `design/ORBITER-ISLAND-VERIFICATION.md`; the p
 - [Tauri runtime authority](https://v2.tauri.app/security/runtime-authority/), [single instance](https://v2.tauri.app/plugin/single-instance/), [autostart](https://v2.tauri.app/plugin/autostart/)
 - [WebView2 deployment](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution), [Windows suspend events](https://learn.microsoft.com/en-us/windows/win32/power/pbt-apmsuspend)
 - [Playwright browser testing APIs](https://playwright.dev/docs/api/class-browsertype)
+## October 14 UI polish
+
+The 0.4 installer refresh adds grouped buddy settings, independently scrolling Discoveries, a padded export deck, centered close controls, wider Test actions, and faster wave transitions. Settings opens at 560 px tall and Discoveries at 520 px tall; these temporary expansions do not replace your saved compact size. Open owned cosmetics through **Buddy options → Your companion → Explore discoveries**.
+
+The existing installed app does not update just because source files changed. After saving/finishing your current session, Quit Orbiter from its tray, run the refreshed installer, and reopen it. Browser users should reload their usual URL to get the regenerated source without changing storage origins.
+

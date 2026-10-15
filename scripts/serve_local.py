@@ -7,7 +7,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_FILES = {
     "Application.html", "manifest.webmanifest", "sw.js",
-    "design/scheduler-ui-preview/index.html", "web/account-sync.js",
+    "design/scheduler-ui-preview/index.html", "web/account-sync.js", "web/cloud-sync.js", "web/account.css",
     "web/study-companion.html", "web/study-companion.js", "web/glass.css",
 }
 

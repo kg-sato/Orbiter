@@ -24,3 +24,45 @@
 #reward-strip .orb-level small{font-size:9px}
 #reward-strip .orb-collection-button{flex:0 0 28px}
 :host([data-solid=true]) button:where(:not(#cat)){background:#304451!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+/* A miniature celestial landscape, with the same material hierarchy as the planner. */
+#island{background:radial-gradient(ellipse at 8% 10%,#c4e5da30,transparent 58%),radial-gradient(ellipse at 95% 80%,#b1a1d12a,transparent 65%),linear-gradient(145deg,#203b48f5,#121d30fc);border-color:#d0e7df50;box-shadow:inset 0 1px #f3fff54a,inset 0 -2px 15px #07152230}
+.island-water::before{content:'';position:absolute;width:190px;height:120px;left:-20px;top:30px;border-radius:50%;background:radial-gradient(ellipse,#b8e4d525,transparent 68%);animation:island-glimmer 13s ease-in-out infinite alternate}
+.island-water i{height:90%;bottom:-76%;background:linear-gradient(145deg,#b4e3d62b,#9aa9c814);box-shadow:inset 0 1px #e1f4e72b;animation:island-current 14s ease-in-out infinite alternate}
+.island-water i:nth-child(2){bottom:-62%;background:linear-gradient(120deg,#bfb0d51b,#9fc5c413);animation-delay:-7s;animation-duration:19s}
+.island-water i:nth-child(3){bottom:-56%;background:linear-gradient(120deg,#e0cfb414,#a8bddd08);animation-delay:-4s;animation-duration:24s}
+#window-bar button{border:1px solid #ccded32b;border-radius:10px;color:#e2efed}
+#instrument{gap:4px}#time{font-weight:600;font-size:35px}#cat{background:radial-gradient(ellipse at 50% 80%,#c1d7da20,transparent 68%)}
+.actions #toggle{min-height:32px;min-width:68px;box-shadow:inset 0 1px #f4fff42b,0 4px 14px #02132220}
+.actions #finish{border-radius:12px 12px 18px 18px}.actions #planner{border-radius:12px}
+#reward-strip{gap:9px;border-top-color:#cee4df2b}#reward-panel>header{background:linear-gradient(120deg,#b6dad220,#b9a5d510);border-radius:18px}
+#reward-content .orb-collection-item{background:linear-gradient(135deg,#b5d5d41a,#a9a0bd0c);border-color:#c4dad329;box-shadow:inset 0 1px #fff2}
+#reward-content .orb-item-preview{background:radial-gradient(ellipse,#b9cbd820,transparent 70%)}
+#options input,#options select{background:#c4dce50b;box-shadow:inset 0 1px #ffffff12;border-radius:14px}
+:host([data-solid=true]) #island{background:#213341}
+@keyframes island-glimmer{from{transform:translate(0,0) scale(.96);opacity:.65}to{transform:translate(12px,-6px) scale(1.04);opacity:1}}
+:host([data-calm=true]) *,:host([data-calm=true]) *::before{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.island-water::before{animation:none!important}}
+/* Expanded panels are separate planes; neither may paint over crate progress. */
+#window-bar button{display:grid;place-items:center;line-height:1}
+:host([data-presentation=reward]) #island{grid-template-rows:24px 110px 48px minmax(0,1fr);gap:10px}
+#reward-strip{overflow:hidden;padding:5px 0;min-height:44px}
+#reward-strip .orb-crate-button{padding:3px 4px!important;flex-shrink:0}
+#reward-strip .orb-collection-button{display:grid;place-items:center;padding:0!important;line-height:1}
+#reward-panel{isolation:isolate}
+#reward-panel>header{margin-bottom:8px;min-height:44px}
+#reward-content{padding:14px 4px 18px}
+#options{padding:0 3px 18px;scrollbar-width:thin}
+#options>header{position:relative;background:transparent;padding:2px 0 12px;border-radius:0;border-bottom:1px solid #c9dddf25}
+#options>header h2{font-size:21px;margin:8px 0}
+.settings-intro{font-size:13px;padding:16px 2px;color:#e5efee}
+.settings-intro span{display:block;margin-top:5px;font-size:11px;color:#b5cbd1}
+.settings-card{min-width:0;margin:0 0 16px;padding:14px 16px 18px;border:1px solid #d0e5e32b;border-radius:22px;background:linear-gradient(140deg,#bddbce15,#abb4d00a)}
+.settings-card legend{padding:0 7px;font-size:12px;font-weight:650;letter-spacing:.3px;color:var(--accent)}
+.settings-card label{line-height:1.5;margin-top:12px}
+.settings-card label:has(input[type=checkbox]){display:flex;align-items:center;gap:10px;padding:9px 0;margin:0;border-bottom:1px solid #d1e1e012}
+.settings-card input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--accent);flex-shrink:0}
+.settings-card .preset{margin:7px 0 10px}
+.settings-card>button{margin-top:10px;min-height:36px}
+.settings-card details{margin-bottom:0}
+#growth-info{font-size:12px;line-height:1.6;color:#c7ded9}
+

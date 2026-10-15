@@ -1,0 +1,215 @@
+/* Orbiter 0.4: the scene is expressive; the reading plane stays still. */
+:root {
+  --space-ink: #0d1927;
+  --space-text: #edf4f6;
+  --space-muted: #b6c9d3;
+  --space-line: #d6e7e628;
+  --space-panel: linear-gradient(135deg, #bddbd51c, #879bb112);
+  --space-radius: 28px;
+  --space-gap: 22px;
+}
+body { background: var(--space-ink); color: var(--space-text); }
+.orbital-backdrop {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+  background: #0d1927; transform: none!important; filter: none!important;
+}
+.orbital-backdrop::before,.orbital-backdrop::after { display: none; }
+#liquid-landscape {
+  position: absolute; inset: -6%; width: 112%; height: 112%; opacity: 1;
+  transform: translate3d(var(--scene-x,0px),var(--scene-y,0px),0)!important;
+  filter: none!important; transition: transform .55s cubic-bezier(.2,.7,.2,1);
+}
+.celestial-sky { fill: #0d1927; }
+.scene-accent-stop { stop-color: var(--orbiter-accent,#b4e6d5); }
+.scene-lilac-stop { stop-color: #b9a5df; }
+.celestial-haze { transform-origin: 50% 50%; animation: haze-breathe 24s ease-in-out infinite alternate; }
+.celestial-ribbon { transform-origin: 50% 70%; animation: ribbon-drift 18s ease-in-out infinite alternate; }
+.celestial-ribbon.far { animation-duration: 27s; animation-delay: -12s; opacity: .64; }
+.celestial-ribbon.near { animation-delay: -7s; }
+.celestial-stars { animation: star-breathe 9s ease-in-out infinite alternate; }
+.celestial-sculpture { transform-origin:90% 40%; animation: sculpture-float 22s ease-in-out infinite alternate; }
+@keyframes sculpture-float { from { transform:translate(8px,-6px) rotate(-3deg); } to { transform:translate(-12px,12px) rotate(3deg); } }
+.scene-atlas,.scene-tasks,.scene-rhythm { opacity: 0; transition: opacity .45s ease; }
+body[data-scene="atlas"] .scene-atlas,body[data-scene="tasks"] .scene-tasks,body[data-scene="rhythm"] .scene-rhythm { opacity: 1; }
+body[data-scene="atlas"] .celestial-horizon { opacity: .35; }
+body[data-scene="tasks"] .celestial-ribbon.near { transform-origin: 80% 20%; }
+body[data-scene="rhythm"] .celestial-haze { opacity: .7; }
+body.scene-still .orbital-backdrop *,body.motion-hidden .orbital-backdrop * { animation-play-state: paused!important; }
+@keyframes haze-breathe { from { transform: translate(-12px,8px) scale(1); opacity:.68; } to { transform: translate(16px,-10px) scale(1.035); opacity:1; } }
+@keyframes ribbon-drift { from { transform: translate(-10px,8px) rotate(-1deg); } to { transform: translate(14px,-10px) rotate(1deg); } }
+@keyframes star-breathe { from { opacity:.32; } to { opacity:.7; } }
+
+/* A shared bento rhythm, rather than a separate visual language per page. */
+.workspace { max-width: 1760px; }
+.sidebar { background: linear-gradient(150deg,#a8c8cc22,#172a3ed9)!important; border-color: var(--space-line)!important; box-shadow: inset 0 1px #f5fff52b,0 18px 60px #020c1833; }
+.masthead { background: linear-gradient(115deg,#bdded324,#7f96b51b)!important; border: 1px solid var(--space-line); border-radius:24px; box-shadow:inset 0 1px #f5fff525; }
+.sidebar,.masthead { backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.side-nav button { min-height:48px; border-radius:17px; background:transparent!important; box-shadow:none; }
+.side-nav button[aria-pressed="true"] { background:transparent!important; border-color:transparent!important; }
+.nav-lens { top:0!important; transform:translateY(var(--nav-y,0px)); background:linear-gradient(120deg,#c8e8d530,#b0b7dc16)!important; border:1px solid var(--control-border); border-radius:17px; box-shadow:inset 0 1px #fff4,0 5px 20px #071b291f; transition:transform .38s cubic-bezier(.22,.85,.24,1); }
+.side-nav button[aria-pressed="true"]::after { background:var(--orbiter-accent); box-shadow:0 0 12px var(--orbiter-accent); }
+.greeting { margin-block:32px 24px; }
+#greeting-title { font-size:clamp(32px,3.4vw,48px); letter-spacing:-1.8px; font-weight:600; }
+#greeting-kicker { color:var(--space-muted); letter-spacing:2.5px; font-size:8px; }
+.date-stamp { border-radius:20px; min-width:148px; background:#c1dddc12!important; border:1px solid var(--space-line); box-shadow:inset 0 1px #fff2; }
+.desk-layout { column-gap:var(--space-gap); row-gap:var(--space-gap); }
+.main-column { min-width:0; }
+.hero,#planner,.assignment-overview,.atlas-detail,.focus-card,.workload-forecast,.next-peek {
+  border:1px solid var(--space-line); border-radius:var(--space-radius); background:var(--space-panel)!important;
+  box-shadow:inset 0 1px #edf9f321,0 12px 40px #020d1919;
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+#now-card { padding:32px; min-height:338px; isolation:isolate; overflow:hidden; }
+#now-card::before { background:radial-gradient(ellipse at 80% 20%,#b6a8d329,transparent 58%); opacity:1; }
+#now-card>div:not(.orbit-art):not(.next-peek):not(.orb-reward-dashboard) { max-width:calc(100% - 225px); }
+#now-title { max-width:650px; font-size:clamp(25px,2.5vw,38px); line-height:1.12; letter-spacing:-1px; font-weight:550; }
+#now-card .orbit-art { right:20px; top:12px; width:240px; height:225px; opacity:1; }
+#now-card .orb-reward-dashboard { left:24px; right:24px; bottom:22px; border-radius:22px; border-color:var(--space-line); background:linear-gradient(110deg,#a4cfc922,#b1a8ca0f); box-shadow:inset 0 1px #e6fff326; backdrop-filter:none; }
+.orb-crate-button { background:transparent!important; box-shadow:none!important; }
+.orb-level progress::-webkit-progress-value { background:linear-gradient(90deg,var(--orbiter-accent),#b9a5df); }
+.focus-card { padding:24px 18px; }
+.focus-card .eyebrow { color:var(--space-muted); letter-spacing:2px; }
+.timer-face { width:min(100%,220px); margin-inline:auto; background:radial-gradient(ellipse at 30% 20%,#b8dccc14,#0e1b291f); box-shadow:inset 0 1px #defff022,0 12px 28px #04122230; }
+.focus-presets { background:#0c1e2b23!important; border:1px solid var(--space-line); box-shadow:none!important; }
+.study-rail { gap:var(--space-gap); }
+#planner { padding:22px; margin-top:22px; border-radius:30px; }
+.week-strip { background:#aecfd00b!important; box-shadow:none; border:1px solid var(--space-line); padding:7px; }
+.date-button { background:transparent!important; box-shadow:none!important; }
+.date-button[aria-pressed="true"] { background:linear-gradient(135deg,#c4e4d326,#a8b9d414)!important; box-shadow:inset 0 1px #fff3!important; }
+.date-button.today { border-color:#c6b6e677; }
+.day-signal { background:#c1dfdb0b!important; box-shadow:inset 0 1px #fff1!important; border:1px solid var(--space-line); border-radius:20px; }
+.schedule-card { background:linear-gradient(120deg,#b3d3cf17,#94acc20a)!important; box-shadow:inset 0 1px #ffffff14!important; }
+.workload-forecast { padding:24px; margin-top:0; }
+.forecast-days { gap:10px; }
+.forecast-day { background:#bdd5d90b!important; box-shadow:none!important; border-radius:20px; border-color:var(--space-line); padding:16px 10px; }
+.forecast-day .forecast-meter { box-shadow:none; background:#0e23313d; }
+.forecast-heading-row { align-items:center; gap:12px; }
+.forecast-heading-row h2 { margin-right:auto; font-size:15px; }
+.forecast-heading-row button { white-space:nowrap; }
+
+/* Assignments: overview, tests and practice are distinct, readable modules. */
+#tasks-main { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; background:none!important; }
+#tasks-main[hidden] { display:none!important; }
+#tasks-main>.assignment-overview,#tasks-main>.section-heading,#tasks-main>.task-tabs,#tasks-main>#tasks-full,#tasks-main>.dialog-description { grid-column:1/-1; }
+.assignment-overview { padding:28px 32px; min-height:170px; }
+.assignment-overview h2 { font-size:clamp(28px,3vw,40px); letter-spacing:-1.2px; }
+.completion-orbit { background:radial-gradient(ellipse at 30% 20%,#c3d6e22b,#8f9cba10); box-shadow:inset 0 1px #fff3; border-radius:32% 48% 38% 45%; }
+#tasks-main>.exam-preparation,#tasks-main>.daily-practice { padding:22px; background:var(--space-panel); border:1px solid var(--space-line); border-radius:26px; min-width:0; margin:0; }
+.exam-prep-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+#tasks-main .exam-prep-list { grid-template-columns:1fr; }
+.exam-prep-card { padding:22px; min-width:0; background:linear-gradient(145deg,#d8c5dc13,#a9d6cf10)!important; border:1px solid var(--space-line); border-radius:26px; }
+.exam-prep-card strong.exam-remaining { font-size:25px; letter-spacing:-.6px; }
+.exam-prep-actions { gap:8px; flex-wrap:wrap; }
+.exam-prep-actions button { flex:0 1 auto; white-space:normal; }
+.exam-prep-card progress,.practice-card progress { accent-color:var(--orbiter-accent); }
+.assignment-group { margin-top:4px; }
+.assignment-group>header { display:flex; align-items:center; gap:12px; margin:10px 0 14px; }
+.assignment-group h3 { font-size:13px; font-weight:550; }
+.assignment-count { font-size:10px; padding:4px 8px; border:1px solid var(--space-line); border-radius:20px; }
+.assignment-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+#tasks-full .task-item { border-radius:24px; padding:22px; background:linear-gradient(130deg,#c0d8d817,#a89cbe0c)!important; border:1px solid var(--space-line); box-shadow:inset 0 1px #fff2; }
+.task-empty { background:#bedbd20c!important; border:1px dashed var(--space-line); box-shadow:none!important; border-radius:24px; }
+.practice-card { background:#acd7d511!important; border:1px solid var(--space-line); border-radius:22px; padding:18px; }
+#tasks-main>.dialog-description { display:none; }
+
+/* Atlas habitats use cached portraits. Only the selected character is live. */
+#course-atlas { position:relative; }
+#course-atlas>.atlas-intro { min-height:195px; padding:28px 40% 28px 28px; background:var(--space-panel); border:1px solid var(--space-line); border-radius:28px; align-items:flex-start; display:flex; flex-direction:column; gap:14px; }
+#course-atlas>.atlas-intro h2 { font-size:28px; letter-spacing:-.8px; }
+.atlas-sculpture { position:absolute; top:0; right:0; width:38%; height:195px; margin:0; background:none; border:0; overflow:visible; pointer-events:none; }
+.atlas-sculpture::after { display:none; }
+.atlas-courses { gap:18px; margin-top:22px; }
+.course-planet { position:relative; isolation:isolate; overflow:hidden; padding:24px!important; min-height:225px; text-align:left; background:var(--space-panel)!important; border-radius:28px; }
+.course-planet[aria-pressed="true"] { border-color:var(--control-accent)!important; background:linear-gradient(130deg,#b6d7cc26,#b1a2d014)!important; }
+.course-planet>.planet-sculpture { position:relative; z-index:1; width:130px; height:130px; }
+.course-planet strong,.course-planet .planet-caption,.course-planet .cat-stage-caption { position:relative; z-index:2; }
+.course-habitat { position:absolute; width:190px; height:140px; top:30px; right:-15px; z-index:0; pointer-events:none; }
+.course-habitat i { position:absolute; bottom:0; left:0; width:170px; height:58px; border-radius:50%; background:linear-gradient(160deg,#cbdde328,#6e829320); box-shadow:inset 0 2px #effffa40,0 12px 24px #03162824; transform:rotate(-12deg); }
+.course-habitat i:nth-child(2) { width:85px; height:35px; left:60px; bottom:40px; background:linear-gradient(150deg,var(--habitat-color,#baa5d7),#69888d33); opacity:.5; transform:rotate(16deg); }
+.course-habitat i:nth-child(3) { width:24px; height:34px; left:125px; bottom:78px; border-radius:40% 55% 35% 45%; background:#d7d8cd80; transform:rotate(-12deg); }
+.course-planet[data-growth="0"] .course-habitat i:nth-child(3) { opacity:.12; }
+.course-planet[data-growth="2"] .course-habitat i:nth-child(3),.course-planet[data-growth="3"] .course-habitat i:nth-child(3) { box-shadow:0 0 16px #d7d8cd30; }
+.atlas-create { margin-block:20px; }
+.atlas-detail { padding:28px; }
+.atlas-detail-grid { gap:28px; }
+.atlas-notebook { border-top:1px solid var(--space-line); padding-top:24px; margin-top:26px; }
+#atlas-notes { min-height:150px; }
+.atlas-detail-heading h2 { font-size:26px; letter-spacing:-.8px; }
+.atlas-assignment { border-color:var(--space-line); }
+
+/* Rhythms inherit the selected accent; geometric cues communicate repetition. */
+body[data-scene="rhythm"] #planner { margin-top:0; padding:28px; }
+body[data-scene="rhythm"] .week-strip { margin-top:20px; }
+#rhythm-note { background:#c0d9d309; border-left:2px solid var(--orbiter-accent); border-radius:0 16px 16px 0; font-size:11px; }
+body[data-scene="rhythm"] .day-signal { background:linear-gradient(120deg,#b4d6c814,#96a8c908)!important; }
+
+/* A material hierarchy: blur belongs to a small number of floating planes. */
+button:where(:not(.orbit-art):not(#cat)) { backdrop-filter:none; -webkit-backdrop-filter:none; transition:transform .18s,background .2s,border-color .2s; }
+dialog.popup-lab { background:linear-gradient(140deg,#31515ae8,#243346f5)!important; border-radius:32px; box-shadow:inset 0 1px #fff3,0 30px 100px #02091560; }
+dialog.popup-lab .jump-heading,dialog.popup-lab .dialog-header { background:linear-gradient(115deg,#c7e5da13,#ad9ed00d); }
+dialog.popup-lab :is(input,select,textarea) { backdrop-filter:none!important; -webkit-backdrop-filter:none!important; background:#c0d6df0c!important; }
+.popup-sigil { opacity:.9; }
+body.solid-glass :is(.hero,#planner,.assignment-overview,.atlas-detail,.focus-card,.workload-forecast,.exam-prep-card,.course-planet),body[data-material="quiet"] :is(.hero,#planner,.assignment-overview,.atlas-detail,.focus-card,.workload-forecast,.exam-prep-card,.course-planet) { background:#233340!important; backdrop-filter:none!important; }
+body.solid-glass dialog.popup-lab,body[data-material="quiet"] dialog.popup-lab { background:#243646!important; }
+body.solid-glass dialog.popup-lab :is(input,select,textarea),body[data-material="quiet"] dialog.popup-lab :is(input,select,textarea) { background:#2a4050!important; }
+
+@media(max-width:1100px) {
+  :root { --space-gap:18px; }
+  .assignment-cards { grid-template-columns:1fr; }
+  #tasks-main { grid-template-columns:1fr; }
+  #now-card .orbit-art { width:195px; right:10px; }
+  #now-card>div:not(.orbit-art):not(.next-peek):not(.orb-reward-dashboard) { max-width:calc(100% - 180px); }
+}
+@media(max-width:720px) {
+  :root { --space-gap:16px; }
+  .greeting { margin-block:24px 18px; }
+  #greeting-title { font-size:34px; }
+  .masthead { border-radius:20px; }
+  #now-card { padding:24px; min-height:350px; }
+  #now-card .orbit-art { width:150px; height:170px; top:10px; right:0; }
+  #now-card>div:not(.orbit-art):not(.next-peek):not(.orb-reward-dashboard) { max-width:calc(100% - 110px); }
+  #now-title { font-size:26px; }
+  .exam-prep-list { grid-template-columns:1fr; }
+  .forecast-heading-row { flex-wrap:wrap; }
+  .forecast-heading-row h2 { flex:1 1 100%; }
+  .forecast-days { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .forecast-day { padding:13px 5px; }
+  #course-atlas>.atlas-intro { padding:24px 42% 24px 24px; min-height:175px; }
+  #course-atlas>.atlas-intro h2 { font-size:22px; }
+  .atlas-sculpture { height:175px; }
+  .atlas-courses { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .course-planet { padding:18px!important; min-height:200px; }
+  .course-planet>.planet-sculpture { width:105px; height:105px; }
+  .course-habitat { transform:scale(.8); transform-origin:right bottom; }
+  .atlas-detail,body[data-scene="rhythm"] #planner { padding:20px; }
+  .date-stamp { min-width:112px; }
+  #planner { padding:14px; }
+}
+@media(max-width:380px) { .atlas-courses { grid-template-columns:1fr; } #now-card .orbit-art { width:120px; } .date-stamp { min-width:100px; } }
+@media(prefers-reduced-motion:reduce) { .orbital-backdrop * { animation:none!important; } #liquid-landscape { transform:none!important; transition:none; } }
+@media(prefers-reduced-transparency:reduce) { .sidebar,.masthead,dialog.popup-lab { background:#233443!important; backdrop-filter:none!important; } }
+#atlas-notes { backdrop-filter:none; -webkit-backdrop-filter:none; }
+/* Task titles are text links; the explicit actions carry the glass surface. */
+.task-item button.task-title,.exam-prep-card button.task-title,.practice-card button.task-title,#atlas-assignments button.atlas-task-link {
+  background:transparent!important; border:0!important; border-radius:8px; box-shadow:none!important;
+  padding:0; color:var(--space-text)!important; line-height:1.45; text-align:left;
+}
+.task-item button.task-title:hover,.exam-prep-card button.task-title:hover,.practice-card button.task-title:hover,#atlas-assignments button.atlas-task-link:hover { background:transparent!important; color:var(--orbiter-accent)!important; }
+.task-tabs { display:flex; gap:4px; padding:5px; width:max-content; border:1px solid var(--space-line); border-radius:18px; background:#bddbd10a; }
+.task-tabs button { border:1px solid transparent; border-radius:13px; padding:9px 16px; background:transparent!important; }
+.task-tabs button[aria-pressed="true"] { border-color:var(--control-border); background:#b7d5cd1c!important; }
+.task-tabs button::after { display:none; }
+#atlas-new-name { background:#b7d1d614; border:1px solid var(--space-line); border-radius:18px; padding:14px 16px; }
+/* Export is a small command deck, with enough room for the actual content. */
+#export-dialog.popup-lab { padding: 0 0 24px; overflow-x: hidden; }
+#export-dialog .export-option { margin: 18px 24px 0; padding: 22px; border: 1px solid var(--control-border); border-radius: 24px; background: linear-gradient(145deg,#c9e4e516,#acb4d00b); }
+#export-dialog .export-option h3 { margin: 0 0 10px; font-size: 19px; }
+#export-dialog .export-option p { line-height: 1.6; color: #cadce4; margin: 10px 0 14px; }
+#export-dialog .export-option button { width: auto; min-height: 44px; padding: 11px 18px; border-radius: 16px; }
+#export-dialog .export-check { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+#export-dialog .export-check input { appearance: none; box-sizing: border-box; flex: 0 0 18px; width: 18px; height: 18px; min-height: 0; padding: 0; margin: 0; border: 1px solid var(--control-border); border-radius: 5px; background: #c9e3dd12; box-shadow: none; }
+#export-dialog .export-check input:checked { background: var(--control-accent); border-color: var(--control-accent); }
+#export-dialog .export-check input:checked::after { content: '✓'; display: block; text-align: center; line-height: 16px; color: #173b35; font-size: 13px; }
+#export-dialog .export-check input:focus-visible { outline: 2px solid var(--control-accent); outline-offset: 3px; }
+#export-dialog #export-error { margin-inline: 24px; }
+@media(max-width:540px){#export-dialog .export-option{margin-inline:14px;padding:18px;}}

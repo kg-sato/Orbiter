@@ -1,6 +1,6 @@
 [package]
 name = "orbit-companion"
-version = "0.3.1"
+version = "0.4.2"
 description = "An autonomous study companion for Scheduler"
 edition = "2021"
 
@@ -14,6 +14,7 @@ tauri-plugin-autostart = "2"
 tauri-plugin-opener = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-dialog = "2"
+tauri-plugin-updater = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.38", features = ["bundled"] }
@@ -24,9 +25,11 @@ tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "sync", "
 tokio-stream = { version = "0.1", features = ["sync"] }
 futures-util = "0.3"
 sha2 = "0.10"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+tungstenite = { version = "0.28", features = ["rustls-tls-native-roots"] }
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_RemoteDesktop", "Win32_System_LibraryLoader"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_System_RemoteDesktop", "Win32_System_LibraryLoader", "Win32_Security_Cryptography", "Win32_System_Memory"] }
 
 [profile.release]
 codegen-units = 1
