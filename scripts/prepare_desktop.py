@@ -20,12 +20,14 @@ html = (root / 'Application.html').read_text(encoding='utf-8')
 html = re.sub(r'<link\s+rel="(?:manifest|apple-touch-icon)"[^>]*>\s*', '', html)
 html = html.replace('<head>', '<head>\n<script src="./native-adapter.js"></script>', 1)
 html = html.replace('<body>', '<body data-native-mode="buddy">\n<div id="native-planner" hidden inert>', 1)
-html = html.replace('</body>', '</div><orbiter-buddy></orbiter-buddy><script src="./native-shell.js"></script></body>')
+html = html.replace('</body>', '</div><orbiter-buddy></orbiter-buddy><script src="./native-shell.js"></script><script src="./updater.js"></script></body>')
 html = html.replace('</head>', '<style>body[data-native-mode="buddy"]{margin:0;overflow:hidden;background:transparent!important}html:has(body[data-native-mode="buddy"]){background:transparent!important}#native-planner[hidden]{display:none!important}body[data-native-mode="buddy"] #native-planner *{animation-play-state:paused!important}</style></head>')
 (native / 'Application.html').write_bytes(html.replace('\r\n','\n').replace('\r','\n').encode('utf-8'))
-for name in ('native-adapter.js','native-shell.js','buddy.css'):
+for name in ('native-adapter.js','native-shell.js','updater.js','buddy.css'):
     shutil.copyfile(root / 'desktop/ui' / name,native / name)
 shutil.copyfile(root / 'web/account-sync.js',native / 'web/account-sync.js')
+shutil.copyfile(root / 'web/cloud-sync.js',native / 'web/cloud-sync.js')
+shutil.copyfile(root / 'web/account.css',native / 'web/account.css')
 shutil.copyfile(root / 'web/rewards.css',native / 'web/rewards.css')
 shutil.copyfile(root / 'web/glass.css',native / 'web/glass.css')
 for icon in (root / 'web/icons').glob('*'):

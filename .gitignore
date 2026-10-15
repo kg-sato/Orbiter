@@ -29,3 +29,6 @@ node_modules/
 desktop/src-tauri/target/
 desktop/src-tauri/assets/
 desktop/src-tauri/gen/
+
+# Local release-signing secrets; back up outside the repository.
+.release-keys/

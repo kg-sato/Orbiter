@@ -1,7 +1,7 @@
 {
   "name": "orbiter-study",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.4.2",
   "scripts": {
     "build:core": "python scripts/build_core.py",
     "dev:lan": "python scripts/serve_local.py --bind 127.0.0.1",
@@ -12,6 +12,8 @@
     "desktop:build": "npm run build:core && npm run desktop:prepare && cd desktop && tauri build"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@supabase/supabase-js": "^2.117.3",
     "@tauri-apps/cli": "^2.12.2",
     "esbuild": "^0.28.2",
     "playwright-core": "^1.58.2",

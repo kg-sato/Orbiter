@@ -1,8 +1,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+mod cloud;
 mod engine;
 mod model;
 mod power;
 mod server;
+mod updates;
 use engine::Backend;
 use serde_json::{json, Value};
 use server::Access;
@@ -34,7 +36,7 @@ fn ui_ready(
     if std::env::args().any(|a| a == "--measure") {
         if let Some(w) = app.get_webview_window("buddy") {
             let size = w.inner_size().map_err(|e| e.to_string())?;
-            std::fs::write(backend.dir.join("ui-ready.json"),json!({"ready":true,"width":size.width,"height":size.height,"diagnostics":diagnostics,"scale":w.scale_factor().unwrap_or(1.0),"mode":if app.state::<WindowMode>().planner.load(Ordering::SeqCst){"planner"}else{"buddy"}}).to_string()).map_err(|e|e.to_string())?;
+            std::fs::write(backend.dir.join("ui-ready.json"),json!({"ready":true,"identifier":app.config().identifier,"width":size.width,"height":size.height,"diagnostics":diagnostics,"scale":w.scale_factor().unwrap_or(1.0),"mode":if app.state::<WindowMode>().planner.load(Ordering::SeqCst){"planner"}else{"buddy"}}).to_string()).map_err(|e|e.to_string())?;
         }
     }
     Ok(())
@@ -125,7 +127,7 @@ fn buddy_presentation(app: tauri::AppHandle, kind: String) -> Result<(), String>
     if let Some(w) = app.get_webview_window("buddy") {
         let (width, height) = match kind.as_str() {
             "options" => (settings.buddy_width.max(420), 560),
-            "reward" => (settings.buddy_width.max(420), 400),
+            "reward" => (settings.buddy_width.max(420), 520),
             _ => (settings.buddy_width, settings.buddy_height),
         };
         w.set_size(LogicalSize::new(width as f64, height as f64))
@@ -433,12 +435,16 @@ fn main() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .manage(updates::Updates::default())
         .plugin(
             tauri_plugin_autostart::Builder::new()
                 .args(["--quiet"])
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
+            updates::check_update,
+            updates::install_update,
             snapshot,
             ui_ready,
             action,
@@ -452,7 +458,8 @@ fn main() {
             window_control,
             close_buddy,
             export_workspace,
-            open_backups
+            open_backups,
+            cloud::cloud_command
         ])
         .setup(|app| {
             let backend = Backend::open(
@@ -473,6 +480,9 @@ fn main() {
                 std::fs::write(file, access.link())?;
             }
             app.manage(backend.clone());
+            let cloud = cloud::Cloud::open(backend.clone()).map_err(std::io::Error::other)?;
+            app.manage(cloud.clone());
+            cloud.start();
             app.manage(access.clone());
             let show = MenuItem::with_id(app, "show", "Show companion", true, None::<&str>)?;
             let timer = MenuItem::with_id(app, "timer", "Start / pause focus", true, None::<&str>)?;
@@ -518,7 +528,10 @@ fn main() {
                 .build(app)?;
             power::listen(backend.clone());
             tauri::async_runtime::spawn(backend.run());
-            tauri::async_runtime::spawn(server::serve(access));
+            // Measurement-only builds never compete with the user's paired website port.
+            if !std::env::args().any(|a| a == "--measure") {
+                tauri::async_runtime::spawn(server::serve(access));
+            }
             // Optional startup opens quietly in the tray; ordinary launches show the buddy.
             if !std::env::args().any(|a| a == "--quiet") {
                 show_buddy(app.handle()).map_err(std::io::Error::other)?;

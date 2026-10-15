@@ -6,12 +6,13 @@
  const invoke=window.__TAURI__.core.invoke, listen=window.__TAURI__.event.listen;
  let current=null,latest=null,subscriber=null,pending=false,again=false;
  const publish=v=>{if(!latest||v.revision>=latest.revision){latest=v;window.OrbiterNativeState=v;window.dispatchEvent(new CustomEvent('orbiter-native-state',{detail:v}));}};
+ const rewardAction=async(action,args)=>{if(!latest?.cloudConnected)return null;if(action==='chest')return invoke('cloud_command',{action:'chest',args:{}});if(action==='settings'){for(const slot of ['appearance','halo','trail','habitat'])if(args[slot])return invoke('cloud_command',{action:'equip',args:{slot,item:args[slot]}});}return null;};
  const ready=invoke('snapshot').then(v=>{current=v;publish(v);return v;});
  window.OrbitDesktop={
   ready,
-  actionResult:async(action,args={})=>{await ready;const v=await invoke('action',{action,args});if(v.editRevision===current.editRevision)current=v;publish(v);return v;},
+  actionResult:async(action,args={})=>{await ready;const v=await rewardAction(action,args)||await invoke('action',{action,args});if(v.editRevision===current.editRevision)current=v;publish(v);return v;},
   save:async(workspace,importing=false)=>{await ready;try{const v=await invoke('save_workspace',{workspace,revision:current.editRevision,import:importing});current=v;publish(v);sessionStorage.removeItem('orbit.unsaved-draft');return v.workspace;}catch(e){sessionStorage.setItem('orbit.unsaved-draft',JSON.stringify(workspace));throw e;}},
-  action:async(action,args={})=>{await ready;if(action==='show-buddy'){await invoke('switch_mode',{mode:'buddy'});return latest.workspace;}const v=await invoke('action',{action,args});if(v.editRevision===current.editRevision)current=v;publish(v);return v.workspace;},
+  action:async(action,args={})=>{await ready;if(action==='show-buddy'){await invoke('switch_mode',{mode:'buddy'});return latest.workspace;}const v=await rewardAction(action,args)||await invoke('action',{action,args});if(v.editRevision===current.editRevision)current=v;publish(v);return v.workspace;},
   subscribe:callback=>{subscriber=callback;},
   reload:async()=>{current=await invoke('snapshot');publish(current);return current.workspace;},
   draft:()=>sessionStorage.getItem('orbit.unsaved-draft'),

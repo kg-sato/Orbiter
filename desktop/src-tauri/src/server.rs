@@ -2,7 +2,7 @@
 use crate::engine::Backend;
 use axum::{
     body::Body,
-    extract::{DefaultBodyLimit, State},
+    extract::{DefaultBodyLimit, Query, State},
     http::{HeaderMap, HeaderValue, Request, StatusCode},
     middleware::{self, Next},
     response::{
@@ -28,6 +28,7 @@ pub struct Access {
     grants: Mutex<HashMap<String, Instant>>,
     sessions: Mutex<HashMap<String, (String, Instant)>>,
     attempts: Mutex<(Instant, u32)>,
+    auth_attempts: Mutex<(Instant, u32)>,
 }
 pub fn token() -> String {
     let mut b = [0u8; 32];
@@ -41,6 +42,7 @@ impl Access {
             grants: Mutex::new(HashMap::new()),
             sessions: Mutex::new(HashMap::new()),
             attempts: Mutex::new((Instant::now(), 0)),
+            auth_attempts: Mutex::new((Instant::now(), 0)),
         })
     }
     pub fn link(&self) -> String {
@@ -60,6 +62,19 @@ async fn guard(State(access): State<Arc<Access>>, req: Request<Body>, next: Next
         return failure(StatusCode::FORBIDDEN, "Invalid host");
     }
     let path = req.uri().path();
+    if path == "/auth-callback" {
+        let mut rate = access.auth_attempts.lock().unwrap();
+        if rate.0.elapsed() > Duration::from_secs(60) {
+            *rate = (Instant::now(), 0);
+        }
+        rate.1 += 1;
+        if rate.1 > 10 {
+            return failure(
+                StatusCode::TOO_MANY_REQUESTS,
+                "Too many sign-in attempts; wait a minute.",
+            );
+        }
+    }
     let api = path.starts_with("/api/");
     let write = req.method() != axum::http::Method::GET;
     if api {
@@ -124,6 +139,38 @@ async fn guard(State(access): State<Arc<Access>>, req: Request<Body>, next: Next
     h.insert("x-frame-options", HeaderValue::from_static("DENY"));
     h.insert("referrer-policy", HeaderValue::from_static("no-referrer"));
     response
+}
+async fn auth_callback(
+    State(a): State<Arc<Access>>,
+    Query(q): Query<HashMap<String, String>>,
+) -> Response {
+    use tauri::{Emitter, Manager};
+    let Some(code) = q.get("code").cloned() else {
+        return (StatusCode::BAD_REQUEST,[("content-type","text/html; charset=utf-8")],"<h1>Sign-in was not completed</h1><p>Request a new link in Orbiter and open it on this PC.</p>").into_response();
+    };
+    let app = a.backend.app.lock().unwrap().clone();
+    let Some(app) = app else {
+        return failure(StatusCode::SERVICE_UNAVAILABLE, "Orbiter is unavailable");
+    };
+    let Some(cloud) = app
+        .try_state::<Arc<crate::cloud::Cloud>>()
+        .map(|c| c.inner().clone())
+    else {
+        return failure(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "Account service unavailable",
+        );
+    };
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        cloud.command("complete-link", json!({"code":code}))
+    })
+    .await;
+    if !matches!(result, Ok(Ok(_))) {
+        return (StatusCode::BAD_REQUEST,[("content-type","text/html; charset=utf-8")],"<h1>Sign-in was not completed</h1><p>Open Orbiter, request a new link, and use the newest email on this PC. Your study data is unchanged.</p>").into_response();
+    }
+    let _ = crate::set_mode(&app, "planner");
+    let _ = app.emit("orbiter-open-account", ());
+    ([("content-type","text/html; charset=utf-8"),("content-security-policy","default-src 'none'; frame-ancestors 'none'; base-uri 'none'")],"<h1>Connected to Orbiter</h1><p>Return to the Orbiter application to choose how to connect your workspace. You can close this tab.</p>").into_response()
 }
 async fn pair(State(a): State<Arc<Access>>, Json(v): Json<Value>) -> Response {
     let grant = v["token"].as_str().unwrap_or("");
@@ -222,8 +269,16 @@ async fn asset(req: Request<Body>) -> Response {
             include_bytes!("../assets/desktop-sync.js").as_slice(),
             "text/javascript",
         ),
+        "/web/cloud-sync.js" => (
+            include_bytes!("../../../web/cloud-sync.js").as_slice(),
+            "text/javascript",
+        ),
+        "/web/account.css" => (
+            include_bytes!("../../../web/account.css").as_slice(),
+            "text/css",
+        ),
         "/web/account-sync.js" => (
-            b"/* Desktop workspace is local, not a cloud account. */".as_slice(),
+            include_bytes!("../../../web/account-sync.js").as_slice(),
             "text/javascript",
         ),
         "/web/icons/orbit-192.png" => (
@@ -261,7 +316,7 @@ async fn asset(req: Request<Body>) -> Response {
     }
     response
 }
-fn base64(bytes: &[u8]) -> String {
+pub(crate) fn base64(bytes: &[u8]) -> String {
     const A: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     let mut out = String::new();
     for c in bytes.chunks(3) {
@@ -280,6 +335,7 @@ fn base64(bytes: &[u8]) -> String {
 }
 fn router(access: Arc<Access>) -> Router {
     let app = Router::new()
+        .route("/auth-callback", get(auth_callback))
         .route("/api/pair", post(pair))
         .route("/api/state", get(snapshot))
         .route("/api/workspace", post(save))

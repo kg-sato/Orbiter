@@ -1,10 +1,13 @@
-param([switch]$Expanded, [string]$Executable, [string]$Profile)
+param([switch]$Expanded, [string]$Executable, [string]$Profile, [switch]$IsolatedQa)
 $ErrorActionPreference = 'Stop'
 $orbitRepo = Split-Path -Parent $PSScriptRoot
 $orbitExecutable = if ($Executable) { $Executable } else { Join-Path $orbitRepo 'desktop\src-tauri\target\release\orbit-companion.exe' }
 $orbitProfile = if ($Profile) { $Profile } else { Join-Path $orbitRepo 'build\desktop-performance' }
 # Single-instance routing is application-wide. Never let QA hide/quit a live study session.
-if (Get-Process -Name 'orbit-companion' -ErrorAction SilentlyContinue) {
+if ($IsolatedQa -and [IO.Path]::GetFileName($orbitExecutable) -ne 'orbiter-performance.exe') {
+  throw 'Parallel QA requires the explicitly named isolated measurement executable.'
+}
+if (-not $IsolatedQa -and (Get-Process -Name 'orbit-companion' -ErrorAction SilentlyContinue)) {
   throw 'Close Orbiter explicitly before measuring a release. A QA profile does not isolate native single-instance commands.'
 }
 New-Item -ItemType Directory -Path $orbitProfile -Force | Out-Null
@@ -16,6 +19,9 @@ $orbitWatch = [System.Diagnostics.Stopwatch]::StartNew()
 $orbitProcess = Start-Process -FilePath $orbitExecutable -ArgumentList $orbitArgs -PassThru -WindowStyle Hidden
 while (-not (Test-Path -LiteralPath $orbitReady) -and $orbitWatch.Elapsed.TotalSeconds -lt 15) { Start-Sleep -Milliseconds 100 }
 if (-not (Test-Path -LiteralPath $orbitReady)) { throw 'The native UI did not report readiness. Check IPC and window permissions.' }
+if ($IsolatedQa -and (Get-Content -LiteralPath $orbitReady | ConvertFrom-Json).identifier -ne 'com.kgsato.orbit.performance') {
+  throw 'Measurement identity is not isolated. No hide or quit commands were sent.'
+}
 $orbitStartup = $orbitWatch.Elapsed.TotalSeconds
 function Get-OrbitProcesses {
   $orbitInventory = @(Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId)

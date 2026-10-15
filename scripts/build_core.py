@@ -8,6 +8,7 @@ import sys
 root = Path(__file__).resolve().parent.parent
 subprocess.run(['node', str(root / 'node_modules/typescript/bin/tsc'), '-p', str(root / 'tsconfig.json')], cwd=root, check=True)
 subprocess.run(['node', str(root / 'scripts/build_cat.cjs')], cwd=root, check=True)
+subprocess.run(['node', str(root / 'scripts/build_cloud.cjs')], cwd=root, check=True)
 app = root / 'Application.html'
 source = app.read_text(encoding='utf-8')
 javascript = (root / 'build/study-core.js').read_text(encoding='utf-8')
@@ -33,6 +34,18 @@ if '<style id="orbiter-glass-styles">' in source:
     source = re.sub(r'<style id="orbiter-glass-styles">.*?</style>', lambda _: glass_css, source, flags=re.S)
 else:
     source = source.replace('</head>', glass_css + '\n</head>', 1)
+celestial_css = '<style id="orbiter-celestial-styles">\n' + (root / 'web/celestial.css').read_text(encoding='utf-8') + '\n</style>'
+if '<style id="orbiter-celestial-styles">' in source:
+    source = re.sub(r'<style id="orbiter-celestial-styles">.*?</style>', lambda _: celestial_css, source, flags=re.S)
+else:
+    source = source.replace('</head>', celestial_css + '\n</head>', 1)
+scene_script = '<script id="orbiter-scene-controller">\n' + (root / 'web/celestial.js').read_text(encoding='utf-8') + '\n</script>'
+if '<script id="orbiter-scene-controller">' in source:
+    source = re.sub(r'<script id="orbiter-scene-controller">.*?</script>', lambda _: scene_script, source, flags=re.S)
+else:
+    source = source.replace('<!-- Generated 3D cat', scene_script + '\n<!-- Generated 3D cat', 1)
+scene_art = '<div class="orbital-backdrop" aria-hidden="true">\n' + (root / 'web/celestial.svg').read_text(encoding='utf-8') + '\n</div>'
+source = re.sub(r'<div class="orbital-backdrop" aria-hidden="true">.*?</div>', lambda _: scene_art, source, count=1, flags=re.S)
 app.write_text(source, encoding='utf-8')
 for name in ['sync_app.py', 'sync_preview.py']:
     subprocess.run([sys.executable, str(root / 'scripts' / name)], cwd=root, check=True)
@@ -40,7 +53,7 @@ for name in ['sync_app.py', 'sync_preview.py']:
 # A content-based shell version lets hosted offline clients discover each build.
 worker = root / 'sw.js'
 if worker.exists():
-    digest = hashlib.sha256(app.read_bytes() + (root / 'web/account-sync.js').read_bytes() + (root / 'web/study-companion.html').read_bytes() + (root / 'web/study-companion.js').read_bytes()).hexdigest()[:16]
+    digest = hashlib.sha256(app.read_bytes() + (root / 'web/cloud-sync.js').read_bytes() + (root / 'web/account.css').read_bytes() + (root / 'web/account-sync.js').read_bytes() + (root / 'web/study-companion.html').read_bytes() + (root / 'web/study-companion.js').read_bytes()).hexdigest()[:16]
     text = worker.read_text(encoding='utf-8')
     text = re.sub(r'const SHELL_VERSION = "[^"]*";', 'const SHELL_VERSION = "' + digest + '";', text)
     worker.write_text(text, encoding='utf-8')
