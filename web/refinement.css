@@ -1,0 +1,84 @@
+/* Shared daily controls and original moonlit scenes. Text never inherits atmosphere opacity. */
+:root { --atmosphere:.5; --orb-press:90ms; --orb-local:180ms; --orb-panel:240ms; }
+body[data-preset="lunar-mist"] { --space-ink:#181c32; }
+body[data-preset="opal-dawn"] { --space-ink:#1e2934; }
+body[data-preset="lunar-mist"] .celestial-sky { fill:#181c32; }
+body[data-preset="lunar-mist"] .scene-lilac-stop { stop-color:#c4c5ed; }
+body[data-preset="opal-dawn"] .celestial-sky { fill:#1e2934; }
+body[data-preset="opal-dawn"] .scene-lilac-stop { stop-color:#edc3ae; }
+body[data-preset="opal-dawn"] .scene-accent-stop { stop-color:#bed8ce; }
+.intention-field { text-align:left; display:grid; gap:8px; margin:18px 0 8px; min-width:0; }
+.intention-field label { font-size:11px; letter-spacing:.06em; color:var(--space-muted); }
+.intention-field select { width:100%; min-width:0; text-overflow:ellipsis; }
+.focus-secondary,.appearance-actions,.appearance-preview-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.focus-secondary button { flex:1; min-width:85px; white-space:nowrap; }
+.focus-card .focus-controls { gap:10px; }
+.focus-card .focus-reset { flex:0 0 44px; width:44px; height:44px; padding:0; display:grid; place-items:center; }
+button { transition:background-color 140ms ease-out,border-color 140ms ease-out,transform var(--orb-press) ease-out; }
+button:active:not(:disabled) { transform:scale(.97); }
+button:disabled { cursor:not-allowed; opacity:.5; }
+button:focus-visible,select:focus-visible,input:focus-visible { outline:2px solid var(--orbiter-accent,#b4e6d5); outline-offset:4px; }
+button.close,.dialog-header [data-close],.jump-heading>button { display:grid; place-items:center; line-height:1; min-width:44px; min-height:44px; padding:0; }
+.appearance-studio { display:grid; gap:10px; margin-top:18px; }
+.appearance-studio label { display:flex; justify-content:space-between; }
+.appearance-studio input[type=range] { width:100%; accent-color:var(--orbiter-accent,#b4e6d5); background:transparent!important; box-shadow:none!important; padding:0; }
+.appearance-preview { --preview-accent:#b4e6d5; position:relative; overflow:hidden; isolation:isolate; display:flex; gap:16px; min-height:210px; border:1px solid #dfedeb40; border-radius:24px; padding:22px; color:#edf4f6; background:#142634; }
+.appearance-preview[data-preset=lunar-mist] { background:#242842; }
+.appearance-preview[data-preset=opal-dawn] { background:#35414a; }
+.preview-sky { position:absolute; z-index:-1; inset:0; opacity:calc(.3 + var(--atmosphere,.5) * .7); background:radial-gradient(ellipse at 80% 20%,#d2c0e45c,transparent 60%),linear-gradient(155deg,transparent 35%,#8abfb54d 36%,#8abfb51a 57%,transparent 58%); }
+[data-preset=opal-dawn]>.preview-sky { background:radial-gradient(ellipse at 85% 5%,#efc8a77c,transparent 60%),linear-gradient(155deg,transparent 35%,#b9d5c44d 36%,#b9d5c41a 57%,transparent 58%); }
+.preview-sidebar { width:32px; flex:none; border-right:1px solid #ffffff20; color:var(--preview-accent); }
+.preview-sidebar i { display:block; width:16px; height:4px; background:#ffffff40; border-radius:5px; margin-top:20px; }
+.preview-content { display:grid; align-content:center; gap:12px; min-width:0; flex:1; }
+.preview-content small { font-size:9px; letter-spacing:.15em; }
+.preview-content strong { font-size:19px; max-width:230px; }
+.preview-content button { background:color-mix(in srgb,var(--preview-accent) 24%,transparent)!important; color:#edf4f6!important; border:1px solid var(--preview-accent); width:max-content; pointer-events:none; }
+.preview-progress { height:5px; border-radius:20px; background:#ffffff24; }
+.preview-progress span { display:block; width:38%; height:100%; border-radius:inherit; background:var(--preview-accent); }
+.preview-cat { width:100px; display:grid; place-items:center; color:var(--preview-accent); font-size:50px; }
+.preview-cat img { width:100%; height:120px; object-fit:contain; }
+.appearance-preview[data-view=buddy] { max-width:430px; margin:auto; width:100%; min-height:165px; border-radius:44px; }
+.appearance-preview[data-view=buddy] .preview-sidebar { display:none; }
+.appearance-preview[data-view=buddy] .preview-cat { order:-1; width:80px; }
+.appearance-preview[data-material=quiet] { background:#253344; }
+.appearance-preview[data-material=quiet] .preview-sky { display:none; }
+.appearance-actions button { min-height:42px; flex:1 1 120px; }
+.orb-session-recap { border:1px solid #d4ebe630; border-radius:22px; padding:20px; margin-top:18px; background:linear-gradient(130deg,#c4e7dd14,#c8b5eb0d); }
+.orb-session-recap h3 { margin:0 0 8px; font-size:18px; }
+.orb-session-recap p { margin:8px 0; font-size:13px; color:var(--space-muted,#c5d4dc); }
+.orb-session-recap .recap-metrics { display:flex; flex-wrap:wrap; gap:12px 24px; margin:16px 0; }
+.recap-metrics strong { display:block; font-size:22px; color:var(--space-text,#edf4f6); }
+.recap-metrics small { font-size:11px; }
+.recap-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.recap-actions button { min-height:40px; }
+.course-planet[data-growth] .planet-sculpture::after { content:''; position:absolute; width:95%; height:12px; left:3%; bottom:4%; border-radius:50%; background:#07111b35; pointer-events:none; }
+.course-planet[data-growth="2"] .course-habitat i:nth-child(3),.course-planet[data-growth="3"] .course-habitat i:nth-child(3) { background:#efd9b9; }
+.reduced-motion *,body.calm *,body.quiet * { scroll-behavior:auto!important; }
+@media(max-width:600px) {
+  .appearance-preview { padding:16px; gap:10px; min-height:190px; }
+  .preview-cat { width:70px; }
+  .preview-sidebar { width:20px; }
+  .preview-content strong { font-size:16px; }
+  .focus-secondary button { min-height:44px; }
+}
+@media(prefers-reduced-motion:reduce) { button { transition:none!important; } button:active:not(:disabled) { transform:none; } }
+
+.focus-custom { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:11px; color:var(--space-muted); margin:8px 0; }
+.focus-custom input { width:78px; min-height:36px; text-align:center; }
+
+.orb-session-recap { width:100%; text-align:left; }
+#now-card:has(.orb-reward-dashboard) .orbit-art { height:225px;max-height:225px; }
+@media(max-width:720px){#now-card:has(.orb-reward-dashboard) .orbit-art{height:170px;max-height:170px}}
+
+[data-cat-fallback=true][data-habitat-stage]::before { content:''; position:absolute; width:80%; height:14%; border-radius:50%; background:#8bb5aa66; bottom:4%; left:10%; pointer-events:none; }
+[data-cat-fallback=true][data-habitat-stage="2"]::before,[data-cat-fallback=true][data-habitat-stage="3"]::before { box-shadow:-30px -18px 0 -7px #edd5a5,28px -10px 0 -5px #a9c4ab; }
+
+@media(min-width:760px) {
+  #settings-editor { width:min(900px,calc(100vw - 64px)); max-width:900px; }
+  .appearance-studio { grid-template-columns:minmax(170px,.7fr) minmax(280px,1fr); gap:20px; align-items:start; }
+  .appearance-studio .scene-controls { display:grid;gap:12px; }
+  .appearance-studio>.appearance-actions,.appearance-studio>#appearance-status { grid-column:1/-1; }
+  .appearance-preview { min-height:245px; }
+}
+
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more) { .preview-sky { display:none!important; } .appearance-preview { background:#253344!important; } }

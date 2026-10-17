@@ -16,6 +16,16 @@ for(const name of fs.readdirSync('supabase/migrations').sort()){
 }
 await db.exec(`insert into public.orbiter_beta_members values('11111111-1111-4111-a111-111111111111');set role authenticated;set request.jwt.claim.sub='11111111-1111-4111-a111-111111111111';`);
 const call=async(name,args=[])=>{if(name==='orbiter_write'&&typeof args[3]==='string')args[3]=JSON.stringify(args[3]);const rows=await db.query(`select public.${name}(${args.map((_,i)=>'$'+(i+1)).join(',')}) as result`,args);return rows.rows[0].result;};
+await db.exec('reset role'); // Validate the private helper as this disposable database's owner.
+for(const scene of ['tidal-night','lunar-mist','opal-dawn'])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','scenePreset']),JSON.stringify(scene)]),true);
+assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','scenePreset']),JSON.stringify('unknown')]),false);
+for(const strength of [0,50,100])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','atmosphereStrength']),JSON.stringify(strength)]),true);
+for(const strength of [-1,101,0.5])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','atmosphereStrength']),JSON.stringify(strength)]),false);
+for(const strength of [0,70,100])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','motionIntensity']),JSON.stringify(strength)]),true);
+for(const strength of [-1,101,0.5])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','motionIntensity']),JSON.stringify(strength)]),false);
+for(const quality of ['auto','low','high'])assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','effectQuality']),JSON.stringify(quality)]),true);
+assert.equal(await call('orbiter_validate_record',[JSON.stringify(['preference','effectQuality']),JSON.stringify('ultra')]),false);
+await db.exec('set role authenticated');
 const k=JSON.stringify(['preference','name']),op='33333333-3333-4333-a333-333333333333';
 const first=await call('orbiter_write',[op,k,0,'First']);assert.equal(first.version,1);
 assert.deepEqual(await call('orbiter_write',[op,k,0,'First']),first);

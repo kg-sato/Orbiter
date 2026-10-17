@@ -31,15 +31,16 @@ fn ui_ready(
     app: tauri::AppHandle,
     backend: State<Arc<Backend>>,
     diagnostics: Option<Value>,
-) -> Result<(), String> {
+) -> Result<bool, String> {
     // Opt-in local acceptance measurements; no telemetry or writes in ordinary use.
-    if std::env::args().any(|a| a == "--measure") {
+    let measuring = std::env::args().any(|a| a == "--measure");
+    if measuring {
         if let Some(w) = app.get_webview_window("buddy") {
             let size = w.inner_size().map_err(|e| e.to_string())?;
             std::fs::write(backend.dir.join("ui-ready.json"),json!({"ready":true,"identifier":app.config().identifier,"width":size.width,"height":size.height,"diagnostics":diagnostics,"scale":w.scale_factor().unwrap_or(1.0),"mode":if app.state::<WindowMode>().planner.load(Ordering::SeqCst){"planner"}else{"buddy"}}).to_string()).map_err(|e|e.to_string())?;
         }
     }
-    Ok(())
+    Ok(measuring)
 }
 #[tauri::command]
 fn action(
@@ -330,6 +331,23 @@ fn show_buddy(app: &tauri::AppHandle) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     if let Some((x, y)) = settings.position {
         let _ = w.set_position(clamp_position(&w, x, y));
+    }
+    if std::env::args().any(|a| a == "--measure") {
+        let _ = w.set_title("Orbiter — temporary performance check");
+        if let Ok(Some(m)) = w.current_monitor() {
+            let area = m.work_area();
+            if let Ok(size) = w.outer_size() {
+                let _ = w.set_position(PhysicalPosition::new(
+                    area.position.x + area.size.width as i32 - size.width as i32 - 24,
+                    area.position.y + area.size.height as i32 - size.height as i32 - 24,
+                ));
+            }
+        }
+    }
+    // Measurement mode must be established natively, not depend on a query-string
+    // interpretation by the bundled asset protocol before readiness is reported.
+    if std::env::args().any(|a| a == "--measure-expanded") {
+        set_mode(app, "planner")?;
     }
     let _ = w.show();
     let _ = w.set_focus();

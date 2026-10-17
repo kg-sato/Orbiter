@@ -101,6 +101,10 @@ pub struct Timer {
     pub course_profile: Option<String>,
     #[serde(default)]
     pub cloud_owner: Option<String>,
+    #[serde(default)]
+    pub session_focused_ms: u64,
+    #[serde(default)]
+    pub start_focused_ms: u64,
 }
 impl Default for Timer {
     fn default() -> Self {
@@ -114,6 +118,8 @@ impl Default for Timer {
             session_id: format!("{:016x}", rand::random::<u64>()),
             course_profile: None,
             cloud_owner: None,
+            session_focused_ms: 0,
+            start_focused_ms: 0,
         }
     }
 }
@@ -135,6 +141,7 @@ pub struct Settings {
     pub halo: String,
     pub trail: String,
     pub habitat: String,
+    pub recap_ack: String,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -152,6 +159,7 @@ impl Default for Settings {
             halo: "halo-thin".into(),
             trail: "trail-waves".into(),
             habitat: String::new(),
+            recap_ack: String::new(),
         }
     }
 }
@@ -188,6 +196,7 @@ pub struct Store {
     pub wall: DateTime<Utc>,
     pub last_reminder: String,
     pub cloud_events: Vec<Value>,
+    pub latest_recap: Value,
 }
 pub struct Backend {
     pub store: Mutex<Store>,
@@ -206,6 +215,7 @@ impl Backend {
             CREATE TABLE IF NOT EXISTS cloud_binding(id INTEGER PRIMARY KEY CHECK(id=1),owner TEXT NOT NULL,guest TEXT NOT NULL,guest_rewards TEXT NOT NULL DEFAULT '{}');
             CREATE TABLE IF NOT EXISTS cloud_outbox(owner TEXT PRIMARY KEY,workspace TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS cloud_rewards(owner TEXT PRIMARY KEY,snapshot TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS session_recap(id INTEGER PRIMARY KEY CHECK(id=1),data TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS cloud_focus(owner TEXT NOT NULL,event_id TEXT PRIMARY KEY,data TEXT NOT NULL);
             
 ").map_err(|e|e.to_string())?;
@@ -264,7 +274,7 @@ impl Backend {
                 r,
                 serde_json::from_str::<Timer>(&t).map_err(|e| e.to_string())?,
                 serde_json::from_str::<Settings>(&s).map_err(|e| e.to_string())?,
-                serde_json::from_str(&x).map_err(|e| e.to_string())?,
+                serde_json::from_str::<Rewards>(&x).map_err(|e| e.to_string())?,
             ),
             Err(rusqlite::Error::QueryReturnedNoRows) => (
                 empty_workspace(),
@@ -292,7 +302,31 @@ impl Backend {
             timer.reason = "Recovered after restart. Resume when ready.".into();
         }
         timer.active = false;
+        // Older native builds already stored grouped checkpoint records. Recover a partial
+        // session's cumulative credit without celebrating old completed/imported sessions.
+        if timer.session_focused_ms == 0
+            && timer.remaining_ms > 0
+            && timer.remaining_ms < timer.duration as u64 * 60000
+        {
+            timer.session_focused_ms = workspace["study"]["sessions"]
+                .as_array()
+                .map_or(0.0, |a| {
+                    a.iter()
+                        .filter(|r| r["orbitSession"].as_str() == Some(timer.session_id.as_str()))
+                        .map(|r| r["minutes"].as_f64().unwrap_or(0.0) * 60000.0)
+                        .sum::<f64>()
+                })
+                .round() as u64;
+            timer.start_focused_ms = rewards.focused_ms.saturating_sub(timer.session_focused_ms);
+        }
         validate_workspace(&workspace)?;
+        let latest_recap = db
+            .query_row("SELECT data FROM session_recap WHERE id=1", [], |r| {
+                r.get::<_, String>(0)
+            })
+            .ok()
+            .and_then(|raw| serde_json::from_str(&raw).ok())
+            .unwrap_or(Value::Null);
         let (changes, _) = broadcast::channel(32);
         let backend = Arc::new(Self {
             store: Mutex::new(Store {
@@ -307,6 +341,7 @@ impl Backend {
                 wall: Utc::now(),
                 last_reminder: String::new(),
                 cloud_events: Vec::new(),
+                latest_recap,
             }),
             changes,
             wake: Notify::new(),
@@ -399,6 +434,19 @@ impl Backend {
     pub fn cloud_rewards(&self, owner: &str, rewards: &Value) -> Result<(), String> {
         let mut s = self.store.lock().unwrap();
         let raw = rewards.to_string();
+        let confirm_recap = s.latest_recap["owner"].as_str() == Some(owner)
+            && s.latest_recap["rewardStatus"] == "pending"
+            && s.db
+                .query_row(
+                    "SELECT count(*) FROM cloud_focus WHERE owner=?1 AND event_id LIKE ?2",
+                    params![
+                        owner,
+                        format!("{}:%", s.latest_recap["sessionId"].as_str().unwrap_or("!"))
+                    ],
+                    |r| r.get::<_, i64>(0),
+                )
+                .unwrap_or(1)
+                == 0;
         if s.db
             .query_row(
                 "SELECT snapshot FROM cloud_rewards WHERE owner=?1",
@@ -408,12 +456,27 @@ impl Backend {
             .ok()
             .as_deref()
             == Some(raw.as_str())
+            && !confirm_recap
         {
             return Ok(());
         }
         s.db.execute("INSERT INTO cloud_rewards VALUES(?1,?2) ON CONFLICT(owner) DO UPDATE SET snapshot=excluded.snapshot",params![owner,rewards.to_string()]).map_err(|e|e.to_string())?;
+        let previous_recap = s.latest_recap.clone();
+        if confirm_recap {
+            s.latest_recap["rewardStatus"] = json!("confirmed");
+            s.latest_recap["accountTotals"] =
+                json!({"xp":rewards["xp"],"crates":rewards["chests"]});
+            let confirmed_ms = s.latest_recap["courseProfile"]
+                .as_str()
+                .map(|profile| rewards["courseMs"][profile].as_u64().unwrap_or(0))
+                .unwrap_or_else(|| rewards["focusedMs"].as_u64().unwrap_or(0));
+            s.latest_recap["growth"] = growth(confirmed_ms);
+        }
         s.revision += 1;
-        s.persist()?;
+        if let Err(e) = s.persist() {
+            s.latest_recap = previous_recap;
+            return Err(e);
+        }
         drop(s);
         self.changed();
         Ok(())
@@ -548,25 +611,28 @@ impl Backend {
             s.wall,
         );
         let old_cloud_events = s.cloud_events.clone();
+        let old_recap = s.latest_recap.clone();
         let tx_result = (|| -> Result<Option<Value>, String> {
             let mut reward = None;
             match action {
                 "start" | "pause" | "toggle" | "finish" | "power-pause" => {
                     if s.timer.active {
                         s.settle()?;
+                        if s.timer.remaining_ms == 0 {
+                            s.complete_recap();
+                        }
                     }
                     match action {
                         "start" | "toggle" if !old.1.active => {
                             if s.timer.remaining_ms == 0 {
                                 s.timer.session_id = format!("{:016x}", rand::random::<u64>());
                                 s.timer.remaining_ms = s.timer.duration as u64 * 60000;
+                                s.timer.session_focused_ms = 0;
                             }
                             // Capture the course profile once; task edits cannot redirect a running session.
 
                             // Capture once; editing a task never redirects a running cat's growth.
-                            if s.timer.remaining_ms == s.timer.duration as u64 * 60000
-                                || s.timer.course_profile.is_none()
-                            {
+                            if s.timer.remaining_ms == s.timer.duration as u64 * 60000 {
                                 ensure_cat_profiles(&mut s.workspace);
                                 let course = s.workspace["study"]["tasks"]
                                     .as_array()
@@ -583,6 +649,7 @@ impl Backend {
                                     .map(|code| code.to_string());
                             }
                             if s.timer.remaining_ms == s.timer.duration as u64 * 60000 {
+                                s.timer.start_focused_ms = s.rewards.focused_ms;
                                 s.timer.cloud_owner =
                                     s.db.query_row(
                                         "SELECT owner FROM cloud_binding WHERE id=1",
@@ -603,6 +670,7 @@ impl Backend {
                                 .into();
                         }
                         "finish" => {
+                            s.complete_recap();
                             s.timer.remaining_ms = 0;
                             s.timer.reason = "Session saved. Take a breath.".into();
                         }
@@ -651,6 +719,8 @@ impl Backend {
                         session_id: format!("{:016x}", rand::random::<u64>()),
                         course_profile: None,
                         cloud_owner: None,
+                        session_focused_ms: 0,
+                        start_focused_ms: s.rewards.focused_ms,
                     };
                 }
                 "settings" => {
@@ -719,6 +789,7 @@ impl Backend {
                             s.started = Some(Instant::now());
                             s.wall = Utc::now();
                         } else {
+                            s.complete_recap();
                             s.timer.reason = "Session saved. Take a breath.".into();
                         }
                     }
@@ -758,6 +829,12 @@ impl Backend {
                     }
                     s.rewards.opened += 1;
                 }
+                "ack-recap" => {
+                    if args["sessionId"].as_str() != s.latest_recap["sessionId"].as_str() {
+                        return Err("That recap is no longer current.".into());
+                    }
+                    s.settings.recap_ack = args["sessionId"].as_str().unwrap_or("").to_string();
+                }
                 "position" => {
                     if let (Some(x), Some(y)) = (args["x"].as_i64(), args["y"].as_i64()) {
                         s.settings.position =
@@ -773,6 +850,7 @@ impl Backend {
         match tx_result {
             Err(e) => {
                 s.cloud_events = old_cloud_events;
+                s.latest_recap = old_recap;
                 (
                     s.workspace,
                     s.timer,
@@ -908,6 +986,13 @@ impl Store {
                 r.get::<_, String>(0)
             })
             .ok();
+        result["latestRecap"] = if self.latest_recap["owner"].as_str().is_none()
+            || self.latest_recap["owner"].as_str() == account.as_deref()
+        {
+            self.latest_recap.clone()
+        } else {
+            Value::Null
+        };
         result["cloudConnected"] = json!(account.is_some());
         if let Some(owner) = account {
             if let Ok(raw) = self.db.query_row(
@@ -928,6 +1013,40 @@ impl Store {
         }
         result
     }
+    fn complete_recap(&mut self) {
+        if self.latest_recap["sessionId"] == self.timer.session_id
+            || self.timer.session_focused_ms == 0
+        {
+            return;
+        }
+        let focused = self.timer.session_focused_ms;
+        let task = self.workspace["study"]["tasks"].as_array().and_then(|a| {
+            a.iter()
+                .find(|t| t["id"].as_str() == self.timer.task_id.as_deref())
+        });
+        let exam_reduction = task.filter(|t| t["kind"] == "exam").map(|task| {
+            let manual = task["exam"]["logs"].as_array().map_or(0.0, |a| {
+                a.iter()
+                    .map(|l| l["minutes"].as_f64().unwrap_or(0.0))
+                    .sum::<f64>()
+            });
+            let other = self.workspace["study"]["sessions"]
+                .as_array()
+                .map_or(0.0, |a| {
+                    a.iter()
+                        .filter(|r| {
+                            r["taskId"].as_str() == self.timer.task_id.as_deref()
+                                && r["orbitSession"] != self.timer.session_id
+                        })
+                        .map(|r| r["minutes"].as_f64().unwrap_or(0.0))
+                        .sum::<f64>()
+                });
+            ((task["exam"]["targetMinutes"].as_f64().unwrap_or(0.0) - manual - other).max(0.0)
+                * 60000.0)
+                .min(focused as f64) as u64
+        });
+        self.latest_recap = json!({"sessionId":self.timer.session_id,"title":self.timer.title,"taskId":self.timer.task_id,"courseProfile":self.timer.course_profile,"owner":self.timer.cloud_owner,"focusedMs":focused,"finishedAt":Utc::now().to_rfc3339(),"examReductionMs":exam_reduction,"xp":self.rewards.focused_ms/60000-self.timer.start_focused_ms/60000,"crates":self.rewards.focused_ms/1800000-self.timer.start_focused_ms/1800000,"rewardStatus":if self.timer.cloud_owner.is_some(){"pending"}else{"confirmed"},"growth":growth(self.timer.course_profile.as_ref().map_or(self.rewards.focused_ms,|p|*self.rewards.course_ms.get(p).unwrap_or(&0)))});
+    }
     fn settle(&mut self) -> Result<(), String> {
         let elapsed = self
             .started
@@ -942,6 +1061,7 @@ impl Store {
         if let Some(owner) = &self.timer.cloud_owner {
             self.cloud_events.push(json!({"owner":owner,"id":format!("{}:{}",self.timer.session_id,self.wall.timestamp_millis()),"start":self.wall.timestamp_millis(),"end":self.wall.timestamp_millis()+elapsed as i64,"course":self.timer.course_profile}));
         }
+        self.timer.session_focused_ms += elapsed;
         self.rewards.focused_ms += elapsed;
         if let Some(profile) = &self.timer.course_profile {
             *self.rewards.course_ms.entry(profile.clone()).or_default() += elapsed;
@@ -1008,6 +1128,7 @@ impl Store {
         }
         tx.execute("INSERT INTO cloud_outbox(owner,workspace) SELECT owner,?1 FROM cloud_binding WHERE id=1 ON CONFLICT(owner) DO UPDATE SET workspace=excluded.workspace",[self.workspace.to_string()]).map_err(|e|e.to_string())?;
         tx.execute("INSERT INTO state(id,workspace,revision,timer,settings,rewards,edit_revision) VALUES(1,?1,?2,?3,?4,?5,?6) ON CONFLICT(id) DO UPDATE SET workspace=excluded.workspace,revision=excluded.revision,timer=excluded.timer,settings=excluded.settings,rewards=excluded.rewards,edit_revision=excluded.edit_revision",params![self.workspace.to_string(),self.revision as i64,serde_json::to_string(&self.timer).unwrap(),serde_json::to_string(&self.settings).unwrap(),serde_json::to_string(&self.rewards).unwrap(),self.edit_revision as i64]).map_err(|e|e.to_string())?;
+        tx.execute("INSERT INTO session_recap(id,data) VALUES(1,?1) ON CONFLICT(id) DO UPDATE SET data=excluded.data",[self.latest_recap.to_string()]).map_err(|e|e.to_string())?;
         tx.commit().map_err(|e| e.to_string())?;
         self.cloud_events.clear();
         Ok(())
@@ -1017,6 +1138,146 @@ impl Store {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn deadline_controls_complete_once_and_zero_credit_has_no_recap() {
+        let b = backend();
+        b.action("finish", json!({})).unwrap();
+        assert!(b.snapshot()["latestRecap"].is_null());
+        b.action("configure", json!({"duration":1})).unwrap();
+        b.action("start", json!({})).unwrap();
+        {
+            let mut s = b.store.lock().unwrap();
+            s.started = Some(Instant::now() - Duration::from_secs(61));
+        }
+        b.action("toggle", json!({})).unwrap();
+        let r = b.snapshot()["latestRecap"].clone();
+        assert_eq!(r["focusedMs"], 60000);
+        assert!(!b.snapshot()["timer"]["active"].as_bool().unwrap());
+        b.action("finish", json!({})).unwrap();
+        assert_eq!(b.snapshot()["latestRecap"], r);
+    }
+    #[test]
+    fn recap_is_atomic_grouped_acknowledged_and_recovered() {
+        let b = backend();
+        study(&b, 35);
+        study(&b, 30);
+        assert!(b.snapshot()["latestRecap"].is_null());
+        b.action("finish", json!({})).unwrap();
+        let v = b.snapshot();
+        let r = &v["latestRecap"];
+        assert!(r["focusedMs"].as_u64().unwrap() >= 65000);
+        assert_eq!(r["xp"], 1);
+        assert_eq!(r["rewardStatus"], "confirmed");
+        b.action("finish", json!({})).unwrap();
+        assert_eq!(b.snapshot()["latestRecap"], *r);
+        b.action("ack-recap", json!({"sessionId":r["sessionId"]}))
+            .unwrap();
+        let next = Backend::open(b.dir.clone()).unwrap().snapshot();
+        assert_eq!(next["latestRecap"]["sessionId"], r["sessionId"]);
+        assert_eq!(next["latestRecap"]["focusedMs"], r["focusedMs"]);
+        assert_eq!(next["settings"]["recapAck"], r["sessionId"]);
+    }
+    #[test]
+    fn failed_recap_write_rolls_back_credit_and_completion() {
+        let b = backend();
+        b.action("start", json!({})).unwrap();
+        {
+            let mut s = b.store.lock().unwrap();
+            s.started = Some(Instant::now() - Duration::from_secs(61));
+            s.db.execute_batch("CREATE TRIGGER reject_recap BEFORE INSERT ON session_recap BEGIN SELECT RAISE(ABORT,'disk');END;").unwrap();
+        }
+        assert!(b.action("finish", json!({})).is_err());
+        assert_eq!(b.snapshot()["rewards"]["xp"], 0);
+        assert!(b.snapshot()["latestRecap"].is_null());
+        b.store
+            .lock()
+            .unwrap()
+            .db
+            .execute_batch("DROP TRIGGER reject_recap")
+            .unwrap();
+        b.action("finish", json!({})).unwrap();
+        assert_eq!(b.snapshot()["rewards"]["xp"], 1);
+    }
+    #[test]
+    fn cloud_recap_waits_for_confirmed_account_totals() {
+        let b = backend();
+        let guest = b.snapshot()["workspace"].clone();
+        b.cloud_bind("owner-a", &guest).unwrap();
+        study(&b, 65);
+        b.action("finish", json!({})).unwrap();
+        assert_eq!(b.snapshot()["latestRecap"]["rewardStatus"], "pending");
+        let rewards =
+            json!({"focusedMs":65000,"xp":1,"chests":0,"courseMs":{},"owned":[],"stars":0});
+        b.cloud_rewards("owner-a", &rewards).unwrap();
+        assert_eq!(b.snapshot()["latestRecap"]["rewardStatus"], "pending");
+        b.store
+            .lock()
+            .unwrap()
+            .db
+            .execute("DELETE FROM cloud_focus WHERE owner='owner-a'", [])
+            .unwrap();
+        b.cloud_rewards("owner-a", &rewards).unwrap();
+        assert_eq!(b.snapshot()["latestRecap"]["rewardStatus"], "confirmed");
+        assert_eq!(b.snapshot()["latestRecap"]["accountTotals"]["xp"], 1);
+        assert_eq!(b.snapshot()["latestRecap"]["growth"]["focusedMs"], 65000);
+    }
+    #[test]
+    fn recap_preserves_exam_reduction_and_midnight_session_identity() {
+        let b = backend();
+        let mut w = empty_workspace();
+        w["study"]["tasks"] = json!([{"id":"exam","title":"Exam","course":"PSY","due":"2026-10-25","estimate":30,"done":false,"kind":"exam","exam":{"targetMinutes":30,"startDate":"2026-10-01","logs":[]},"steps":[]}]);
+        b.save_workspace(w, 0, false).unwrap();
+        b.action("configure", json!({"taskId":"exam","duration":25}))
+            .unwrap();
+        b.action("start", json!({})).unwrap();
+        {
+            let mut s = b.store.lock().unwrap();
+            s.wall = Local::now()
+                .date_naive()
+                .and_hms_opt(0, 0, 0)
+                .unwrap()
+                .and_local_timezone(Local)
+                .unwrap()
+                .with_timezone(&Utc)
+                - TimeDelta::seconds(30);
+            s.started = Some(Instant::now() - Duration::from_secs(60));
+        }
+        b.action("finish", json!({})).unwrap();
+        let v = b.snapshot();
+        assert_eq!(
+            v["workspace"]["study"]["sessions"]
+                .as_array()
+                .unwrap()
+                .len(),
+            2
+        );
+        assert!(v["latestRecap"]["examReductionMs"].as_u64().unwrap() >= 60000);
+        assert_eq!(
+            v["workspace"]["study"]["sessions"][0]["orbitSession"],
+            v["latestRecap"]["sessionId"]
+        );
+    }
+    #[test]
+    fn appearance_fields_validate_without_breaking_old_backups() {
+        let mut w = empty_workspace();
+        assert!(validate_workspace(&w).is_ok());
+        w["study"]["preferences"]["scenePreset"] = json!("lunar-mist");
+        w["study"]["preferences"]["atmosphereStrength"] = json!(100);
+        w["study"]["preferences"]["motionIntensity"] = json!(70);
+        w["study"]["preferences"]["effectQuality"] = json!("auto");
+        assert!(validate_workspace(&w).is_ok());
+        w["study"]["preferences"]["effectQuality"] = json!("unknown");
+        assert!(validate_workspace(&w).is_err());
+        w["study"]["preferences"]["effectQuality"] = json!("low");
+        w["study"]["preferences"]["motionIntensity"] = json!(0.5);
+        assert!(validate_workspace(&w).is_err());
+        w["study"]["preferences"]["motionIntensity"] = json!(0);
+        assert!(validate_workspace(&w).is_ok());
+        w["study"]["preferences"]["atmosphereStrength"] = json!(101);
+        assert!(validate_workspace(&w).is_err());
+        w["study"]["preferences"]["atmosphereStrength"] = json!(20.5);
+        assert!(validate_workspace(&w).is_err());
+    }
     #[test]
     fn cloud_focus_is_account_owned_and_guest_progress_is_restored() {
         let b = backend();

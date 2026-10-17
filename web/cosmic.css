@@ -1,0 +1,73 @@
+/* Original observatory scenes. Depth belongs to the artwork, not the reading plane. */
+body { --cosmic-color:#99cbd5;--cosmic-secondary:#8982cd; }
+html,body { overflow-x:clip; }
+body[data-preset=lunar-mist] { --cosmic-color:#c0c4eb;--cosmic-secondary:#7c94c6; }
+body[data-preset=opal-dawn] { --cosmic-color:#efc5a3;--cosmic-secondary:#b59ed7; }
+.cosmic-preset { display:none; }
+body:not([data-preset]) .cosmic-tidal,body[data-preset=tidal-night] .cosmic-tidal,body[data-preset=lunar-mist] .cosmic-lunar,body[data-preset=opal-dawn] .cosmic-opal { display:inline; }
+.cosmic-atmosphere { opacity:calc(.45 + var(--atmosphere,.5)*.55); }
+.cosmic-primary { translate:calc(var(--primary-offset-x,0px) + var(--scene-x,0px)*.4) calc(var(--primary-offset-y,0px) + var(--scene-y,0px)*.35); }
+.cosmic-starfield { opacity:calc(.18 + var(--atmosphere,.5)*.55); }
+.cosmic-constellations { opacity:.65; }
+.cosmic-world { position:fixed;inset:-5%;pointer-events:none;overflow:hidden;z-index:-1;isolation:isolate;opacity:var(--atmosphere,.5); }
+.cosmic-pointer-light { position:absolute;inset:0;background:radial-gradient(ellipse at 75% 22%,color-mix(in srgb,var(--cosmic-color) 10%,transparent),transparent 36%);transform:translate3d(var(--cosmic-x,0px),var(--cosmic-y,0px),0); }
+.cosmic-pointer-light { background:radial-gradient(ellipse 380px 260px at var(--pointer-u,50%) var(--pointer-v,50%),color-mix(in srgb,var(--cosmic-color) 28%,transparent),transparent 75%);mix-blend-mode:screen;transition:background-position .3s; }
+.ethereal-far { translate:calc(var(--scene-x,0px)*-.6) calc(var(--scene-y,0px)*-.4);transition:translate .8s ease-out; }
+.ethereal-near { translate:calc(var(--scene-x,0px)*1.5) calc(var(--scene-y,0px)*1.1);transition:translate .6s ease-out; }
+.cosmic-ripple { position:absolute;width:100px;height:100px;margin:-50px;border:1px solid color-mix(in srgb,var(--cosmic-color) 65%,transparent);border-radius:48% 52% 57% 43%;box-shadow:0 0 25px #c7c0ef18,inset 0 0 25px #c7c0ef12;animation:ethereal-touch 1.4s ease-out forwards; }
+@keyframes ethereal-touch { from{transform:scale(.3) rotate(-15deg);opacity:.8}to{transform:scale(5) rotate(25deg);opacity:0} }
+.scene-still .ethereal-far,.scene-still .ethereal-near { translate:none;transition:none; }
+.scene-still .cosmic-ripple { display:none; }
+.appearance-preview[data-preset]>.preview-sky.preview-sky { background:radial-gradient(ellipse at 85% 12%,#a8d5db55,transparent 60%),conic-gradient(from 210deg at 75% 20%,#121c30,#827aab65,#a7ddcb55,#172638 40%,#121c30); }
+.appearance-preview[data-preset=lunar-mist]>.preview-sky { filter:hue-rotate(24deg); }
+.appearance-preview[data-preset=opal-dawn]>.preview-sky { filter:hue-rotate(100deg); }
+.cosmic-habitat-glow { position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse at 85% 75%,color-mix(in srgb,var(--habitat-color,#97cfc2) 38%,transparent),transparent 47%); }
+body[data-habitat] .cosmic-habitat-glow { opacity:.65; }
+body[data-habitat="habitat-07"] .cosmic-habitat-glow { background:conic-gradient(from 200deg at 85% 80%,transparent 0deg,#a68cd320 12deg,transparent 25deg,#b9b8e322 36deg,transparent 55deg); }
+body[data-habitat="habitat-10"] .cosmic-habitat-glow { background:radial-gradient(ellipse at 85% 40%,#84d8bb29,transparent 50%),radial-gradient(ellipse at 70% 60%,#b69fe829,transparent 50%); }
+body[data-habitat="habitat-12"] .cosmic-habitat-glow { background:repeating-radial-gradient(ellipse at 85% 80%,transparent 0 80px,#b8a6e313 81px 83px,transparent 84px 160px); }
+body[data-material=quiet] .cosmic-world,body.solid-glass .cosmic-world { opacity:.1; }
+.scene-still .cosmic-pointer-light { transform:none!important; }
+.scene-still .cosmic-primary { translate:var(--primary-offset-x,0px) var(--primary-offset-y,0px); }
+body[data-material=quiet] .cosmic-primary,body.solid-glass .cosmic-primary { opacity:.4; }
+.appearance-preview .preview-sky { background:radial-gradient(circle at 82% 18%,#8faebb 0 14%,transparent 14.5%),radial-gradient(ellipse at 75% 20%,#86b6c349,transparent 65%),#142436; }
+.appearance-preview[data-preset=lunar-mist]>.preview-sky { background:radial-gradient(circle at 82% 18%,#ccd5e2 0 17%,transparent 17.5%),radial-gradient(ellipse at 80% 30%,#a5a7d347,transparent 65%),#20283d; }
+.appearance-preview[data-preset=opal-dawn]>.preview-sky { background:radial-gradient(circle at 82% 18%,#e1b4ab 0 16%,transparent 16.5%),radial-gradient(ellipse at 80% 20%,#e6b29752,transparent 70%),#303047; }
+.orb-equipped-summary { display:flex;gap:8px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid #d5e8e426;margin-bottom:14px; }
+.orb-equipped-summary span { font-size:11px;color:var(--space-muted,#c3d5dc);padding:5px 9px;border-radius:12px;background:#d2e5e312; }
+.orb-equipped-portrait { width:82px;height:82px;object-fit:contain;flex:none; }
+.orb-equipment-preview { display:grid;gap:12px;text-align:center; }
+.orb-preview-model { position:relative;width:min(100%,340px);height:255px;margin:auto;isolation:isolate; }
+.orb-preview-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
+.orb-preview-actions button { min-width:110px; }
+.orb-item-preview[data-slot=habitat] { width:90px;height:90px; }
+.orb-collection-item[data-owned=false] { opacity:.55; }
+.orb-collection-item[data-owned=false]::after { content:'Preview only';font-size:10px; }
+.appearance-preview[data-quality=low] .preview-sky { filter:none; }
+@media(max-width:600px){.cosmic-primary{--primary-offset-x:-310px;--primary-offset-y:-50px;opacity:.58}.cosmic-starfield{opacity:.25}.orb-preview-model{height:220px}}
+@media(prefers-reduced-motion:reduce){.cosmic-world *{transform:none!important}}
+
+/* Local mist and distant pond movement sit behind the stationary reading plane. */
+.cosmic-fog{position:absolute;inset:0;overflow:hidden;opacity:.5}
+.cosmic-fog i{position:absolute;width:90%;height:36%;left:0;bottom:0;border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,var(--cosmic-color) 20%,transparent),transparent 68%);animation:orb-mist-drift 26s ease-in-out infinite alternate;transform:translate3d(var(--cosmic-x,0px),0,0)}
+.cosmic-fog i+i{left:40%;bottom:30%;opacity:.5;animation-delay:-13s;animation-duration:32s}
+.cosmic-pond{position:absolute;right:-2%;bottom:4%;width:420px;height:210px;opacity:.30;transform:translate3d(var(--cosmic-x,0px),var(--cosmic-y,0px),0);mask-image:radial-gradient(ellipse,#000,transparent 72%)}
+.pond-light{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(ellipse at 65% 45%,transparent 0 27px,#adddd51a 28px 29px,transparent 30px 49px);transform:skewX(-20deg)}
+.pond-fish{position:absolute;width:65px;height:26px;color:#adcfc6;offset-path:path('M 80 100 C 120 10 360 20 330 120 C 310 200 100 190 80 100');offset-rotate:auto;animation:orb-pond-swim 38s linear infinite}
+.pond-fish-two{width:48px;color:#c9b4cf;animation-duration:47s;animation-delay:-19s}
+@keyframes orb-pond-swim{to{offset-distance:100%}}
+@keyframes orb-mist-drift{from{translate:-5% 0;opacity:.4}to{translate:8% -4%;opacity:.7}}
+.scene-still .cosmic-fog i,.scene-still .pond-fish,body[data-effect-quality=low] .cosmic-fog i,body[data-effect-quality=low] .pond-fish{animation:none}
+body[data-material=quiet] .cosmic-pond,body.solid-glass .cosmic-pond{display:none}
+@media(max-width:600px){.cosmic-pond{width:300px;right:-130px;opacity:.16}.cosmic-fog{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.cosmic-fog i,.pond-fish{animation:none}}
+
+/* Steam starts at the pond; only its outer wrapper receives cursor gusts. */
+.pond-steam{position:absolute;right:-2%;bottom:4%;width:420px;height:340px;pointer-events:none;transform:translate3d(var(--cosmic-x,0px),var(--cosmic-y,0px),0)}
+.steam-fan{position:absolute;left:calc(8% + var(--plume)*13%);bottom:8%;width:130px;height:230px}
+.steam-fan i{position:absolute;inset:0;border-radius:48%;background:radial-gradient(ellipse at 48% 64%,color-mix(in srgb,var(--cosmic-color) 65%,#f0e9ed) 0%,transparent 64%);animation:orb-steam-rise calc(9s + var(--plume)*.7s) linear infinite;animation-delay:calc(var(--plume)*-2.3s);opacity:0}
+@keyframes orb-steam-rise{0%{transform:translate(-12px,80px) scale(.42,.55);opacity:0}20%{opacity:.38}55%{transform:translate(14px,-25px) scale(.85,1.05);opacity:.29}100%{transform:translate(-8px,-155px) scale(1.25,1.4);opacity:0}}
+.scene-still .steam-fan i,body[data-effect-quality=low] .steam-fan i{animation:none;transform:translateY(-20px);opacity:.10}
+body[data-material=quiet] .pond-steam,body.solid-glass .pond-steam{display:none}
+@media(max-width:600px){.pond-steam{right:-130px;width:300px;opacity:.6}}
+@media(prefers-reduced-motion:reduce){.steam-fan i{animation:none;transform:translateY(-20px);opacity:.10}}

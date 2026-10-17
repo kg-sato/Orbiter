@@ -66,3 +66,45 @@
 .settings-card details{margin-bottom:0}
 #growth-info{font-size:12px;line-height:1.6;color:#c7ded9}
 
+
+/* Original presets share the planner's atmospheric direction. */
+:host([data-preset="lunar-mist"]) #island { background:linear-gradient(135deg,#34354aeb,#202a40ed); }
+:host([data-preset="opal-dawn"]) #island { background:linear-gradient(135deg,#4c5056ed,#263d43ed); }
+.island-water { opacity:calc(.2 + var(--atmosphere,.5) * .7); }
+:host([data-solid="true"]) #island { background:#253344!important; }
+:host([data-solid="true"]) .island-water { display:none; }
+
+#reward-content.recap-view { text-align:left; padding:16px; background:#172b3930; border-radius:20px; }
+.recap-metrics { display:flex;gap:20px;margin:18px 0;flex-wrap:wrap; }.recap-metrics strong { display:block;font-size:24px; }.recap-metrics small { color:#c4d6dd;font-size:11px; }.recap-actions { display:flex;gap:8px;flex-wrap:wrap; }.recap-actions button { min-height:40px; }
+/* Earned worlds fill the island without changing the controls' contrast. */
+:host([data-habitat^="habitat-"]) #island { background:radial-gradient(ellipse at 15% 20%,#8c8dd54d,transparent 65%),linear-gradient(130deg,#294252,#172437); }
+:host([data-habitat="habitat-07"]) #island { background:radial-gradient(ellipse at 10% 100%,#9b80c766,transparent 65%),#223041; }
+:host([data-habitat="habitat-10"]) #island { background:radial-gradient(ellipse at 10% 90%,#6ed1be55,transparent 60%),#1c3041; }
+:host([data-habitat="habitat-12"]) #island { background:radial-gradient(ellipse at 20% 90%,#9484d65c,transparent 65%),#202a41; }
+#reward-content .orb-preview-model { height:230px;max-width:100%; }
+#reward-content .orb-equipment-preview h3 { margin:8px 0; }
+/* A miniature observatory, with the same three worlds as the planner. */
+:host { --island-sky:#101d30;--island-glow:#80b5bc;--island-moon:#abc8cb; }
+:host([data-preset=lunar-mist]) { --island-sky:#1c2338;--island-glow:#aab3d4;--island-moon:#dbdfe7; }
+:host([data-preset=opal-dawn]) { --island-sky:#30273c;--island-glow:#d5a49b;--island-moon:#edd2c1; }
+#island,:host([data-habitat^="habitat-"]) #island { background:radial-gradient(ellipse at 8% 70%,color-mix(in srgb,var(--island-glow) 23%,transparent),transparent 65%),var(--island-sky); }
+.island-water::before { inset:0;background:radial-gradient(circle at 9% 18%,#dce9e975 0 1px,transparent 1.5px),radial-gradient(circle at 85% 67%,#dce9e975 0 1px,transparent 1.5px);filter:none;animation:none;opacity:.6; }
+.island-water i,.island-water i:nth-child(2),.island-water i:nth-child(3) { left:auto;right:0;bottom:auto;transform:none;animation:none;border-radius:50%; }
+.island-water i:first-child { inset:-45% -30% 0 15%;height:auto;background:radial-gradient(ellipse,color-mix(in srgb,var(--island-glow) 27%,transparent),transparent 65%); }
+.island-water i:nth-child(2) { width:115px;height:115px;right:-28px;top:-28px;background:radial-gradient(circle at 25% 20%,var(--island-moon),color-mix(in srgb,var(--island-glow) 70%,var(--island-sky)) 38%,var(--island-sky) 80%);opacity:.28; }
+.island-water i:nth-child(3) { width:170px;height:44px;right:-55px;top:8px;background:transparent;border:3px double color-mix(in srgb,var(--island-moon) 20%,transparent);transform:rotate(-28deg);opacity:.3; }
+:host([data-preset=lunar-mist]) .island-water i:nth-child(3),:host([data-preset=opal-dawn]) .island-water i:nth-child(3) { display:none; }
+:host([data-focusing=true]) .island-water i { animation:none; }
+:host([data-focusing=true]) .island-water i:first-child { animation:observatory-breathe 14s ease-in-out infinite alternate; }
+:host([data-solid=true]) #island { background:var(--island-sky); }
+:host([data-solid=true]) .island-water { opacity:.25; }
+@keyframes observatory-breathe { from{opacity:.55}to{opacity:.85} }
+/* Translucent folds echo the abstract planner without a literal miniature planet. */
+.island-water i:nth-child(2) { width:330px;height:190px;right:-100px;top:-95px;border-radius:30% 70% 60% 40%;background:linear-gradient(155deg,transparent 30%,color-mix(in srgb,var(--island-glow) 30%,transparent) 52%,#e4e0fa45 54%,transparent 57%);transform:rotate(-24deg);opacity:.65; }
+.island-water i:nth-child(3),:host([data-preset=lunar-mist]) .island-water i:nth-child(3),:host([data-preset=opal-dawn]) .island-water i:nth-child(3) { display:block;width:390px;height:180px;right:-145px;top:-55px;border:1px solid color-mix(in srgb,var(--island-moon) 20%,transparent);border-radius:50%;transform:rotate(-35deg);opacity:.4; }
+
+/* Shared blue pond scene; the original decorative water layers are retired. */
+:host{--island-sky:#14233f;--island-glow:#88b7d1;--island-moon:#b8cae8}
+#island,:host([data-habitat^="habitat-"]) #island{background:linear-gradient(125deg,#263e5ddd,#172a47ee)}
+.island-water{opacity:.55!important;overflow:hidden}.island-water::before,.island-water>i{display:none!important}.island-water canvas{border-radius:inherit}
+:host([data-solid=true]) #island{background:#20344f!important}:host([data-solid=true]) .island-water{display:none}

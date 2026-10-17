@@ -19,6 +19,9 @@ $orbitWatch = [System.Diagnostics.Stopwatch]::StartNew()
 $orbitProcess = Start-Process -FilePath $orbitExecutable -ArgumentList $orbitArgs -PassThru -WindowStyle Hidden
 while (-not (Test-Path -LiteralPath $orbitReady) -and $orbitWatch.Elapsed.TotalSeconds -lt 15) { Start-Sleep -Milliseconds 100 }
 if (-not (Test-Path -LiteralPath $orbitReady)) { throw 'The native UI did not report readiness. Check IPC and window permissions.' }
+$orbitExpectedMode = if ($Expanded) { 'planner' } else { 'buddy' }
+while ((Get-Content -LiteralPath $orbitReady | ConvertFrom-Json).mode -ne $orbitExpectedMode -and $orbitWatch.Elapsed.TotalSeconds -lt 15) { Start-Sleep -Milliseconds 100 }
+if ((Get-Content -LiteralPath $orbitReady | ConvertFrom-Json).mode -ne $orbitExpectedMode) { throw 'The requested view was not confirmed; no performance label was assigned.' }
 if ($IsolatedQa -and (Get-Content -LiteralPath $orbitReady | ConvertFrom-Json).identifier -ne 'com.kgsato.orbit.performance') {
   throw 'Measurement identity is not isolated. No hide or quit commands were sent.'
 }
@@ -36,6 +39,14 @@ function Measure-Orbit([string]$Mode) {
   $orbitClock = [System.Diagnostics.Stopwatch]::StartNew()
   Start-Sleep -Seconds 20
   $orbitFinal = @(Get-OrbitProcesses)
+  if ($Mode -ne 'tray' -and $orbitFinal.Count -lt 2) {
+    Start-Process -FilePath $orbitExecutable -ArgumentList @('--profile-dir', $orbitProfile, '--quit') -WindowStyle Hidden -Wait
+    throw 'The webview closed during the visible sample. Discarding this measurement.'
+  }
+  if ($Mode -ne 'tray' -and (Get-Content -LiteralPath $orbitReady | ConvertFrom-Json).mode -ne $orbitExpectedMode) {
+    Start-Process -FilePath $orbitExecutable -ArgumentList @('--profile-dir', $orbitProfile, '--quit') -WindowStyle Hidden -Wait
+    throw 'View changed during the sample. Discarding this measurement; no mode label was assigned.'
+  }
   $orbitCpuEnd = ($orbitFinal | Measure-Object -Property CPU -Sum).Sum
   [pscustomobject]@{
     Mode = $Mode

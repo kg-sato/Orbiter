@@ -46,6 +46,21 @@ else:
     source = source.replace('<!-- Generated 3D cat', scene_script + '\n<!-- Generated 3D cat', 1)
 scene_art = '<div class="orbital-backdrop" aria-hidden="true">\n' + (root / 'web/celestial.svg').read_text(encoding='utf-8') + '\n</div>'
 source = re.sub(r'<div class="orbital-backdrop" aria-hidden="true">.*?</div>', lambda _: scene_art, source, count=1, flags=re.S)
+for resource, tag, label in [('web/refinement.css','style','orbiter-refinement-styles'),('web/cosmic.css','style','orbiter-cosmic-styles')]:
+    extra = '<'+tag+' id="'+label+'">\n'+(root/resource).read_text(encoding='utf-8')+'\n</'+tag+'>'
+    if 'id="'+label+'"' in source:
+        source = re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>',lambda _:extra,source,flags=re.S)
+    else: source = source.replace('</head>',extra+'\n</head>',1)
+# Pond fallbacks are bundled data assets: native, browser and offline copies agree.
+import base64
+pond_css=(root/'web/pond.css').read_text(encoding='utf-8')
+for token,name in [('TIDAL','tidal-night'),('LUNAR','lunar-mist'),('OPAL','opal-dawn')]:
+    data=base64.b64encode((root/f'web/pond/{name}.jpg').read_bytes()).decode('ascii')
+    pond_css=pond_css.replace('POND_STILL_'+token,'data:image/jpeg;base64,'+data)
+pond_block='<style id="orbiter-pond-styles">\n'+pond_css+'\n</style>'
+if 'id="orbiter-pond-styles"' in source:
+    source=re.sub(r'<style id="orbiter-pond-styles">.*?</style>',lambda _:pond_block,source,flags=re.S)
+else:source=source.replace('</head>',pond_block+'\n</head>',1)
 app.write_text(source, encoding='utf-8')
 for name in ['sync_app.py', 'sync_preview.py']:
     subprocess.run([sys.executable, str(root / 'scripts' / name)], cwd=root, check=True)
