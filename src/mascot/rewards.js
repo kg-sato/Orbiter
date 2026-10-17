@@ -2,7 +2,7 @@
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const calm = () => matchMedia('(prefers-reduced-motion:reduce)').matches || ['reduced-motion','calm','quiet'].some(c=>document.body.classList.contains(c));
 const swatches = ['#ecc0ad','#e7dfcb','#99bad0','#dfc391','#acc7b5','#c5b4df','#dda6bd','#cbdfe0','#9b94c0','#91d8c1','#d8c7ed','#aaa7dc'];
-export const lookColor = id => swatches[Math.max(0,(Number(id?.slice(-2))||1)-1)%12];
+export const lookColor = id => ({mint:'#b4e6d5',lilac:'#c8b5eb',opal:'#e6ddca',rose:'#e0b6c9',aurora:'#8ee4c8',eclipse:'#e9ba90',indigo:'#939ddd',singularity:'#aca0db',cultivation:'#ccd7a0'}[id]||swatches[Math.max(0,(Number(id?.slice(-2))||1)-1)%12]);
 export function growth(ms = 0) {
   const hours = ms / 3600000, thresholds = [0,2,8,20];
   const stage = Math.max(0, thresholds.findLastIndex(h => hours >= h));
@@ -52,12 +52,34 @@ export function strip(v, compact=false) {
   return `<button class="orb-crate-button ${r.chests?'is-ready':''}" data-reward-open aria-label="${r.chests?`Open ${r.chests} earned crates`:`Next crate in ${minutes} focus minutes`}">${crateArt()}<span>${r.chests?`${r.chests} ready`: `${minutes}m to crate`}</span></button><div class="orb-level"><div><strong>Lv. ${r.level}</strong><span>${r.xp%100}/100 XP</span></div><progress max="100" value="${r.xp%100}" aria-label="Progress to next level"></progress>${compact?'':`<small>${g.label} · ${g.nextAtMs?Math.ceil((g.nextAtMs-g.focusedMs)/60000)+'m to grow':'Your journey continues'}</small>`}</div><button class="orb-collection-button" data-reward-collection aria-label="Open discoveries collection">✧${compact?'':' Discoveries'}</button>`;
 }
 export function collection(v, slot='appearance') {
-  return `<nav class="orb-collection-tabs" aria-label="Reward categories">${[['appearance','Looks'],['halo','Accessories'],['trail','Trails'],['habitat','Habitat']].map(([s,n])=>`<button data-slot-filter="${s}" aria-pressed="${slot===s}">${n}</button>`).join('')}</nav><div class="orb-collection-grid">${v.catalog.filter(c=>(c.slot||'appearance')===slot).map(c=>{const owned=v.rewards.owned.includes(c.id),equipped=v.settings[slot]===c.id;return `<button class="orb-collection-item" data-equip="${escape(c.id)}" data-slot="${slot}" data-rarity="${c.rarity}" aria-pressed="${equipped}" ${owned?'':'disabled'}>${preview(c)}<strong>${escape(c.name)}</strong><small>${equipped?'Equipped':owned?'Owned':c.rarity+' · locked'}</small></button>`;}).join('')}</div>`;
+  return `<div class="orb-equipped-summary" aria-label="Equipped collection">${['appearance','halo','trail','habitat'].map(s=>`<span>${escape(v.catalog.find(c=>c.id===v.settings[s])?.name||'No '+s)}</span>`).join('')}</div><nav class="orb-collection-tabs" aria-label="Reward categories">${[['appearance','Looks'],['halo','Accessories'],['trail','Trails'],['habitat','Habitat']].map(([s,n])=>`<button data-slot-filter="${s}" aria-pressed="${slot===s}">${n}</button>`).join('')}</nav><div class="orb-collection-grid">${v.catalog.filter(c=>(c.slot||'appearance')===slot).map(c=>{const owned=v.rewards.owned.includes(c.id),equipped=v.settings[slot]===c.id;return `<button class="orb-collection-item" data-equip="${escape(c.id)}" data-slot="${slot}" data-owned="${owned}" data-rarity="${c.rarity}" aria-pressed="${equipped}">${preview(c)}<strong>${escape(c.name)}</strong><small>${equipped?'Equipped':owned?'Owned · preview':c.rarity+' · locked'}</small></button>`;}).join('')}</div>`;
+}
+export function equipmentPreview(v,item){const owned=v.rewards.owned.includes(item.id);return `<section class="orb-equipment-preview"><small>${owned?'TRY IT ON':'LOCKED · PREVIEW ONLY'}</small><h3>${escape(item.name)}</h3><div class="orb-preview-model" aria-label="Companion equipment preview"></div><p>${escape(item.rarity)} · ${owned?'Your discovery':'Earn crates through focus to discover this item.'}</p><div class="orb-preview-actions"><button data-preview-cancel>Cancel preview</button><button data-preview-equip ${owned?'':'disabled'}>Equip</button></div><p data-preview-status role="status"></p></section>`;}
+export function recap(v) {
+  const r=v?.latestRecap;if(!r)return '';
+  const ms=Math.max(0,r.focusedMs||0),seconds=Math.floor(ms/1000),minutes=Math.floor(seconds/60);
+  const duration=seconds<60?seconds+'s':minutes<60?minutes+'m':Math.floor(minutes/60)+'h'+(minutes%60?' '+minutes%60+'m':'');
+  const g=r.growth||growth(0),next=r.rewardStatus==='pending'?'Growth updates after sync':g.nextAtMs?Math.max(0,Math.ceil((g.nextAtMs-g.focusedMs)/60000))+'m to grow':'Your journey continues';
+  const rewards=r.rewardStatus==='pending'?'Rewards awaiting account confirmation':r.accountTotals?`${r.accountTotals.xp||0} total XP · ${r.accountTotals.crates||0} crates ready`:`+${r.xp||0} XP · ${r.crates||0} new crates`;
+  return `<small>A LITTLE PROGRESS, RECORDED</small><h3>${escape(r.title||'Open focus')}</h3><div class="recap-metrics"><div><strong>${escape(duration)}</strong><small>actual focus</small></div><div><strong>${escape(g.label)}</strong><small>${escape(next)}</small></div></div><p>${escape(rewards)}</p>${r.examReductionMs!=null?`<p>${Math.floor(r.examReductionMs/1000)<60?Math.floor(r.examReductionMs/1000)+'s':Math.floor(r.examReductionMs/60000)+'m'} off your preparation budget</p>`:''}<div class="recap-actions"><button type="button" data-recap-done>Done</button>${r.taskId?'<button type="button" data-recap-task>Open task</button>':''}${v.rewards?.chests?'<button type="button" data-recap-crate>Open crate</button>':''}</div><p data-recap-status role="status"></p>`;
+}
+let recapCard=null,expandedRecap='',recapPage='desk';
+function renderRecap() {
+  if(!recapCard)return;
+  recapCard.hidden=recapPage!=='desk'||!current?.latestRecap;if(!current?.latestRecap)return;
+  const r=current.latestRecap;
+  if(current.settings?.recapAck===r.sessionId&&expandedRecap!==r.sessionId){recapCard.innerHTML='<small>LATEST SESSION</small><h3></h3><button type="button" data-recap-review>View session</button>';recapCard.querySelector('h3').textContent=r.title||'Open focus';recapCard.querySelector('[data-recap-review]').onclick=()=>{expandedRecap=r.sessionId;renderRecap();};return;}
+  recapCard.innerHTML=recap(current);
+  recapCard.querySelector('[data-recap-done]')?.addEventListener('click',async()=>{try{if(window.OrbitDesktop)await action('ack-recap',{sessionId:current.latestRecap.sessionId});expandedRecap='';renderRecap();}catch(e){recapCard.querySelector('[data-recap-status]').textContent=String(e);}});
+  recapCard.querySelector('[data-recap-task]')?.addEventListener('click',()=>window.OrbiterUI?.openTaskById(current.latestRecap.taskId));
+  recapCard.querySelector('[data-recap-crate]')?.addEventListener('click',()=>open(false));
 }
 let current = null, card = null, dialog = null, busy = false, slot = 'appearance';
 function render() {
   if(!card)return;
+  if(!current&&dialog?.open){window.OrbiterCats?.cancelPreview();dialog.close();}
   card.innerHTML=strip(current);
+  renderRecap();
   card.querySelector('[data-reward-open]')?.addEventListener('click',()=>open(false));
   card.querySelector('[data-reward-collection]')?.addEventListener('click',()=>open(true));
   if(dialog?.open&&dialog.dataset.view==='collection')renderCollection();
@@ -67,13 +89,15 @@ async function action(type,args={}) {
   return window.OrbitDesktop.actionResult(type,args);
 }
 function renderCollection() {
+  window.OrbiterCats?.cancelPreview();
   dialog.dataset.view='collection';
   dialog.querySelector('.orb-reward-content').innerHTML=collection(current,slot);
+  const portrait=new Image();portrait.className='orb-equipped-portrait';portrait.alt='Your equipped collection';portrait.src=window.OrbiterCats?.portrait(window.OrbiterCats.main(),current.rewards.focusedMs,current.settings)||'';dialog.querySelector('.orb-equipped-summary').prepend(portrait);
   bindCollection(dialog.querySelector('.orb-reward-content'));
 }
 function bindCollection(host) {
   host.querySelectorAll('[data-slot-filter]').forEach(b=>b.onclick=()=>{slot=b.dataset.slotFilter;renderCollection();});
-  host.querySelectorAll('[data-equip]').forEach(b=>b.onclick=async()=>{try{await action('settings',{[b.dataset.slot]:b.dataset.equip});renderCollection();}catch(e){message(e);}});
+  host.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>{const item=current.catalog.find(c=>c.id===b.dataset.equip);dialog.dataset.view='preview';host.innerHTML=equipmentPreview(current,item);window.OrbiterCats?.previewEquipment(host.querySelector('.orb-preview-model'),{[item.slot]:item.id});host.querySelector('[data-preview-cancel]').onclick=renderCollection;host.querySelector('[data-preview-equip]').onclick=async()=>{try{await action('settings',{[item.slot]:item.id});renderCollection();}catch(e){message(e);}};});
 }
 function message(text) {dialog.querySelector('.orb-reward-status').textContent=String(text);}
 async function open(collectionOnly) {
@@ -88,7 +112,7 @@ async function open(collectionOnly) {
     host.classList.add('orb-opening');
     const result=await action('chest');
     const reward=result?.reward;
-    await new Promise(resolve=>setTimeout(resolve,calm()?0:420));
+
     if(!dialog.open)return;
     host.classList.remove('orb-opening');
     host.innerHTML=reward?`${preview(reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(reward.name)}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';
@@ -101,9 +125,11 @@ function init() {
   card=document.createElement('section');card.className='orb-reward-dashboard';card.hidden=hero.hidden;card.setAttribute('aria-label','Companion progress');hero.append(card);
   dialog=document.createElement('dialog');dialog.className='orb-reward-dialog';dialog.innerHTML='<header><div><small>YOUR LITTLE UNIVERSE</small><h2>Discoveries</h2></div><button aria-label="Close discoveries">×</button></header><div class="orb-reward-content"></div><p class="orb-reward-status" role="status"></p><details><summary>How discoveries work</summary><p>Every 30 focused minutes earns a crate. Common 70% · Rare 25% · Mythic 5%. Only unowned items; unavailable tiers redistribute. Complete collections earn constellation stars.</p></details>';
   (document.getElementById('native-planner')||document.body).append(dialog);dialog.querySelector('header button').onclick=()=>dialog.close();
+  dialog.addEventListener('close',()=>window.OrbiterCats?.cancelPreview());
+  recapCard=document.createElement('section');recapCard.className='orb-session-recap';recapCard.setAttribute('aria-label','Latest focus session');recapCard.hidden=true;hero.after(recapCard);
   render();
 }
 window.addEventListener('orbiter-native-state',e=>{current=e.detail;render();if(!window.__TAURI__)window.OrbiterUI?.refreshCat();});
-window.addEventListener('orbiter-workspace-rendered',e=>{if(card)card.hidden=e.detail.page!=='desk';});
+window.addEventListener('orbiter-workspace-rendered',e=>{recapPage=e.detail.page;if(card)card.hidden=e.detail.page!=='desk';renderRecap();});
 document.addEventListener('DOMContentLoaded',()=>{current=window.OrbiterNativeState||null;init();});
-window.OrbiterRewards={growth,strip,preview,collection,crateArt};
+window.OrbiterRewards={growth,strip,preview,collection,crateArt,recap,equipmentPreview};

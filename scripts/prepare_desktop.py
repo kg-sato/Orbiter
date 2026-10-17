@@ -30,6 +30,7 @@ shutil.copyfile(root / 'web/cloud-sync.js',native / 'web/cloud-sync.js')
 shutil.copyfile(root / 'web/account.css',native / 'web/account.css')
 shutil.copyfile(root / 'web/rewards.css',native / 'web/rewards.css')
 shutil.copyfile(root / 'web/glass.css',native / 'web/glass.css')
+shutil.copyfile(root / 'web/cosmic.css',native / 'web/cosmic.css')
 for icon in (root / 'web/icons').glob('*'):
     shutil.copyfile(icon,native / 'web/icons' / icon.name)
 png = (root / 'web/icons/orbit-192.png').read_bytes()

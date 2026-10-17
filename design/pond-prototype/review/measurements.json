@@ -1,0 +1,151 @@
+{
+  "loadToFirstFramesMs": 947.1999999992549,
+  "tidal-night": {
+    "frames": 33,
+    "simSteps": 121,
+    "drawMs": 1.200000001117587,
+    "workMs": 1.300000000745058,
+    "gpuMs": 0.223232,
+    "contextLost": false,
+    "fluidFormat": "RGBA16F",
+    "resolution": [
+      1224,
+      850
+    ],
+    "still": false,
+    "contexts": 1,
+    "memory": {
+      "heap": 17469252
+    }
+  },
+  "lunar-mist": {
+    "frames": 61,
+    "simSteps": 146,
+    "drawMs": 0.599999999627471,
+    "workMs": 0.6999999992549419,
+    "gpuMs": 0.223232,
+    "contextLost": false,
+    "fluidFormat": "RGBA16F",
+    "resolution": [
+      1224,
+      850
+    ],
+    "still": false,
+    "contexts": 1,
+    "memory": {
+      "heap": 15734945
+    }
+  },
+  "opal-dawn": {
+    "frames": 92,
+    "simSteps": 174,
+    "drawMs": 0.40000000037252903,
+    "workMs": 0.5,
+    "gpuMs": 0.2456,
+    "contextLost": false,
+    "fluidFormat": "RGBA16F",
+    "resolution": [
+      1224,
+      850
+    ],
+    "still": false,
+    "contexts": 1,
+    "memory": {
+      "heap": 21476747
+    }
+  },
+  "activeResources": {
+    "seconds": 10.111,
+    "cpuPercentMachine": 0.5830206140412847,
+    "privateMB": 494.16015625,
+    "workingMB": 555.22265625,
+    "processes": 7,
+    "renderSubmitMs": {
+      "median": 0.6999999992549419,
+      "p95": 1.300000000745058
+    },
+    "frameWorkMs": {
+      "median": 0.7999999988824129,
+      "p95": 1.5
+    },
+    "renderGpuMs": {
+      "median": 0.224256,
+      "p95": 215.52768
+    },
+    "state": {
+      "frames": 400,
+      "simSteps": 481,
+      "drawMs": 0.6999999992549419,
+      "workMs": 0.6999999992549419,
+      "gpuMs": 0.224256,
+      "contextLost": false,
+      "fluidFormat": "RGBA16F",
+      "resolution": [
+        1224,
+        850
+      ],
+      "still": false,
+      "contexts": 1,
+      "memory": {
+        "heap": 12373393
+      }
+    }
+  },
+  "pausedResources": {
+    "seconds": 10.107,
+    "cpuPercentMachine": 0.03793834541830965,
+    "privateMB": 492.859375,
+    "workingMB": 555.50390625,
+    "processes": 7,
+    "renderSubmitMs": {
+      "median": 0.6999999992549419,
+      "p95": 1.300000000745058
+    },
+    "frameWorkMs": {
+      "median": 0.7999999988824129,
+      "p95": 1.5
+    },
+    "renderGpuMs": {
+      "median": 0.224256,
+      "p95": 215.52768
+    },
+    "state": {
+      "frames": 402,
+      "simSteps": 482,
+      "drawMs": 0.5,
+      "workMs": 0.5,
+      "gpuMs": 0.224256,
+      "contextLost": false,
+      "fluidFormat": "RGBA16F",
+      "resolution": [
+        1224,
+        850
+      ],
+      "still": true,
+      "contexts": 1,
+      "memory": {
+        "heap": 12838669
+      }
+    }
+  },
+  "paused": {
+    "frames": 553,
+    "simSteps": 630,
+    "drawMs": 0.5,
+    "workMs": 0.7999999988824129,
+    "gpuMs": 0.25088,
+    "contextLost": false,
+    "fluidFormat": "RGBA16F",
+    "resolution": [
+      1224,
+      850
+    ],
+    "still": true,
+    "contexts": 1,
+    "memory": {
+      "heap": 16290480
+    }
+  },
+  "acceptance": "passed",
+  "codec": "video/webm;codecs=vp9"
+}

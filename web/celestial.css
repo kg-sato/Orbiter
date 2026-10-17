@@ -22,22 +22,10 @@ body { background: var(--space-ink); color: var(--space-text); }
 .celestial-sky { fill: #0d1927; }
 .scene-accent-stop { stop-color: var(--orbiter-accent,#b4e6d5); }
 .scene-lilac-stop { stop-color: #b9a5df; }
-.celestial-haze { transform-origin: 50% 50%; animation: haze-breathe 24s ease-in-out infinite alternate; }
-.celestial-ribbon { transform-origin: 50% 70%; animation: ribbon-drift 18s ease-in-out infinite alternate; }
-.celestial-ribbon.far { animation-duration: 27s; animation-delay: -12s; opacity: .64; }
-.celestial-ribbon.near { animation-delay: -7s; }
-.celestial-stars { animation: star-breathe 9s ease-in-out infinite alternate; }
-.celestial-sculpture { transform-origin:90% 40%; animation: sculpture-float 22s ease-in-out infinite alternate; }
-@keyframes sculpture-float { from { transform:translate(8px,-6px) rotate(-3deg); } to { transform:translate(-12px,12px) rotate(3deg); } }
-.scene-atlas,.scene-tasks,.scene-rhythm { opacity: 0; transition: opacity .45s ease; }
-body[data-scene="atlas"] .scene-atlas,body[data-scene="tasks"] .scene-tasks,body[data-scene="rhythm"] .scene-rhythm { opacity: 1; }
-body[data-scene="atlas"] .celestial-horizon { opacity: .35; }
-body[data-scene="tasks"] .celestial-ribbon.near { transform-origin: 80% 20%; }
-body[data-scene="rhythm"] .celestial-haze { opacity: .7; }
-body.scene-still .orbital-backdrop *,body.motion-hidden .orbital-backdrop * { animation-play-state: paused!important; }
-@keyframes haze-breathe { from { transform: translate(-12px,8px) scale(1); opacity:.68; } to { transform: translate(16px,-10px) scale(1.035); opacity:1; } }
-@keyframes ribbon-drift { from { transform: translate(-10px,8px) rotate(-1deg); } to { transform: translate(14px,-10px) rotate(1deg); } }
-@keyframes star-breathe { from { opacity:.32; } to { opacity:.7; } }
+/* The observatory is a static vector painting at rest; only pointer/scroll events
+   request a bounded parallax update. No full-viewport filter or animation loop. */
+body.scene-still .orbital-backdrop * { animation-play-state:paused!important; }
+body.scene-still .cosmic-primary { translate:var(--primary-offset-x,0px) var(--primary-offset-y,0px); }
 
 /* A shared bento rhythm, rather than a separate visual language per page. */
 .workspace { max-width: 1760px; }

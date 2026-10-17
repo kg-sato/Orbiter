@@ -19,3 +19,9 @@
 .orb-crate-button>span:last-child{white-space:nowrap}
 .orb-level small{display:block;margin-top:6px}
 @media(max-width:540px){#now-card .orb-reward-dashboard{gap:10px;left:14px;right:14px;padding:10px}.orb-crate-button{gap:6px;font-size:10px}.orb-crate-button .orb-crate-art{width:34px;height:30px}}
+/* A reveal is decorative; reward controls never wait for the local tide. */
+.orb-reward-content:has(>.orb-item-preview),#reward-content:has(>.orb-item-preview){position:relative;isolation:isolate;overflow:hidden}
+.orb-reward-content:has(>.orb-item-preview)::before,#reward-content:has(>.orb-item-preview)::before{content:'';position:absolute;inset:-30%;z-index:-1;pointer-events:none;border-radius:44%;background:linear-gradient(135deg,#b4e6d52b,#c8b5eb35,#21374b00);animation:reward-local-tide 420ms ease-out both}
+@keyframes reward-local-tide{from{transform:translate(-45%,35%) rotate(-18deg);opacity:.9}to{transform:translate(45%,-35%) rotate(12deg);opacity:0}}
+.reduced-motion .orb-reward-content::before,.calm .orb-reward-content::before,.quiet .orb-reward-content::before,:host([data-calm=true]) #reward-content::before{animation:none!important;display:none}
+@media(prefers-reduced-motion:reduce){.orb-reward-content::before,#reward-content::before{animation:none!important;display:none}}

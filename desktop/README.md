@@ -4,7 +4,7 @@ An autonomous study buddy built with Tauri 2, Rust, SQLite and bundled HTML/CSS 
 
 ## First use
 
-Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The installed executable is `C:\Users\kgsat\AppData\Local\Orbiter\orbit-companion.exe`; the simple installer is `build\release\Orbiter Setup.exe` (version 0.4.2).
+Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The installed executable is `C:\Users\kgsat\AppData\Local\Orbiter\orbit-companion.exe`; the simple installer is `build\release\Orbiter Setup.exe` (version 0.5.0).
 
 - Orbiter launches as a rounded 420 × 220 floating island. Click the cat, the doorway action, or the island's ↗ control to open the full scheduler **inside the same app**. The planner has ordinary Windows controls; Restore returns to the island, and minimize uses the taskbar.
 - Starting or resuming focus automatically returns to buddy mode. You can reopen the planner during focus. Focus Room has been replaced by these two modes.
@@ -17,7 +17,24 @@ Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The ins
 - Closing keeps Orbiter in the tray and releases the webview. Unsaved planner edits offer Save/Discard/Cancel. **Quit Orbiter** pauses and persists focus before exit.
 - The tray's **Open paired browser (optional)** is the only action that opens an external browser. The bundled planner works offline without Python, Node or the local server.
 
-The animated cat is a real procedural Three.js model. Courses keep unique profiles combining coat, ears, scarf and charm. A new main cat is selected on fresh loads, while mode switches retain it; task-linked focus uses the course cat. Head pats and typing reactions operate only inside Orbiter. Reduced motion stops ambient movement. A static illustration appears if WebGL is unavailable.
+The animated cat is an original Blender-built GLB rendered with the existing Three.js engine. Editable model sources and export instructions are in `design/avatar/`; Blender is not required to run Orbiter. Courses keep unique profiles combining coat, ears, scarf and charm. A new main cat is selected on fresh loads, while mode switches retain it; task-linked focus uses the course cat. Head pats and typing reactions operate only inside Orbiter. Reduced motion stops ambient movement. A static illustration appears if WebGL is unavailable.
+
+## Cosmic worlds and equipment
+
+Appearance studio offers Tidal Night, Lunar Mist and Opal Dawn, decorative atmosphere strength, independent motion intensity, and Auto/Low/High quality. Changes stay in the preview until Apply. Auto reduces resolution if sustained rendering cost exceeds its budget; Low uses 1x resolution. Zero motion and reduced motion stop the render loop.
+
+In Discoveries, select an owned or locked item to try it on the live cat. **Equip** saves owned items; **Cancel preview**, Escape or closing restores the previous collection. Locked items are labeled and cannot be equipped. Habitats fill the cat environment and tint the wider planner/island. Existing XP, crate odds and ownership are unchanged.
+
+The live scene uses one WebGL context, including previews. Course portraits are cached. Rendering is capped at 30 FPS and suspended when hidden. See `docs/VERIFICATION-0.6.0.md` for measured resource use and outstanding live release checks.
+
+## Everyday study and appearance
+
+- Choose an intention and duration in My Day. The hero and timer share that intention; Pause/Resume, Finish, and task details stay in fixed control areas. An in-progress native session must be finished before changing its intention or duration.
+- **Appearance studio**, available through planner preferences and buddy options, previews planner/buddy styling before Apply. Try Tidal Night, Lunar Mist, or Opal Dawn, your accent/material, and atmosphere strength. Cancel preview restores saved choices; Reset resets appearance only. Save preferences also commits the current preview.
+- Frequent menus use short local transitions. The signature wave remains for applied scene changes and Week in orbit. Reduced motion suppresses decoration without blocking typing.
+- Habitats develop from resting stone to pool, lantern, and celestial garden using the existing 0/2/8/20-hour milestones. Course identity and owned cosmetics remain intact.
+- Finish or complete focus to see actual credited time, exam budget reduction, confirmed rewards, and growth in a session recap. Cloud credit can remain pending; confirmed account totals are explicitly labeled as totals. Done acknowledges the recap. Reopen it through **Latest session** or My Day without awarding time again.
+- Before synchronizing the new appearance preferences, apply `supabase/migrations/202610160001_appearance.sql` through Supabase's SQL editor. This local build does not change your hosted database.
 
 ## Updates
 
@@ -76,3 +93,9 @@ The 0.4 installer refresh adds grouped buddy settings, independently scrolling D
 
 The existing installed app does not update just because source files changed. After saving/finishing your current session, Quit Orbiter from its tray, run the refreshed installer, and reopen it. Browser users should reload their usual URL to get the regenerated source without changing storage origins.
 
+
+## Orbiter 0.5 pond workspace
+
+The blue lily pond now sits behind the full scheduler and compact buddy. Mist moves automatically and parts under cursor sweeps; it stops with Low quality, reduced motion, quiet mode or zero motion intensity. If it looks still, check Appearance settings before increasing atmosphere. Keep Auto quality for the conservative default.
+
+Save and Quit Orbiter from its tray menu before installing the new 0.5.0 build. Local 0.6.x files were unreleased visual-development builds; 0.5.0 is the requested release version. A local 0.6.x installation needs a manual installer run because updater version ordering will not offer a numerically lower version. Existing database and signing-key identifiers are unchanged.

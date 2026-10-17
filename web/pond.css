@@ -1,0 +1,18 @@
+/* Orbiter 0.5: one blue pond behind the complete workspace. */
+body.pond-050{--space-ink:#101d36;--space-muted:#bfd0e6;background:#101d36;color:#edf3fa}
+body.pond-050 .orbital-backdrop,body.pond-050 .cosmic-world{display:none!important}
+#pond-background{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#101d36 url('POND_STILL_TIDAL') center/cover no-repeat}
+body[data-preset=lunar-mist] #pond-background{background-image:url('POND_STILL_LUNAR')}
+body[data-preset=opal-dawn] #pond-background{background-image:url('POND_STILL_OPAL')}
+body[data-native-mode=buddy] #pond-background{display:none}
+body.pond-050 .sidebar,body.pond-050 .masthead{background:linear-gradient(140deg,#223858ed,#182a47eb)!important;border-color:#b5d0ed39}
+body.pond-050 .hero,body.pond-050 .focus-card,body.pond-050 .assignment-overview,body.pond-050 .atlas-detail,body.pond-050 .workload-forecast,body.pond-050 .next-peek{background:linear-gradient(135deg,#203753ed,#172a46df)!important;border-color:#bad4ef38}
+body.pond-050 .hero{background:linear-gradient(110deg,#1a304eea 0%,#1d3458b8 58%,#20385d70)!important}
+body.pond-050 dialog{background:linear-gradient(145deg,#28405af5,#192d4bf5)!important;border-color:#bed7ef55}
+body.pond-050 .course-planet{background:linear-gradient(135deg,#274565b3,#243756aa)!important}
+body.pond-050 .planner{border-radius:28px}
+body.pond-050 .course-notes,body.pond-050 textarea{background:#25405d50;border-color:#c2d8ec38;color:#e6eff8}
+body.pond-050.solid-glass .hero,body.pond-050.solid-glass .sidebar,body.pond-050.solid-glass .masthead,body.pond-050.solid-glass .focus-card,body.pond-050.solid-glass .atlas-detail{background:#21344e!important}
+body.pond-050[data-material=quiet] #pond-background canvas{display:none}
+body.pond-050 .preview-sky{background:linear-gradient(140deg,#243c5c,#142949)!important}
+body.pond-050 .preview-sky::after{content:'';position:absolute;inset:0;background:url('POND_STILL_TIDAL') center/cover;opacity:.7}

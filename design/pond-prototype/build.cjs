@@ -1,0 +1,5 @@
+const fs=require('fs'),path=require('path'),esbuild=require('esbuild');
+const root=path.resolve(__dirname,'../..');
+// Reuse the existing character factory without its application controller or
+// legacy stage. This transforms an in-memory copy; production source is untouched.
+esbuild.build({entryPoints:[path.join(__dirname,'main.js')],bundle:true,format:'iife',minify:true,target:'es2022',loader:{'.glb':'dataurl'},outfile:path.join(__dirname,'preview.js'),plugins:[{name:'isolated-character',setup(build){build.onLoad({filter:/[\\/]mascot[\\/]cat\.js$/},()=>{let source=fs.readFileSync(path.join(root,'src/mascot/cat.js'),'utf8').split('let drawMs=')[0];source=source.replace('function makeCat(','export function makeCat(').replace('function disposeModel(','export function disposeModel(').replace(/^ const stage=island.*$/m,'').replace(/if\(equipment.habitat\)\{addHabitat[^\n]+/,"if(equipment.habitat)addHabitat(habitat,Number(equipment.habitat.slice(-2)),gold);");return {contents:source,loader:'js',resolveDir:path.join(root,'src/mascot')};});}}]}).catch(e=>{console.error(e);process.exitCode=1});

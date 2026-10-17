@@ -18,7 +18,8 @@ out.mkdir(parents=True, exist_ok=True)
 for source in (installer, signature):
     shutil.copyfile(source, out / source.name)
 shutil.copyfile(installer, out / 'Orbiter Setup.exe')
-notes = (root / 'docs/RELEASE-0.4.2.md').read_text(encoding='utf-8') if version == '0.4.2' else f'Orbiter {version}'
+notes_path = root / f'docs/RELEASE-{version}.md'
+notes = notes_path.read_text(encoding='utf-8') if notes_path.exists() else f'Orbiter {version}'
 manifest = {'version': version, 'notes': notes,
             'pub_date': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'platforms': {'windows-x86_64': {

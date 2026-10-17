@@ -212,6 +212,29 @@ pub fn validate_workspace(v: &Value) -> Result<(), String> {
     {
         return fail();
     }
+    if p.get("motionIntensity").is_some()
+        && !p["motionIntensity"].as_u64().is_some_and(|n| n <= 100)
+    {
+        return fail();
+    }
+    if p.get("effectQuality").is_some()
+        && !matches!(p["effectQuality"].as_str(), Some("auto" | "low" | "high"))
+    {
+        return fail();
+    }
+    if p.get("scenePreset").is_some()
+        && !matches!(
+            p["scenePreset"].as_str(),
+            Some("tidal-night" | "lunar-mist" | "opal-dawn")
+        )
+    {
+        return fail();
+    }
+    if p.get("atmosphereStrength").is_some()
+        && !p["atmosphereStrength"].as_u64().is_some_and(|n| n <= 100)
+    {
+        return fail();
+    }
     let start = p.get("studyStart").and_then(Value::as_u64).unwrap_or(540);
     let end = p.get("studyEnd").and_then(Value::as_u64).unwrap_or(1260);
     let target = p.get("dailyTarget").and_then(Value::as_u64).unwrap_or(180);
