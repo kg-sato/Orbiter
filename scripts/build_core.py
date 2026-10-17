@@ -51,6 +51,15 @@ for resource, tag, label in [('web/refinement.css','style','orbiter-refinement-s
     if 'id="'+label+'"' in source:
         source = re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>',lambda _:extra,source,flags=re.S)
     else: source = source.replace('</head>',extra+'\n</head>',1)
+# One shared transition controller is embedded for offline and native use too.
+for resource, tag, label in [('web/lake-transitions.css','style','orbiter-lake-styles'),('web/lake-transitions.js','script','orbiter-lake-controller')]:
+    extra='<'+tag+' id="'+label+'">\n'+(root/resource).read_text(encoding='utf-8')+'\n</'+tag+'>'
+    if 'id="'+label+'"' in source:
+        source=re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>',lambda _:extra,source,flags=re.S)
+    else:source=source.replace('</head>',extra+'\n</head>',1)
+# Shared shoreline controls are embedded for offline and native use too.
+shoreline_css='<style id="orbiter-shoreline-styles">\n'+(root/'web/shoreline.css').read_text(encoding='utf-8')+'\n</style>'
+source=re.sub(r'<style id="orbiter-shoreline-styles">.*?</style>',lambda _:shoreline_css,source,flags=re.S) if 'id="orbiter-shoreline-styles"' in source else source.replace('</head>',shoreline_css+'\n</head>',1)
 # Pond fallbacks are bundled data assets: native, browser and offline copies agree.
 import base64
 pond_css=(root/'web/pond.css').read_text(encoding='utf-8')

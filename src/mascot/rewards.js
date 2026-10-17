@@ -116,6 +116,7 @@ async function open(collectionOnly) {
     if(!dialog.open)return;
     host.classList.remove('orb-opening');
     host.innerHTML=reward?`${preview(reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(reward.name)}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';
+    window.OrbiterLake?.play({kind:'crate',target:host});
     host.querySelector('[data-reveal-equip]')?.addEventListener('click',async()=>{try{await action('settings',{[reward.slot]:reward.id});message('Equipped');}catch(e){message(e);}});
     window.OrbiterCats?.celebrate();
   }catch(e){message(e);}finally{busy=false;host.classList.remove('orb-opening');}

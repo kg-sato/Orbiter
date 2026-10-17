@@ -6,7 +6,7 @@ const palettes={
  'opal-dawn':{deep:'#1a2946',light:'#a3ced8',mist:'#d0dff3',sun:'#d3c6e4'}
 };
 export function createPondWorld(renderer){
- let w=1,h=1,ping=0,time=0,pending=false,previous=null,lastDraw=-100,ready=false,frameCount=0,frameMs=0,lastQuiet=true,gusts=0;
+ let w=1,h=1,ping=0,time=0,pending=false,previous=null,lastDraw=-100,ready=false,frameCount=0,frameMs=0,lastQuiet=true,gusts=0,transitionDisturbances=0;
  const pointer=new THREE.Vector2(-10,-10),velocity=new THREE.Vector2(),ripples=Array.from({length:8},()=>new THREE.Vector4(-10,-10,-100,0));let rippleIndex=0;
  const simulation=new THREE.Scene(),screen=new THREE.Scene(),bedScene=new THREE.Scene(),surfaceScene=new THREE.Scene();
  surfaceScene.add(new THREE.AmbientLight('#cadcf2',1.4));const leafLight=new THREE.DirectionalLight('#d9e7ff',2);leafLight.position.set(-2,3,5);surfaceScene.add(leafLight);const botanics=lilies(surfaceScene);
@@ -92,5 +92,12 @@ const fishes=Array.from({length:3},(_,i)=>{const f=koi(i);f.root.position.z=-.04
   const path=e.composedPath();if(path.some(n=>n.matches?.('input,textarea,select,a,button:not(#cat):not(.orbit-art),[contenteditable=true]')))return;
   const bounds=container?.getBoundingClientRect();if(!bounds)return;const px=(e.clientX-bounds.left)/bounds.width,py=1-(e.clientY-bounds.top)/bounds.height,now=performance.now();if(previous&&e.type==='pointermove'){const dt=Math.max(.016,(now-previous.t)/1000);velocity.set(THREE.MathUtils.clamp((px-previous.x)/dt,-2,2),THREE.MathUtils.clamp((py-previous.y)/dt,-2,2));pending=true;gusts++;}pointer.set(px,py);if(e.type==='pointerdown'||previous&&now-previous.ripple>130&&velocity.length()>.18){ripples[rippleIndex++%8].set(px,py,time,e.type==='pointerdown'?.8:.3);previous={x:px,y:py,t:now,ripple:now};}else previous={x:px,y:py,t:now,ripple:previous?.ripple||now};}
  document.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')interact(e);},{passive:true});document.addEventListener('pointerdown',interact,{passive:true});window.addEventListener('blur',()=>{previous=null;pending=false;velocity.set(0,0);});document.addEventListener('visibilitychange',()=>{previous=null;pending=false;lastDraw=-100;});
- return {place,render,reset(){ready=false;field.reset.value=1;lastDraw=-100;render.stamp='';},stats:()=>({frames:frameCount,frameMs,resolution:[bufferW,bufferH],mistMoving:!document.hidden&&!lastQuiet,mistTime:time,gusts,simulation:128})};
+ // Deliberate UI transitions may disturb exposed water even when their origin is a control.
+ window.addEventListener('orbiter-pond-disturb',event=>{
+  if(lastQuiet||document.hidden||document.body.classList.contains('calm')||document.body.classList.contains('quiet')||document.body.classList.contains('reduced-motion')||matchMedia('(prefers-reduced-motion:reduce)').matches||Number(document.body.dataset.motionIntensity??70)===0||document.body.dataset.effectQuality==='low')return;
+  const b=container?.getBoundingClientRect(),d=event.detail;if(!b?.width||!b?.height||!Number.isFinite(d?.x)||!Number.isFinite(d?.y))return;
+  const px=THREE.MathUtils.clamp((d.x-b.left)/b.width,0,1),py=THREE.MathUtils.clamp(1-(d.y-b.top)/b.height,0,1),strength=THREE.MathUtils.clamp(Number(d.strength)||0,0,1);
+  pointer.set(px,py);velocity.set(.18*strength,.8*strength);pending=true;ripples[rippleIndex++%8].set(px,py,time,strength);transitionDisturbances++;
+ });
+ return {place,render,reset(){ready=false;field.reset.value=1;lastDraw=-100;render.stamp='';},stats:()=>({frames:frameCount,frameMs,resolution:[bufferW,bufferH],mistMoving:!document.hidden&&!lastQuiet,mistTime:time,gusts,transitionDisturbances,simulation:128})};
 }

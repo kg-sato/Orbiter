@@ -1,0 +1,61 @@
+{
+  "stats": {
+    "lake": {
+      "active": false,
+      "kind": "popup",
+      "duration": 0,
+      "frames": 139,
+      "completed": 4,
+      "cancelled": 42,
+      "pondCaptures": 46,
+      "meanDrawMs": 0.20000000003216079,
+      "maxDrawMs": 0.7000000029802322,
+      "lastError": null,
+      "overlayCount": 0,
+      "bufferBytes": 7370752,
+      "webglContexts": 0,
+      "timings": {
+        "button": 220,
+        "tab": 350,
+        "popup": 900,
+        "close": 500,
+        "page": 1000,
+        "scene": 1000,
+        "crate": 600
+      }
+    },
+    "cat": {
+      "loaded": true,
+      "error": null,
+      "version": "orbiter-kitten-2",
+      "pond": {
+        "frames": 20,
+        "frameMs": 1.8999999985098839,
+        "resolution": [
+          864,
+          600
+        ],
+        "mistMoving": true,
+        "mistTime": 2.8,
+        "gusts": 0,
+        "transitionDisturbances": 44,
+        "simulation": 128
+      },
+      "triangles": 18488,
+      "frameMs": 0.5999999940395355,
+      "gpuMs": 2.515136,
+      "quality": "low",
+      "frames": 38,
+      "contexts": 1,
+      "profile": 8,
+      "age": 0,
+      "renderCalls": 31,
+      "geometries": 74
+    }
+  },
+  "errors": [],
+  "idleTaskPercent": 25.20550688095862,
+  "effectSampleTaskPercent": 15.053781546394031,
+  "heapBytes": 10277848,
+  "notes": "Browser indicative samples; TaskDuration is main-thread work, not Windows process/GPU utilization. Canvas buffer bytes exclude browser/driver allocation. No native installer measurement."
+}

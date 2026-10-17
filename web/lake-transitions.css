@@ -1,0 +1,10 @@
+/* A single, finite 2D reflection layer. No form pixels or extra WebGL context. */
+body dialog{animation:none!important;transition:none!important;transform:none!important}
+body dialog[open]{opacity:1!important}
+body dialog::backdrop{animation:none!important;transition:none!important}
+#orbiter-lake-transition,#orbiter-lake-transition:popover-open{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden!important;pointer-events:none!important;z-index:2147483646!important;contain:strict}
+#orbiter-lake-transition::backdrop{background:transparent!important;pointer-events:none!important}
+#orbiter-lake-transition canvas{display:block;width:100%;height:100%;pointer-events:none!important}
+.lake-edge-fallback{outline:1px solid color-mix(in srgb,var(--orbiter-accent,#b4e6d5) 55%,transparent);outline-offset:5px}
+@media(prefers-reduced-motion:reduce){#orbiter-lake-transition,.lake-edge-fallback{display:none!important;outline:none!important}}
+.reduced-motion #orbiter-lake-transition,.calm #orbiter-lake-transition,.quiet #orbiter-lake-transition{display:none!important}

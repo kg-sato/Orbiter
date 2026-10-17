@@ -9,6 +9,9 @@ PUBLIC_FILES = {
     "Application.html", "manifest.webmanifest", "sw.js",
     "design/scheduler-ui-preview/index.html", "web/account-sync.js", "web/cloud-sync.js", "web/account.css",
     "web/study-companion.html", "web/study-companion.js", "web/glass.css",
+    "web/lake-transitions.js", "web/lake-transitions.css",
+    "design/lake-transitions/index.html", "design/lake-transitions/scene.js",
+    "web/pond/tidal-night.jpg", "web/pond/lunar-mist.jpg", "web/pond/opal-dawn.jpg",
 }
 
 class AppHandler(SimpleHTTPRequestHandler):
