@@ -1,0 +1,185 @@
+{
+  "startupMs": 1914.5364000000002,
+  "records": [
+    {
+      "original": true,
+      "outfit": "Tide Wanderer",
+      "habitat": "habitat-01",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3267.3734999999997,
+      "fps": 27.54506027547815,
+      "mainThreadPercent": 4.93543208329259,
+      "medianDrawMs": 0.7999999970197678,
+      "medianGpuMs": 0.043008,
+      "jsHeapMiB": 9.678462982177734,
+      "drawCalls": 55,
+      "triangles": 24064,
+      "geometryCount": 92,
+      "components": []
+    },
+    {
+      "original": true,
+      "outfit": "Moon Garden",
+      "habitat": "habitat-11",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3254.2358000000004,
+      "fps": 27.656262646978437,
+      "mainThreadPercent": 4.501210391699335,
+      "medianDrawMs": 0.6999999955296516,
+      "medianGpuMs": 0.350368,
+      "jsHeapMiB": 10.70822525024414,
+      "drawCalls": 76,
+      "triangles": 30528,
+      "geometryCount": 103,
+      "components": []
+    },
+    {
+      "original": true,
+      "outfit": "Stargazer",
+      "habitat": "habitat-07",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3281.286399999999,
+      "fps": 27.733025681635112,
+      "mainThreadPercent": 4.291152396816082,
+      "medianDrawMs": 0.6000000014901161,
+      "medianGpuMs": 0.207968,
+      "jsHeapMiB": 9.990375518798828,
+      "drawCalls": 56,
+      "triangles": 23614,
+      "geometryCount": 93,
+      "components": []
+    },
+    {
+      "original": false,
+      "outfit": "Tide Wanderer",
+      "habitat": "habitat-01",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3280.5250000000015,
+      "fps": 27.43463317609223,
+      "mainThreadPercent": 4.394936786032721,
+      "medianDrawMs": 0.7000000029802322,
+      "medianGpuMs": 0.04608,
+      "jsHeapMiB": 11.565204620361328,
+      "drawCalls": 47,
+      "triangles": 25822,
+      "geometryCount": 90,
+      "components": [
+        {
+          "drawCalls": 4,
+          "triangles": 710,
+          "particles": 0,
+          "item": "halo-10"
+        },
+        {
+          "drawCalls": 6,
+          "triangles": 5184,
+          "particles": 0,
+          "item": "habitat-01"
+        },
+        {
+          "item": "trail-waves",
+          "drawCalls": 2,
+          "triangles": 0,
+          "particles": 0
+        }
+      ]
+    },
+    {
+      "original": false,
+      "outfit": "Moon Garden",
+      "habitat": "habitat-11",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3286.1093999999975,
+      "fps": 27.388010879978633,
+      "mainThreadPercent": 4.229682675811101,
+      "medianDrawMs": 0.6999999955296516,
+      "medianGpuMs": 0.049152,
+      "jsHeapMiB": 22.201805114746094,
+      "drawCalls": 46,
+      "triangles": 36664,
+      "geometryCount": 89,
+      "components": [
+        {
+          "drawCalls": 4,
+          "triangles": 2240,
+          "particles": 0,
+          "item": "halo-12"
+        },
+        {
+          "drawCalls": 4,
+          "triangles": 14448,
+          "particles": 0,
+          "item": "habitat-11"
+        },
+        {
+          "item": "trail-sparks",
+          "drawCalls": 3,
+          "triangles": 48,
+          "particles": 6
+        }
+      ]
+    },
+    {
+      "original": false,
+      "outfit": "Stargazer",
+      "habitat": "habitat-07",
+      "resolution": [
+        864,
+        630
+      ],
+      "elapsedMs": 3282.260399999999,
+      "fps": 27.72479599729504,
+      "mainThreadPercent": 4.486877397052347,
+      "medianDrawMs": 0.7999999970197678,
+      "medianGpuMs": 0.047104,
+      "jsHeapMiB": 18.02783966064453,
+      "drawCalls": 46,
+      "triangles": 24752,
+      "geometryCount": 90,
+      "components": [
+        {
+          "drawCalls": 3,
+          "triangles": 1920,
+          "particles": 0,
+          "item": "halo-07"
+        },
+        {
+          "drawCalls": 6,
+          "triangles": 2784,
+          "particles": 0,
+          "item": "habitat-07"
+        },
+        {
+          "item": "trail-comet",
+          "drawCalls": 2,
+          "triangles": 120,
+          "particles": 1
+        }
+      ]
+    }
+  ],
+  "pausedFrames": 0,
+  "notes": [
+    "Previous-item comparison shares the refined review GLB and pond renderer; it is not a complete old-release baseline.",
+    "Startup is isolated browser page-ready time, not installed native launch time.",
+    "Main-thread percentages use Chromium TaskDuration, not whole-process CPU.",
+    "JS heap excludes native process memory, GPU memory and decoded media.",
+    "GPU medians exclude a 2-second warmup per scene; timer availability is hardware-dependent.",
+    "No installer-size comparison: prototype is not packaged."
+  ]
+}

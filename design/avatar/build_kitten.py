@@ -14,7 +14,7 @@ def mat(name, color, rough=.7):
     m=bpy.data.materials.new(name); m.diffuse_color=(*color,1); m.use_nodes=True
     bs=m.node_tree.nodes.get('Principled BSDF'); bs.inputs['Base Color'].default_value=(*color,1); bs.inputs['Roughness'].default_value=rough
     return m
-fur=mat('Coat',(.90,.79,.62)); ivory=mat('Ivory',(1,.94,.81)); rose=mat('Rose',(.83,.44,.46)); eye=mat('Eyes',(.055,.11,.15),.26); glow=mat('Glint',(1,.98,.91),.25); patch=mat('Pattern',(.55,.66,.61))
+fur=mat('Coat',(.90,.79,.62)); ivory=mat('Ivory',(1,.94,.81)); rose=mat('Rose',(.83,.44,.46)); eye=mat('Eyes',(.045,.095,.13),.38); glow=mat('Glint',(1,.98,.91),.25); patch=mat('Pattern',(.55,.66,.61))
 def point(p): return (p[0],-p[2],p[1])
 def sphere(name,p,s,material,segments=24,rings=16):
     bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=rings,location=point(p))
@@ -49,24 +49,28 @@ for v in head.data.vertices:
 bind(head,'Head')
 bind(sphere('BodyMesh',(0,.45,0),(.39,.47,.33),fur),'Body')
 bind(sphere('Belly',(0,.46,.30),(.22,.27,.035),ivory),'Body')
-bind(sphere('Nose',(0,1.24,.591),(.052,.038,.03),eye),'Head')
-smile=curve('Smile',[(-.12,1.17,.575),(-.095,1.105,.58),(-.04,1.11,.597),(0,1.17,.598),(.04,1.11,.597),(.095,1.105,.58),(.12,1.17,.575)],.018,eye)
+bind(sphere('Nose',(0,1.245,.593),(.045,.031,.027),eye),'Head')
+smile=curve('Smile',[(-.105,1.165,.58),(-.075,1.125,.596),(-.025,1.14,.608),(0,1.175,.611),(.025,1.14,.608),(.075,1.125,.596),(.105,1.165,.58)],.014,eye)
 smile.shape_key_add(name='Basis');happy=smile.shape_key_add(name='Happy')
 for v in happy.data:v.co.z+=.025*min(1,abs(v.co.x)/.12)
 bind(smile,'Head')
 for side in [-1,1]:
     tag='L' if side<0 else 'R'
-    e=sphere('Eye'+tag,(side*.30,1.40,.543),(.137,.173,.057),eye)
+    e=sphere('Eye'+tag,(side*.30,1.40,.543),(.132,.169,.055),eye)
     e.shape_key_add(name='Basis');blink=e.shape_key_add(name='Blink')
     # Local Z is vertical in Blender; export converts it into glTF Y.
     for v in blink.data:v.co.z*=.10
     bind(e,'Head')
-    bind(sphere('Glint'+tag,(side*.30-.035,1.46,.593),(.031,.042,.011),glow,16,10),'Head')
+    bind(sphere('Glint'+tag,(side*.30-.035,1.46,.593),(.024,.032,.009),glow,16,10),'Head')
     bind(sphere('Blush'+tag,(side*.53,1.22,.448),(.085,.035,.016),rose),'Head')
-    brow=sphere('Brow'+tag,(side*.30,1.69,.516),(.085,.025,.024),patch,16,10);bind(brow,'Head')
-    bind(sphere('PawMesh'+tag,(side*.23,.31,.30),(.135,.30,.16),fur),'Paw'+tag)
-    bind(sphere('Foot'+tag,(side*.23,.10,.35),(.16,.115,.195),fur),'Paw'+tag)
+    brow=sphere('Brow'+tag,(side*.30,1.65,.540),(.065,.016,.013),patch,16,10);bind(brow,'Head')
+    bind(sphere('PawMesh'+tag,(side*.23,.31,.30),(.143,.285,.169),fur),'Paw'+tag)
+    bind(sphere('Foot'+tag,(side*.23,.10,.35),(.165,.116,.205),fur),'Paw'+tag)
     bind(sphere('Haunch'+tag,(side*.37,.15,-.02),(.22,.18,.24),fur),'Root')
+    # Two shallow toe divisions sit on the foot surface, never change the paw silhouette.
+    for toe in [-1, 1]:
+        x = side*.23 + toe*.047
+        bind(curve('Toe'+tag+str(toe),[(x,.09,.546),(x,.13,.538),(x,.16,.515)],.005,patch),'Paw'+tag)
     # Four separately named ear meshes; runtime selects the persistent trait.
     for variant in range(4):
         # Rounded outline with a continuous thick rim and an actual recessed inner bowl.
@@ -104,10 +108,10 @@ for side in [-1,1]:
         for f in inner.data.polygons:f.use_smooth=True
         bind(inner,'Ear'+tag)
         if variant==3:bind(sphere('Tuft'+tag,(side*.68,2.35,.035),(.04,.075,.045),ivory,16,10),'Ear'+tag)
-bind(curve('TailMesh',[(.32,.22,-.14),(.71,.25,-.23),(.81,.51,-.26),(.66,.62,-.20)],.085,fur),'Tail')
+bind(curve('TailMesh',[(.32,.22,-.14),(.70,.25,-.24),(.84,.48,-.26),(.79,.67,-.21),(.64,.70,-.18)],.087,fur),'Tail')
 # Neutral, editable preview pose. Runtime accessories retain the original four identities.
-rig['modelVersion']='orbiter-kitten-2';rig['license']='Original Orbiter artwork';rig['triangleBudget']=25000
+rig['modelVersion']='orbiter-kitten-051';rig['license']='Original Orbiter artwork';rig['triangleBudget']=25000
 bpy.context.view_layer.objects.active=rig
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'design/avatar/orbiter-kitten.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'design/avatar/orbiter-kitten-051.blend'))
 bpy.ops.export_scene.gltf(filepath=str(OUT/'kitten.glb'),export_format='GLB',export_animations=False,export_skins=True,export_morph=True,export_yup=True)
 print('ORBITER_MODEL_EXPORTED',sum(len(o.data.polygons) for o in bpy.data.objects if o.type=='MESH'))

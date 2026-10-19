@@ -16,11 +16,11 @@ function koiSkin(index){
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t;
 }
 export function koi(index){
- const root=new THREE.Group(),skin=new THREE.MeshStandardMaterial({map:koiSkin(index),roughness:.38,metalness:.03});
+ const root=new THREE.Group(),skin=new THREE.MeshStandardMaterial({map:koiSkin(index),color:'#9daec1',roughness:.65,metalness:.03});
  const shape=new THREE.SphereGeometry(1,40,28),p=shape.attributes.position;
  for(let i=0;i<p.count;i++){const y=p.getY(i),t=(y+1)/2;const taper=.55+.45*Math.sin(t*Math.PI*.80);p.setXYZ(i,p.getX(i)*taper,p.getY(i),p.getZ(i));}shape.computeVertexNormals();
  const body=new THREE.Mesh(shape,skin);body.scale.set(.071,.23,.037);root.add(body);
- const finMat=new THREE.MeshStandardMaterial({color:'#e1dbc6',transparent:true,opacity:.66,roughness:.65,side:THREE.DoubleSide});
+ const finMat=new THREE.MeshStandardMaterial({color:'#e1dbc6',transparent:true,opacity:.38,roughness:.75,side:THREE.DoubleSide});
  const tailShape=new THREE.Shape();tailShape.moveTo(0,.035);tailShape.bezierCurveTo(-.025,-.035,-.085,-.07,-.105,-.17);tailShape.quadraticCurveTo(0,-.11,.105,-.17);tailShape.bezierCurveTo(.085,-.07,.025,-.035,0,.035);
  const tail=new THREE.Group();tail.position.y=-.20;tail.add(new THREE.Mesh(new THREE.ShapeGeometry(tailShape,20),finMat));
  for(let i=-3;i<=3;i++){const points=[new THREE.Vector3(0,0,.002),new THREE.Vector3(i*.025,-.13,.002)];tail.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:'#a7ad9b',transparent:true,opacity:.35})));}root.add(tail);
@@ -36,6 +36,7 @@ export function lilies(scene){
  const outline=new THREE.Shape();outline.moveTo(0,0);for(let i=0;i<=100;i++){const a=.16+i/100*(Math.PI*2-.32),r=1+.018*Math.sin(a*9)+.012*Math.cos(a*15);outline.lineTo(Math.cos(a)*r,Math.sin(a)*r);}outline.closePath();
  const geometry=new THREE.ShapeGeometry(outline,60);const pos=geometry.attributes.position,uv=geometry.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,(pos.getX(i)+1)/2,(pos.getY(i)+1)/2);
  const material=new THREE.MeshStandardMaterial({map,roughness:.48,metalness:.02,side:THREE.DoubleSide});
+ material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\nfloat wetRim=smoothstep(.43,.50,length(vMapUv-.5));float dew=exp(-dot(vMapUv-vec2(.32,.60),vMapUv-vec2(.32,.60))*1600.);diffuseColor.rgb+=vec3(.22,.40,.48)*wetRim*.18+vec3(.6,.8,.9)*dew*.14;');};
  const pads=[];for(const [x,y,s,a] of [[-.83,.88,.19,.5],[-.96,.46,.16,2.2],[.80,.82,.23,3.4],[.96,-.50,.27,1.1],[-.88,-.75,.24,-.7],[.65,-.91,.18,2.5],[.97,.18,.16,-1]]){const pad=new THREE.Mesh(geometry,material);pad.userData={x,y,size:s,angle:a};pad.position.set(x,y,.10);pad.scale.set(s,s*.84,1);pad.rotation.z=a;scene.add(pad);pads.push(pad);}
  const flower=new THREE.Group();flower.userData={x:-.92,y:.12,size:.11};
  const petalMat=new THREE.MeshStandardMaterial({color:'#eee8f8',roughness:.65}),petalGeo=new THREE.SphereGeometry(1,20,12);

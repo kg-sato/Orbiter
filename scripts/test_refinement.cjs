@@ -49,7 +49,7 @@ async function seed(page){await page.evaluate(async()=>{
   }
   await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#settings-editor').open);
   await page.setViewportSize({width:1440,height:1000});await page.locator('#quick-capture').click();assert.equal(await page.locator('.wave-wipe-stage').count(),0);await page.keyboard.press('Escape');
-  await page.locator('#weekly-review-open').click();await page.waitForFunction(()=>!!document.querySelector('.wave-wipe-stage'));await page.keyboard.press('Escape');assert.equal(await page.locator('.wave-wipe-stage').count(),0);
+  await page.locator('#weekly-review-open').click();await page.waitForFunction(()=>window.OrbiterLake?.stats().active);await page.keyboard.press('Escape');assert.equal(await page.locator('.wave-wipe-stage').count(),0);
   // Shared recap presentation uses confirmed values and escapes user titles.
   await page.evaluate(()=>window.dispatchEvent(new CustomEvent('orbiter-native-state',{detail:{revision:1,settings:{recapAck:''},latestRecap:{sessionId:'test',title:'<img src=x>',focusedMs:25000,xp:0,crates:0,rewardStatus:'pending',growth:window.OrbiterRewards.growth(25000)},rewards:{xp:0,level:1,chests:0,focusedMs:25000,crateProgressMs:25000,owned:[],stars:0},catalog:[]}})));
   assert.match(await page.locator('.orb-session-recap').textContent(),/25s/);assert.match(await page.locator('.orb-session-recap').textContent(),/awaiting account/);assert.equal(await page.locator('.orb-session-recap img').count(),0);
@@ -59,6 +59,6 @@ async function seed(page){await page.evaluate(async()=>{
   assert.equal(await page.evaluate(()=>window.OrbiterCats.stats().contexts),1);
   await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#weekly-review-open').click();assert.equal(await page.locator('.wave-wipe-stage').count(),0);await page.keyboard.press('Escape');
   const fallback=await context.newPage();await route(fallback,'.');await fallback.goto('http://orbiter-fallback.test/Application.html?noWebGL');await fallback.waitForFunction(()=>window.OrbiterUI);assert.equal(await fallback.evaluate(()=>window.OrbiterCats.stats().contexts),0);assert.equal(await fallback.locator('.orbit-art').getAttribute('data-cat-fallback'),'true');
-  assert.deepEqual(errors,[]);console.log('Refinement: intentions, previews, stale saves, themes, phone layouts, selective waves, recap formatting, habitats and fallback passed.');
+  assert.deepEqual(errors,[]);console.log('Refinement: intentions, previews, stale saves, themes, phone layouts, shared lake motion, recap formatting, habitats and fallback passed.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

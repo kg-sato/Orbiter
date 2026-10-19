@@ -1,14 +1,15 @@
+import {styleAvatar} from './appearances.js';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import modelUrl from './assets/kitten.glb';
 
-export const MODEL_VERSION='orbiter-kitten-2';
+export const MODEL_VERSION='orbiter-kitten-051';
 let template=null,error=null;
 // Decode the bundled asset in memory; native CSP needs no extra network/data permissions.
 export const ready=new Promise((resolve,reject)=>{const bytes=Uint8Array.from(atob(modelUrl.split(',')[1]),c=>c.charCodeAt(0));new GLTFLoader().parse(bytes.buffer,'',resolve,reject);}).then(gltf=>{template=gltf.scene;return true;}).catch(e=>{error=e.message;console.warn('Kitten asset unavailable; using original fallback.',error);return false;});
 export const assetStatus=()=>({loaded:!!template,error,version:MODEL_VERSION});
-export function createAvatar(traits,colors,look){
+export function createAvatar(traits,colors,look,appearanceId){
  if(!template)return null;
  const model=clone(template),nodes={},owned=new Map(),paintedGeometry=[],paintedMaterials=[];
  // Every authored piece is rigidly weighted to one bone. Attach those pieces
@@ -56,6 +57,7 @@ export function createAvatar(traits,colors,look){
   const ear=o.name.match(/^(Ear|Inner)(L|R)(\d)$/);if(ear)o.visible=Number(ear[3])===traits.ears;
   if(o.name.startsWith('Tuft'))o.visible=traits.ears===3;
  });
+ styleAvatar(model,appearanceId);
  // Facial identity is painted with shared geometry overlays by the companion layer.
  const morphs=[];model.traverse(o=>{if(o.morphTargetDictionary?.Blink!==undefined)morphs.push(o);});
  return {model,head:nodes.Head,body:nodes.BodyMesh,ears:[nodes.EarL,nodes.EarR],paws:[nodes.PawL,nodes.PawR],tail:nodes.Tail,morphs,

@@ -1,0 +1,69 @@
+/* Shared lake surfaces: decoration never changes control contrast or hit areas. */
+:root{--shore-line:color-mix(in srgb,var(--orbiter-accent,#b4e6d5) 28%,#bcd4ed20);--shore-surface:linear-gradient(145deg,#aecded16,#8eafcb0b);--shore-radius:26px}
+#tasks-main>.assignments-panel,#tasks-main>.exam-preparation,#tasks-main>.daily-practice{padding:24px;border:1px solid var(--shore-line);border-radius:var(--shore-radius);background:var(--shore-surface);min-width:0;margin:0}
+#tasks-main>.assignments-panel{grid-column:1/-1}
+#tasks-main>:is(.assignments-panel,.exam-preparation,.daily-practice)>.section-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:0 0 20px}
+#tasks-main>:is(.assignments-panel,.exam-preparation,.daily-practice)>.section-heading h2{font-size:19px;letter-spacing:-.4px;margin:0}
+#tasks-main .section-heading button{flex:0 0 auto;min-height:42px;width:auto;white-space:nowrap}
+.assignments-panel>.dialog-description{margin:0 0 18px;color:var(--space-muted)}
+.assignments-panel .task-tabs{margin:0 0 20px;width:max-content;max-width:100%}
+.assignments-panel #tasks-full{gap:24px}
+#tasks-main :is(.exam-prep-card,.practice-card),#tasks-full .task-item{border:1px solid var(--shore-line)!important;border-radius:24px!important;background:var(--shore-surface)!important;box-shadow:inset 0 1px #eef7ff0d!important;padding:22px!important;min-width:0}
+#tasks-full .task-item{display:grid;grid-template-columns:minmax(0,1fr) 36px;gap:16px;align-items:start;transform:none}
+#tasks-full .task-item::after{display:none}
+#tasks-full .task-check{grid-column:2;grid-row:1;width:34px;height:34px;min-width:34px;min-height:34px;border-radius:11px;margin:0;display:grid;place-items:center;padding:0}
+#tasks-full .task-content{grid-row:1;grid-column:1;min-width:0}
+#tasks-full .task-title{font-size:15px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+#tasks-full .task-meta{font-size:12px;line-height:1.6;margin-top:12px;flex-wrap:wrap}
+#tasks-full .task-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-self:end;margin:0;padding-top:16px;border-top:1px solid #c3d8ed20}
+#tasks-full .task-actions button{flex:0 1 auto;min-height:38px;padding:9px 14px;border-radius:12px;white-space:normal}
+#tasks-full .task-item.done{opacity:.72}
+#tasks-main :is(.exam-prep-card,.practice-card):hover,#tasks-full .task-item:hover{border-color:color-mix(in srgb,var(--control-accent) 50%,transparent)!important;box-shadow:inset 0 1px #e5f7ff20,0 8px 28px #091c351a!important}
+#tasks-full .task-empty{padding:26px;border:1px dashed var(--shore-line);border-radius:22px;margin:0;background:#adcdeb06;line-height:1.8}
+
+/* Room to breathe, including dynamically mounted account and update dialogs. */
+body dialog,body dialog.popup-lab,body #account-dialog{width:min(820px,calc(100vw - 40px));max-width:calc(100vw - 40px);max-height:calc(100dvh - 48px);box-sizing:border-box;isolation:isolate}
+body #settings-editor.popup-lab{width:min(1060px,calc(100vw - 40px))}
+body :is(#mobile-menu,#window-dialog,#export-dialog,#jump-dialog).popup-lab{width:min(820px,calc(100vw - 40px))}
+body :is(#capture-editor,#task-editor,#editor,#plan-editor).popup-lab{width:min(820px,calc(100vw - 40px))}
+body #review-dialog.popup-lab{width:min(900px,calc(100vw - 40px))}
+body dialog.popup-lab :is(.dialog-header,.jump-heading){padding:28px 34px;min-height:108px}
+body dialog.popup-lab :is(.dialog-header,.jump-heading) h2{padding-right:90px;line-height:1.25}
+body dialog.popup-lab form{padding:26px 34px 30px}
+body dialog :is(.close,#account-close,#jump-close),#orbiter-update-dialog [data-close]{width:44px;height:44px;min-width:44px;min-height:44px;display:grid;place-items:center;padding:0;line-height:1;border-radius:15px;flex:none}
+body dialog.popup-lab :is(.close,#jump-close),#account-close,#orbiter-update-dialog [data-close]{position:absolute;right:24px;top:24px}
+body dialog.popup-lab .popup-sigil{right:76px;top:26px;width:64px;height:64px;opacity:.65}
+
+#orbiter-update-dialog .update-body{display:grid;gap:20px;padding:28px 34px 32px}
+.update-body p{margin:0;line-height:1.7}
+.update-notes{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13px;line-height:1.8;max-height:260px;overflow:auto;background:#0e223b50;border:1px solid var(--shore-line);padding:20px;border-radius:18px;margin:0}
+#orbiter-update-dialog .update-preference{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:16px;min-height:72px;padding:16px 18px;border:1px solid var(--shore-line);border-radius:18px;background:var(--shore-surface);cursor:pointer}
+.update-preference span{display:grid;gap:5px}.update-preference strong{font-size:14px;font-weight:600}.update-preference small{font-size:12px;line-height:1.6;color:var(--space-muted,#bfd0e6)}
+#orbiter-update-dialog .update-preference input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;display:block;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;padding:0!important;margin:0!important;border:1px solid var(--control-border)!important;border-radius:7px;background:#10243d60!important;box-shadow:inset 0 1px #ffffff16!important;cursor:pointer}
+#orbiter-update-dialog .update-preference input:checked{background:var(--control-accent)!important;border-color:var(--control-accent)!important}
+#orbiter-update-dialog .update-preference input:checked::after{content:'';position:absolute;width:5px;height:10px;border:solid #14273b;border-width:0 2px 2px 0;left:7px;top:3px;transform:rotate(45deg)}
+.update-preference:focus-within{outline:2px solid var(--control-accent);outline-offset:4px}
+.update-actions{display:flex;flex-wrap:wrap;gap:10px}.update-actions button{min-height:44px;padding:12px 18px}.update-help{font-size:12px;color:var(--space-muted,#bfd0e6)}
+
+/* Profile is a personal overview followed by working settings, not a wall of fields. */
+#settings-editor>.dialog-header .popup-sigil{display:none}
+#settings-editor .profile-overview{position:relative;overflow:hidden;display:grid;grid-template-columns:72px minmax(0,1fr);gap:20px;margin:0 34px;padding:26px;border:1px solid var(--shore-line);border-radius:24px;background:radial-gradient(ellipse at 95% 100%,#97cbe52b,transparent 65%),linear-gradient(135deg,#abc9e71a,#112a3b33)}
+.profile-medallion{display:grid;place-items:center;align-self:start;width:72px;height:72px;border-radius:26px;border:1px solid var(--shore-line);background:linear-gradient(145deg,color-mix(in srgb,var(--control-accent) 35%,#1f344b),#3c5674);box-shadow:inset 0 1px #ffffff50,0 8px 24px #081e3520;font-size:27px;font-weight:600}
+.profile-intro h3{font-size:24px;letter-spacing:-.6px;overflow-wrap:anywhere;margin:0 0 8px}.profile-intro p{font-size:12px;line-height:1.8;color:var(--space-muted);margin:0}
+.profile-facts{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-top:20px;border-top:1px solid #c0d5ea25;margin:0}.profile-facts>div{min-width:0}.profile-facts dt{font-size:11px;color:var(--space-muted);margin:0 0 8px}.profile-facts dd{font-size:20px;margin:0;overflow-wrap:anywhere}
+#settings-editor>.account-entry{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:18px 34px 0;padding:18px 22px;border:1px solid var(--shore-line);border-radius:18px;background:#b3cfe90a}.account-entry p{margin:0;font-size:12px;line-height:1.7}.account-entry button{flex:none;min-height:42px}
+#settings-editor #settings-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+#settings-form>.popup-group{margin:0;padding:22px;border:1px solid var(--shore-line);border-radius:22px;background:#b5d2ef08;min-width:0}
+#settings-form>.popup-group:has(#appearance-label){grid-column:1/-1}
+#settings-form>.popup-group:has(#hours-label){grid-column:2;grid-row:1}
+#settings-form>.popup-group:has(#personal-label){grid-column:1;grid-row:1}
+#settings-form>:is(.field-error,.dialog-actions,#native-preferences){grid-column:1/-1}
+#settings-form .popup-group-heading{flex-wrap:wrap;gap:10px;margin-bottom:20px}#settings-form .popup-group-heading h3{font-size:15px}#settings-form .popup-group-heading>span:last-child{font-size:11px}
+#settings-form .appearance-studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}#settings-form .appearance-preview{min-height:260px}#settings-form .appearance-actions,#settings-form #appearance-status{grid-column:1/-1}#settings-form .appearance-actions{margin:0;justify-content:flex-end}
+#settings-form .preference-check{min-height:44px;line-height:1.7}
+.sidebar .profile-button{display:flex;align-items:center;gap:12px;min-height:78px;border-radius:22px;padding:16px;text-align:left}.profile-button>span:last-of-type{min-width:0}.profile-button small{display:block;margin-top:5px}
+
+body.solid-glass #tasks-main>:is(.assignments-panel,.exam-preparation,.daily-practice),body[data-material=quiet] #tasks-main>:is(.assignments-panel,.exam-preparation,.daily-practice){background:#213650}
+body.solid-glass #tasks-main :is(.exam-prep-card,.practice-card),body.solid-glass #tasks-full .task-item,body[data-material=quiet] #tasks-main :is(.exam-prep-card,.practice-card),body[data-material=quiet] #tasks-full .task-item{background:#2a405b!important}
+@media(max-width:760px){body dialog,body dialog.popup-lab,body #account-dialog,body #settings-editor{width:calc(100vw - 24px);max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}body dialog.popup-lab :is(.dialog-header,.jump-heading){padding:24px 22px}body dialog.popup-lab form{padding:22px}#settings-editor .profile-overview{margin:0 22px;grid-template-columns:54px minmax(0,1fr);padding:20px;gap:14px}.profile-medallion{width:54px;height:54px;border-radius:19px;font-size:23px}.profile-intro h3{font-size:20px}.profile-facts{gap:10px}.profile-facts dd{font-size:17px}#settings-editor>.account-entry{margin:16px 22px 0;flex-wrap:wrap}#settings-editor #settings-form{grid-template-columns:1fr}#settings-form>.popup-group:has(#hours-label),#settings-form>.popup-group:has(#personal-label){grid-column:1;grid-row:auto}#settings-form .appearance-studio{grid-template-columns:1fr}#settings-form .appearance-preview{min-height:210px}#tasks-main>.assignments-panel,#tasks-main>.exam-preparation,#tasks-main>.daily-practice{padding:18px}#tasks-full .assignment-cards{grid-template-columns:1fr}#orbiter-update-dialog .update-body{padding:22px}body dialog.popup-lab .popup-sigil{display:none}body dialog.popup-lab :is(.dialog-header,.jump-heading) h2{padding-right:36px}}
+@media(forced-colors:active){#orbiter-update-dialog .update-preference input[type=checkbox]{appearance:auto;-webkit-appearance:auto}#orbiter-update-dialog .update-preference input:checked::after{display:none}}
