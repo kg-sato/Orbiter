@@ -4,7 +4,7 @@ Original Orbiter artwork. No marketplace assets, remote textures, or external ru
 
 ## Editable source
 
-Open `orbiter-kitten.blend` in Blender 4.3 or later. The scene contains a continuous rounded head, recessed ear bowls with thick rounded rims, a seated body, four selectable ear variants, and an eight-bone armature. Eyes have a `Blink` shape key. Runtime coat patterns, scarves, charms and rewards attach to the exported rig without changing stored identity codes.
+Open `orbiter-kitten-051.blend` in Blender 4.3 or later for the approved 0.5.1 avatar. The scene contains a continuous rounded head, recessed ear bowls with thick rounded rims, a seated body, four selectable ear variants, and an eight-bone armature. Eyes have a `Blink` shape key. Runtime coat patterns, scarves, charms and rewards attach to the exported rig without changing stored identity codes. The earlier `orbiter-kitten.blend` remains as design history.
 
 The reproducible modeling source is `build_kitten.py`. From the repository root:
 

@@ -1,6 +1,6 @@
 # Living pond: visual review checkpoint
 
-This is a runnable isolated prototype, **not the installed application**. Production HTML, native commands, cloud data, catalog labels and published installers are untouched. Edits remain uncommitted.
+This directory preserves the visual review checkpoint. The approved kitten, pond, transitions and 14 reward treatments have now been promoted into the local **0.5.1** application sources. The study page still uses fictional state and is not the installed app. Published assets remain untouched; edits remain uncommitted. Its build now reuses the promoted production renderer, so the earlier original/new comparison switch is historical rather than a preserved baseline. See `docs/RELEASE-0.5.1.md` for the delivered scope.
 
 ## Run
 

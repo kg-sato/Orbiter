@@ -1,8 +1,11 @@
+body dialog{animation:none!important;transition:none!important;transform:none!important}
+body dialog[open]{opacity:1!important}
+body dialog::backdrop{animation:none!important;transition:none!important}
 /* Tab content is revealed by the water boundary; text never scales or refracts.
  * Navigation stays visible. Popup forms remain immediately usable. */
 .pond-forming{isolation:isolate;background:transparent!important;border-color:transparent!important;box-shadow:none!important}
 .pond-forming.pond-settled{background:var(--orbiter-morph-resting)!important;border-color:var(--orbiter-morph-border)!important}
-.pond-forming>:not(.pond-surface){position:relative;z-index:1}
+.pond-forming>:not(.pond-surface):not(.island-water){position:relative;z-index:1}
 .pond-forming>.pond-surface{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;z-index:0}
 .pond-forming{position:relative}
 dialog.pond-forming{position:fixed}
@@ -12,3 +15,7 @@ dialog.pond-forming{position:fixed}
 .pond-evaporating{position:fixed;pointer-events:none;border:1px solid #bdddeb44;border-radius:30px;z-index:1000;overflow:hidden}
 .pond-evaporating canvas{width:100%;height:100%;display:block}
 @media(prefers-reduced-motion:reduce){#pond-morph-edge{display:none!important}}
+
+body.pond-050 .pond-forming{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+body.pond-050 .pond-forming.pond-settled{background:var(--orbiter-morph-resting)!important;border-color:var(--orbiter-morph-border)!important}
+

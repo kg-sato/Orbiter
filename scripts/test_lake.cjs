@@ -19,6 +19,9 @@ async function files(context){await context.route('**/*',route=>{
   const baseline=await metrics();await page.waitForTimeout(1100);const idle=await metrics();
   const desktopNav=()=>page.locator('.side-nav button[data-page="tasks"]');
   await desktopNav().click();await page.waitForFunction(()=>OrbiterLake.stats().kind==='page'&&OrbiterLake.stats().active);
+  const revealBoxes=await page.locator('.desk-layout [style*="clip-path"]').evaluateAll(nodes=>nodes.map(n=>({display:getComputedStyle(n).display,id:n.id,width:n.getBoundingClientRect().width})));
+  assert(revealBoxes.length>1,'Navigation must reveal actual painted panels');
+  assert(revealBoxes.every(n=>n.display!=='contents'&&n.width>0),'Boxless layout wrappers cannot receive the reveal mask');
   assert.equal(await page.locator('.desk-layout').evaluate(n=>getComputedStyle(n).transform),'none');
   assert.equal(await page.locator('.control-flash,.wave-wipe-stage,.lake-arrival').count(),0);
   await page.waitForTimeout(330);await page.screenshot({path:out+'/navigation.png'});await page.waitForTimeout(850);
@@ -36,12 +39,12 @@ async function files(context){await context.route('**/*',route=>{
   await page.waitForTimeout(450);
   // Keyboard activation has an element-centred origin; Escape prevents a closing aftereffect.
   await page.locator('#quick-capture').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>OrbiterLake.stats().active);await page.keyboard.press('Escape');
-  await page.waitForTimeout(50);assert.equal(await page.locator('#orbiter-lake-transition').count(),0);
+  await page.waitForTimeout(50);assert.equal(await page.locator('#pond-morph-edge').count(),0);
   // A fresh activation immediately following Escape must still animate.
   await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.keyboard.press('Escape');
   // Rapid programmatic actions exercise interruption rather than locator animation waits.
   await page.evaluate(()=>{for(const p of ['atlas','rhythm','tasks','desk','tasks'])document.querySelector(`.side-nav button[data-page="${p}"]`).click();});
-  assert((await page.locator('#orbiter-lake-transition').count())<=1);await page.waitForTimeout(1150);assert.equal(await page.locator('#orbiter-lake-transition').count(),0);
+  assert((await page.locator('#pond-morph-edge').count())<=1);await page.waitForTimeout(1150);assert.equal(await page.locator('#pond-morph-edge').count(),0);
   assert.equal(await page.evaluate(()=>OrbiterUI.snapshot().study?.timer?.endAt||null),beforeSnapshot.study?.timer?.endAt||null);
   // All current palettes/materials retain a stationary form and readable controls.
   for(const scene of ['tidal-night','lunar-mist','opal-dawn'])for(const material of ['sculpted','glass','quiet'])for(const accent of ['mint','lilac','apricot']){
@@ -54,16 +57,16 @@ async function files(context){await context.route('**/*',route=>{
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:out+`/popup-${width}.png`});await page.keyboard.press('Escape');
   }
   await page.setViewportSize({width:1440,height:1000});
-  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});assert.equal(await page.locator('#orbiter-lake-transition').count(),0);await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));});await page.keyboard.press('Escape');
-  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.setViewportSize({width:1400,height:960});assert.equal(await page.locator('#orbiter-lake-transition').count(),0);await page.keyboard.press('Escape');
-  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#quick-capture').click();assert.equal(await page.locator('#orbiter-lake-transition').count(),0);assert(await page.locator('#capture-title').isEditable());await page.keyboard.press('Escape');await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});assert.equal(await page.locator('#pond-morph-edge').count(),0);await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));});await page.keyboard.press('Escape');
+  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.setViewportSize({width:1400,height:960});assert.equal(await page.locator('#pond-morph-edge').count(),0);await page.keyboard.press('Escape');
+  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#quick-capture').click();assert.equal(await page.locator('#pond-morph-edge').count(),0);assert(await page.locator('#capture-title').isEditable());await page.keyboard.press('Escape');await page.emulateMedia({reducedMotion:'no-preference'});
   // Explicit zero motion disables decoration; Low quality still has lightweight edge feedback.
   for(const [motion,quality,expected,calmer] of [[0,'auto',false,false],[70,'auto',false,true],[70,'high',true,false],[70,'low',true,false]]){
    await page.evaluate(async({motion,quality,calmer})=>{const old=OrbiterUI.snapshot(),next=structuredClone(old);Object.assign(next.study.preferences,{motionIntensity:motion,effectQuality:quality,motion:calmer});await SchedulerAccountBridge.load(JSON.stringify(next),JSON.stringify(old));},{motion,quality,calmer});
    await page.locator('#quick-capture').click();await page.waitForTimeout(80);assert.equal(await page.evaluate(()=>OrbiterLake.stats().active),expected);await page.keyboard.press('Escape');
   }
   // Mode changes cancel and suspended dialogs must not produce a close silhouette.
-  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.evaluate(()=>dispatchEvent(new CustomEvent('orbiter-mode-change')));assert.equal(await page.locator('#orbiter-lake-transition').count(),0);await page.keyboard.press('Escape');
+  await page.locator('#quick-capture').click();await page.waitForFunction(()=>OrbiterLake.stats().active);await page.evaluate(()=>dispatchEvent(new CustomEvent('orbiter-mode-change')));assert.equal(await page.locator('#pond-morph-edge').count(),0);await page.keyboard.press('Escape');
   const stats=await page.evaluate(()=>({lake:OrbiterLake.stats(),cat:OrbiterCats.stats()}));assert.equal(stats.lake.lastError,null);assert.equal(stats.cat.contexts,1);assert.equal(stats.lake.overlayCount,0);assert.deepEqual(errors,[]);
   // WebGL failure leaves an ordinary editable dialog and a static reflected-water treatment.
   const fallback=await browser.newContext({viewport:{width:390,height:844}});await files(fallback);await fallback.addInitScript(()=>{const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){return /webgl/.test(kind)?null:get.call(this,kind,...args)};});
@@ -72,3 +75,4 @@ async function files(context){await context.route('**/*',route=>{
   fs.writeFileSync(out+'/report.json',JSON.stringify(report,null,2));const video=page.video();await context.close();await video.saveAs(out+'/application-motion.webm');console.log('Lake transitions: navigation, immediate input, close, tabs, interruption, palettes/materials, phone, reduced motion, Low and WebGL fallback passed. '+JSON.stringify({meanDrawMs:stats.lake.meanDrawMs,maxDrawMs:stats.lake.maxDrawMs,bufferBytes:stats.lake.bufferBytes}));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
+

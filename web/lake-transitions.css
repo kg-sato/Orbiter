@@ -1,10 +1,21 @@
-/* A single, finite 2D reflection layer. No form pixels or extra WebGL context. */
 body dialog{animation:none!important;transition:none!important;transform:none!important}
 body dialog[open]{opacity:1!important}
 body dialog::backdrop{animation:none!important;transition:none!important}
-#orbiter-lake-transition,#orbiter-lake-transition:popover-open{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden!important;pointer-events:none!important;z-index:2147483646!important;contain:strict}
-#orbiter-lake-transition::backdrop{background:transparent!important;pointer-events:none!important}
-#orbiter-lake-transition canvas{display:block;width:100%;height:100%;pointer-events:none!important}
-.lake-edge-fallback{outline:1px solid color-mix(in srgb,var(--orbiter-accent,#b4e6d5) 55%,transparent);outline-offset:5px}
-@media(prefers-reduced-motion:reduce){#orbiter-lake-transition,.lake-edge-fallback{display:none!important;outline:none!important}}
-.reduced-motion #orbiter-lake-transition,.calm #orbiter-lake-transition,.quiet #orbiter-lake-transition{display:none!important}
+/* Tab content is revealed by the water boundary; text never scales or refracts.
+ * Navigation stays visible. Popup forms remain immediately usable. */
+.pond-forming{isolation:isolate;background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.pond-forming.pond-settled{background:var(--orbiter-morph-resting)!important;border-color:var(--orbiter-morph-border)!important}
+.pond-forming>:not(.pond-surface):not(.island-water){position:relative;z-index:1}
+.pond-forming>.pond-surface{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;z-index:0}
+.pond-forming{position:relative}
+dialog.pond-forming{position:fixed}
+#pond-morph-edge,#pond-morph-edge:popover-open{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;padding:0!important;border:0!important;margin:0!important;max-width:none!important;max-height:none!important;background:transparent!important;pointer-events:none!important;overflow:hidden!important;z-index:2147483646!important}
+#pond-morph-edge::backdrop{background:transparent;pointer-events:none}
+#pond-morph-edge canvas{width:100%;height:100%;display:block}
+.pond-evaporating{position:fixed;pointer-events:none;border:1px solid #bdddeb44;border-radius:30px;z-index:1000;overflow:hidden}
+.pond-evaporating canvas{width:100%;height:100%;display:block}
+@media(prefers-reduced-motion:reduce){#pond-morph-edge{display:none!important}}
+
+body.pond-050 .pond-forming{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+body.pond-050 .pond-forming.pond-settled{background:var(--orbiter-morph-resting)!important;border-color:var(--orbiter-morph-border)!important}
+
