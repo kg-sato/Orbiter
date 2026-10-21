@@ -12,7 +12,8 @@ if [[ ! "$TEAM_ID" =~ ^[A-Z0-9]{10}$ || ! "$BUNDLE_ID" =~ ^[A-Za-z0-9-]+(\.[A-Za
   echo "Use your 10-character team ID and your own registered bundle ID." >&2
   exit 1
 fi
-xcodebuild -version
+python3 scripts/sync_app.py
+python3 scripts/check_iphone.py --sdk
 BUILD_NUMBER="${BUILD_NUMBER:-$(( $(date -u +%s) / 86400 - 18262 )).$(date -u +%H).$(date -u +%M)}"
 auth=(-allowProvisioningUpdates)
 # Optional API-key authentication. Otherwise use the account signed into Xcode.

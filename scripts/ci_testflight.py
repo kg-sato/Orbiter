@@ -18,6 +18,8 @@ def run(*args, quiet=False):
 def main():
     if sys.platform != 'darwin' or os.environ.get('GITHUB_ACTIONS') != 'true':
         raise RuntimeError('Run this script through the supplied GitHub macOS workflow.')
+    run(sys.executable, 'scripts/sync_app.py')
+    run(sys.executable, 'scripts/check_iphone.py', '--sdk')
     required = ['TEAM_ID', 'BUNDLE_ID', 'BUILD_CERTIFICATE_BASE64', 'P12_PASSWORD',
                 'BUILD_PROVISION_PROFILE_BASE64', 'ASC_KEY_ID', 'ASC_ISSUER_ID', 'ASC_PRIVATE_KEY']
     missing = [name for name in required if not os.environ.get(name)]

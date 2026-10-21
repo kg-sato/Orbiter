@@ -4,7 +4,7 @@ An autonomous study buddy built with Tauri 2, Rust, SQLite and bundled HTML/CSS 
 
 ## First use
 
-Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The installed executable is `C:\Users\kgsat\AppData\Local\Orbiter\orbit-companion.exe`; the simple installer is `build\release\Orbiter Setup.exe` (version 0.5.0).
+Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The default per-user executable is `%LOCALAPPDATA%\Orbiter\orbit-companion.exe`; the local installer alias is `build\release\Orbiter Setup.exe`. Confirm its version from the actual binary and manifest rather than a document title. See the [current checkpoint](../docs/agents/CHECKPOINT.md) for unresolved version/evidence issues.
 
 - Orbiter launches as a rounded 420 × 220 floating island. Click the cat, the doorway action, or the island's ↗ control to open the full scheduler **inside the same app**. The planner has ordinary Windows controls; Restore returns to the island, and minimize uses the taskbar.
 - Starting or resuming focus automatically returns to buddy mode. You can reopen the planner during focus. Focus Room has been replaced by these two modes.
@@ -56,7 +56,7 @@ Ordinary profiles live in `%LOCALAPPDATA%\com.kgsato.orbit`. `orbit.sqlite3` sto
 
 The local website binds to `127.0.0.1:18743` only, without firewall changes. Tray-generated pairing links expire after 60 seconds and are single use. Paired sessions expire after 12 hours or app restart. Browser writes use CSRF tokens and edit revisions; SSE delivers changes. A conflicting browser draft is retained in that tab's session storage: **Your workspace → Export unsaved draft**, then **Reload shared workspace**, before reapplying edits. A conflicting companion form stays open for review.
 
-The native process owns timer and focus history. Browser clients cannot grant rewards or overwrite native elapsed time. If the local port is occupied, the buddy still works and shows the website connection error. Phone access, cloud accounts and public hosting are separate work.
+The native process owns timer and focus history. Browser clients cannot grant rewards or overwrite native elapsed time. If the local port is occupied, the buddy still works and shows the website connection error. Account sync and hosted browser access are separate from loopback pairing; see [private beta setup](../docs/PRIVATE-BETA.md) for their implemented workflow and limitations.
 
 Windows account access protects these local files; the database is not encrypted at rest. No telemetry or remote application content is loaded. WebView2 is the shared Windows runtime and may be installed by the installer if absent. This personal installer is **unsigned**, not a signed public distribution or security certification.
 
@@ -73,13 +73,13 @@ node scripts/test_unified.cjs
 node scripts/test_island.cjs
 ```
 
-Source: `desktop/ui/native-shell.js` owns the isolated buddy component; `src/mascot/cat.js` owns the 3D model; `desktop/src-tauri/src` owns persistence, scheduling, native windows and loopback service. Root `Application.html` remains Scheduler's source of truth. `scripts/prepare_desktop.py` embeds approved assets and generates the Windows icon. Build outputs are ignored; the installer is under `desktop/src-tauri/target/release/bundle/nsis`.
+Source: `desktop/ui/native-shell.js` owns the isolated buddy component; `src/mascot/cat.js` owns the 3D model; `desktop/src-tauri/src` owns persistence, scheduling, native windows and loopback service. Root `Application.html` remains Scheduler's source of truth. `scripts/prepare_desktop.py` embeds approved assets and generates the Windows icon. Build outputs are ignored. The combined signed-updater packaging script stages the installer under `build/release`; inspect [update instructions](../docs/UPDATES.md) and current scripts before building.
 
 Use `--profile-dir <absolute-path>` for an isolated test profile, `--hide` to close the buddy to the tray, and `--quit` to stop an existing instance. `--quiet` is used by optional autostart. `--measure` writes a local readiness record; `--measure-expanded` opens the full planner; `--planner` opens it in an existing instance. Neither measurement flag is active during ordinary use. Debug builds alone support the one-use QA pairing-file hook.
 
 Performance script: `scripts/measure_desktop.ps1` (also `-Expanded`) measures readiness, the full native/WebView2 process tree, 20-second idle CPU, private memory and summed working sets, and confirms tray survival. It uses an isolated profile. Results and screenshots are in ignored `build/` outputs.
 
-Current acceptance evidence is in `design/ORBITER-ISLAND-VERIFICATION.md`; the preceding release is documented in `design/ORBITER-UNIFIED-VERIFICATION.md`. The full planner consumes more resources than the buddy. Physical sleep/reboot, multiple-monitor/scaling, and notification checks remain necessary before calling this a fully accepted public release.
+Historical island and unified-window evidence is retained in `design/ORBITER-ISLAND-VERIFICATION.md` and `design/ORBITER-UNIFIED-VERIFICATION.md`. For current scope, start with the [checkpoint](../docs/agents/CHECKPOINT.md) and the verification report for the exact revision being delivered. Earlier measurements do not validate later artwork or binaries. Physical sleep/reboot, multiple-monitor/scaling, and notification checks require their own evidence.
 
 ## Primary references
 
@@ -98,4 +98,4 @@ The existing installed app does not update just because source files changed. Af
 
 The blue lily pond now sits behind the full scheduler and compact buddy. Mist moves automatically and parts under cursor sweeps; it stops with Low quality, reduced motion, quiet mode or zero motion intensity. If it looks still, check Appearance settings before increasing atmosphere. Keep Auto quality for the conservative default.
 
-Save and Quit Orbiter from its tray menu before installing the new 0.5.0 build. Local 0.6.x files were unreleased visual-development builds; 0.5.0 is the requested release version. A local 0.6.x installation needs a manual installer run because updater version ordering will not offer a numerically lower version. Existing database and signing-key identifiers are unchanged.
+**Historical 0.5.0 migration note:** the pond release was labeled 0.5.0 after local 0.6.x visual-development builds. This is not the current requested version. An installed higher-numbered development build will not receive a lower-numbered build through normal updater version ordering; determine the actual installed and target versions before choosing an authorized manual installation. Save and Quit Orbiter from its tray before installing. Preserve the existing database and signing-key identifiers.
