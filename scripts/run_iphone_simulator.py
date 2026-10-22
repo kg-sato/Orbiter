@@ -94,7 +94,10 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
             command("xcrun", "simctl", "launch", simulator, bundle, f"--orbiter-smoke-phase={phase}")
             result = wait_report(report)
             (output / report.name).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-            command("xcrun", "simctl", "io", simulator, "screenshot", str(output / f"{phase}.png"))
+            # Seed already includes a WKWebView snapshot. A full simulator screenshot can
+            # stall for tens of seconds, so never put it before the timed termination.
+            if phase == "verify":
+                command("xcrun", "simctl", "io", simulator, "screenshot", str(output / f"{phase}.png"))
             if (result.get("phase") != phase or result.get("version") != info.get("CFBundleShortVersionString")
                     or not result.get("checks") or result.get("errors") != []):
                 raise RuntimeError(f"Incomplete or mismatched native {phase} report")

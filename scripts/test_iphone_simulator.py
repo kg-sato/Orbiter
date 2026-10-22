@@ -80,6 +80,12 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue((evidence / "orbiter-smoke-verify.json").is_file())
         self.assertEqual(calls[-2:], [("xcrun", "simctl", "shutdown", DEVICE), ("xcrun", "simctl", "delete", DEVICE)])
 
+    def test_seed_termination_is_not_delayed_by_simulator_screenshot(self):
+        calls, _, _ = self.simulate()
+        seed = next(i for i, args in enumerate(calls) if "--orbiter-smoke-phase=seed" in args)
+        stopped = next(i for i in range(seed + 1, len(calls)) if calls[i][:3] == ("xcrun", "simctl", "terminate"))
+        self.assertFalse(any(args[:3] == ("xcrun", "simctl", "io") for args in calls[seed:stopped]))
+
     def test_failed_check_stops_and_keeps_evidence(self):
         calls, metadata, evidence = self.simulate(fail=True)
         self.assertEqual(metadata["status"], "failed")
