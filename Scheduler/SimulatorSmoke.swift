@@ -93,14 +93,15 @@ final class SimulatorSmoke {
         let expiring = try await js(webView, """
           (() => {
             const data = JSON.parse(JSON.stringify(window.OrbiterUI.snapshot()));
-            data.study.timer.remaining = 45;
-            data.study.timer.endAt = Date.now() + 45000;
+            data.study.timer.duration = 3;
+            data.study.timer.remaining = 180;
+            data.study.timer.endAt = Date.now() + 180000;
             return JSON.stringify(data);
           })()
           """) as? String
         guard let expiring else { throw failure("expiry-fixture-serialization") }
         bridge.dispatch("nativeScheduleImport", detail: expiring)
-        try await wait(webView, "window.OrbiterUI.snapshot().study.timer.endAt > Date.now() && window.OrbiterUI.snapshot().study.timer.remaining === 45", "active-timer-persisted-for-relaunch")
+        try await wait(webView, "window.OrbiterUI.snapshot().study.timer.endAt > Date.now() && window.OrbiterUI.snapshot().study.timer.remaining === 180", "active-timer-persisted-for-relaunch")
         expectedExpiry = try await js(webView, "window.OrbiterUI.snapshot().study.timer.endAt") as? Double
         guard let expectedExpiry, expectedExpiry > Date().timeIntervalSince1970 * 1000 else {
             throw failure("expiry-deadline-missing")

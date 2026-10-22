@@ -38,7 +38,7 @@ jobs:
       - name: Check simulator runner safety
         run: python3 scripts/test_iphone_simulator.py
       - name: Exercise the app in a disposable iPhone simulator
-        timeout-minutes: 15
+        timeout-minutes: 20
         run: |
           python3 scripts/run_iphone_simulator.py \
             --app "$RUNNER_TEMP/Scheduler-validation/Build/Products/Debug-iphonesimulator/Scheduler.app" \

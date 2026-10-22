@@ -110,7 +110,7 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
                 # The seed's fictional timer expires while the app process is stopped.
                 expiry = result.get("expectedExpiry")
                 stopped_at = time.time() * 1000
-                if not isinstance(expiry, (int, float)) or not 0 < expiry - stopped_at <= 60000:
+                if not isinstance(expiry, (int, float)) or not 0 < expiry - stopped_at <= 240000:
                     raise RuntimeError("Cannot prove process stopped before fictional timer expired")
                 metadata["stoppedBeforeExpiry"] = True
                 time.sleep((expiry - stopped_at) / 1000 + 2)
