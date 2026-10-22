@@ -1,59 +1,86 @@
 # Orbiter
 
-A study planner with a Windows Tauri application, floating companion, browser workspace and account sync, plus a SwiftUI/WebKit iPhone wrapper. Root `Application.html` is the application source of truth.
+A study planner with a small companion to keep you company while you work. Plan your week, manage assignments and tests, keep course notes, and turn focused study into growth for your kitten and its pond habitat.
 
-## Start here
+**Current source version: 0.5.3.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
 
-- **Working on the project:** read [AGENTS.md](AGENTS.md), then the applicable [workflow section](docs/agents/WORKFLOW.md).
-- **Continuing from another chat:** read the [current checkpoint](docs/agents/CHECKPOINT.md) and recheck repository status.
-- **Using Windows Orbiter:** see [desktop operating instructions](desktop/README.md).
-- **Accounts and hosting:** see [private beta setup](docs/PRIVATE-BETA.md).
-- **Windows updates:** see [update and release instructions](docs/UPDATES.md).
-- **iPhone signing and delivery:** see [TestFlight setup](docs/TESTFLIGHT.md).
+## What you can do
 
-Release-document filenames and commit titles are historical labels, not proof of the installed version or publication. Compare manifests and the actual artifact before a release.
+- **My Day:** see your schedule, choose a study intention, capture tasks and start a focus session.
+- **Assignments, tests and daily practice:** track deadlines, preparation and recurring study work.
+- **Atlas:** organize course notes and keep a distinct companion identity for each course.
+- **My Rhythm:** arrange study time and review your week.
+- **Focus:** start, pause, resume and finish sessions; review credited time and companion growth afterward.
+- **Discoveries:** earn cosmetics through native Windows focus, preview equipment and build your companion's collection.
 
-## Local browser preview
+The interface uses a blue pond with koi, lily pads and moving mist. Tidal Night, Lunar Mist and Opal Dawn provide different lighting. Appearance controls include accent, material, atmosphere, motion intensity and graphics quality, with reduced-motion and static fallbacks.
 
-Use the existing project server when one is already running. In VS Code, **Tasks → Run Task → Preview Scheduler** serves port 8002. Alternatively, from this folder in PowerShell:
+## Choose your version
+
+| Surface | Current behavior |
+| --- | --- |
+| Windows | One native app with a full planner and compact floating buddy. Rust/SQLite own the timer, rewards, growth and local persistence. Optional account sync and a paired browser are separate connection paths. |
+| Browser | Planner and local browser storage; hosted private-beta accounts can connect supported workspace data. Browser-only study history does not replace native Windows credit authority. |
+| iPhone | Prepared offline SwiftUI/WebKit beta with local storage, Files transfer and optional local reminders. Account sync is unavailable in this build. Native compilation, signing, device tests and TestFlight delivery remain outstanding. |
+
+### Windows companion
+
+The compact buddy defaults to **420 × 220**, with supported sizes from **360 × 200 to 560 × 300**. Open the full planner from the kitten or planner icon, and return to the buddy without losing the running timer or planner drafts.
+
+The current compact controls use SVG icons and a filled Start/Pause/Resume button. Start and Resume send a dew-light arc into the pond. Native session completion opens a lily-and-starlight celebration before the session recap. Calm, quiet, reduced-motion and zero-motion settings suppress that decoration.
+
+See [Windows use and installation](desktop/README.md).
+
+### Browser preview
+
+Use the existing project server if one is already running. In VS Code, choose **Tasks → Run Task → Preview Scheduler**, or run this from the repository root in PowerShell:
 
 ```powershell
 python -m http.server 8002 --bind 127.0.0.1
 ```
 
-- [Application](http://127.0.0.1:8002/Application.html)
-- [Fictional planner preview](http://127.0.0.1:8002/design/scheduler-ui-preview/)
+Open the [planner](http://127.0.0.1:8002/Application.html) or the [fictional preview](http://127.0.0.1:8002/design/scheduler-ui-preview/).
 
-This static preview is distinct from the account-development server and installed desktop application. Browser storage belongs to its exact origin/profile; changing ports does not move existing study data. The fictional preview is separate from the real workspace.
+Browser storage belongs to the exact address and browser profile. Changing ports does not move saved data. This static preview does not enable hosted accounts or validate the installed Windows app. See [private-beta accounts and hosting](docs/PRIVATE-BETA.md) for that setup.
 
-## Source map
+## Data and installation
 
-| Path | Purpose |
-| --- | --- |
-| `Application.html` | Canonical planner UI and integration |
-| `src/mascot/`, `src/pond/`, `web/` | Shared companion, pond, rewards presentation, motion and account UI |
-| `desktop/src-tauri/`, `desktop/ui/` | Windows native authority, persistence, buddy and updater |
-| `Scheduler/`, `Scheduler.xcodeproj/` | iPhone wrapper and generated application bundle |
-| `design/` | Concepts, reference studies, visual history and fictional preview |
-| `scripts/` | Existing build, generation, development and verification utilities |
-| `docs/agents/` | Workflow routing and compact project handoff |
-| `build/` | Ignored generated assets, diagnostics and local packages |
+Windows saves its workspace, timer, growth, inventory and settings locally. JSON import/export transfers study data; it does not grant native reward balances. Back up your workspace before replacing data.
 
-## Regenerate after implementation
+A source update does not replace a running app. Save your work and choose **Quit Orbiter** from the tray before installing a new Windows build; closing the window leaves it in the tray. Avoid launching older portable copies alongside the installed app because they share its single-instance identity. The repaired installer checks for those copies before replacing application files.
 
-With existing development dependencies installed, from the project root:
+Local installers and signed updater files are generated under ignored `build/` directories. They are not included in a Git clone, and building them does not publish an update. See [Windows update delivery](docs/UPDATES.md).
+
+## Development
+
+Root `Application.html` is canonical. Shared renderer and presentation modules are embedded into it by the existing build scripts; generated copies should not be edited directly.
+
+With project dependencies installed, run from the repository root in PowerShell:
 
 ```powershell
 npm.cmd run build:core
 npm.cmd run desktop:prepare
 ```
 
-The first command embeds shared modules and regenerates iPhone/preview copies; the second prepares Windows assets. Do not repair only a generated copy. Packaging uses the existing combined release script described in [Windows updates](docs/UPDATES.md), which already performs these steps.
+The first command embeds shared modules and regenerates the offline iPhone and fictional preview copies. The second prepares the Windows frontend. Native development, build prerequisites and focused checks are described in [desktop/README.md](desktop/README.md#development).
 
-## Data and verification
+| Path | Purpose |
+| --- | --- |
+| `Application.html` | Canonical planner UI and integration |
+| `src/study-core.ts` | Shared study logic |
+| `src/mascot/`, `src/pond/`, `web/` | Kitten, equipment, pond, motion and browser/account modules |
+| `desktop/ui/` | Compact buddy, native planner adapter and updater UI |
+| `desktop/src-tauri/` | Native timer, SQLite persistence, windows, rewards and sync |
+| `Scheduler/`, `Scheduler.xcodeproj/` | iPhone wrapper and generated offline bundle |
+| `design/` | Reference studies, review notes and design history |
+| `scripts/` | Generation, packaging and verification tools |
+| `build/` | Ignored generated frontends, captures and local installers |
 
-The native timer, rewards and growth records are authoritative in Windows. Account sync and browser-only operation have separate capabilities; see [beta documentation](docs/PRIVATE-BETA.md). Preserve `com.kgsato.orbit`, study data, storage keys, identities and ownership. Back up real data before an authorized import or installation.
+## Project guidance and verification
 
-Use task-specific evidence. A rendered browser page does not validate installed Windows behavior, and a local installer does not establish a published update. Follow the [verification routing](docs/agents/WORKFLOW.md#verification-routing) and consult release-specific reports for their exact scope and remaining gaps. Historical verification is not acceptance evidence for later changes.
+- [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).
+- [Compact buddy design and test scope](design/compact-buddy/README.md).
+- [iPhone preparation and remaining TestFlight steps](docs/TESTFLIGHT.md).
+- [Offline iPhone privacy-policy draft](docs/IPHONE-PRIVACY.md).
 
-Source edits stay local and uncommitted for review in VS Code. Commit, push, merge, install, deployment and publication are separate authorized actions.
+The compact UI passed browser tests against generated native HTML, including 18 size/state combinations, overlap and pointer checks, focus feedback and reduced-motion completion. Local Windows packages have also passed version, checksum and updater-signature checks. These results do not establish an installed upgrade, real native timer expiry, physical-monitor scaling, live cloud reconciliation or iPhone device behavior. Keep those checks separate when preparing a release.

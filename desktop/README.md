@@ -1,101 +1,120 @@
 # Orbiter for Windows
 
-An autonomous study buddy built with Tauri 2, Rust, SQLite and bundled HTML/CSS and Three.js. The browser and Python are not required to run it. The full planner is bundled into the same native window; an optional paired website remains available on this PC.
+Orbiter combines a full study planner and a compact floating kitten companion in one Windows application. It uses Tauri 2, Rust, SQLite and bundled HTML/CSS/JavaScript with Three.js. Python, Node and an external browser are development tools, not requirements for using the installed planner.
 
-## First use
+**Current source version: 0.5.3.** Check the actual running executable when diagnosing a version mismatch; an installer title or release-note filename does not identify the UI currently on screen.
 
-Open **Orbiter** from Desktop/Start, or double-click `Open Orbiter.cmd`. The default per-user executable is `%LOCALAPPDATA%\Orbiter\orbit-companion.exe`; the local installer alias is `build\release\Orbiter Setup.exe`. Confirm its version from the actual binary and manifest rather than a document title. See the [current checkpoint](../docs/agents/CHECKPOINT.md) for unresolved version/evidence issues.
+## Install and open
 
-- Orbiter launches as a rounded 420 × 220 floating island. Click the cat, the doorway action, or the island's ↗ control to open the full scheduler **inside the same app**. The planner has ordinary Windows controls; Restore returns to the island, and minimize uses the taskbar.
-- Starting or resuming focus automatically returns to buddy mode. You can reopen the planner during focus. Focus Room has been replaced by these two modes.
-- **Buddy options → Appearance** provides size presets and custom dimensions from 360 × 200 to 560 × 300. Drag the ORBITER heading or use the lower-right resize grip. Options and rewards temporarily expand without changing the saved compact size.
-- **Keep above other windows** starts enabled for the island, including the upgrade from the older buddy. Turn it off in options if preferred. It never pins the full planner.
-- In the native planner, click the main My Day cat (or focus it and press Enter/Space) to return to the island. Your open drafts and focus timer are preserved.
-- Workspace uses glass action tiles; buttons and course notes follow the chosen accent. Solid mode retains rounded calendars and opaque accessible surfaces. My Rhythm follows Mint, Lilac, or Apricot rather than forcing a page accent.
-- Tasks, tests and recurring practice are created in the full planner. Buddy options selects the focus intention, 25/50/60-minute presets or custom duration.
-- **Buddy options → Import backup** imports the previous browser workspace; export that workspace first from its original address (port 8003). Ordinary browser sites continue to use their own local storage. Import replaces native study data and creates a recovery copy.
-- Closing keeps Orbiter in the tray and releases the webview. Unsaved planner edits offer Save/Discard/Cancel. **Quit Orbiter** pauses and persists focus before exit.
-- The tray's **Open paired browser (optional)** is the only action that opens an external browser. The bundled planner works offline without Python, Node or the local server.
+1. Export a backup and save any open planner edits.
+2. Choose **Quit Orbiter** from its system-tray menu. Closing the window with × keeps the process running.
+3. Run the intended installer. For the same version, **Add/Reinstall components** is the maintenance option.
+4. Open **Orbiter** from Start/Desktop. The default per-user executable is `%LOCALAPPDATA%\Orbiter\orbit-companion.exe`.
 
-The animated cat is an original Blender-built GLB rendered with the existing Three.js engine. Editable model sources and export instructions are in `design/avatar/`; Blender is not required to run Orbiter. Courses keep unique profiles combining coat, ears, scarf and charm. A new main cat is selected on fresh loads, while mode switches retain it; task-linked focus uses the course cat. Head pats and typing reactions operate only inside Orbiter. Reduced motion stops ambient movement. A static illustration appears if WebGL is unavailable.
+The normal local packaging output is `build/release/Orbiter_<version>_x64-setup.exe`. The repaired 0.5.3 installer is under `build/release/compact-repair/`. These ignored local artifacts are not included in the repository. `Open Orbiter.cmd` opens the installed executable when present; its fallback installer alias is the normal `build/release/Orbiter Setup.exe`.
 
-## Cosmic worlds and equipment
+Use one copy of Orbiter. Old portable executables, including renamed `orbit-companion-<version>.exe` files, share the installed app's single-instance identity. Launching a newer copy can bring an older running copy forward. The repaired installer detects `orbit-companion*` processes and asks you to quit from the tray; it does not terminate an active study session automatically. If the check fails, setup stops before replacing application files.
 
-Appearance studio offers Tidal Night, Lunar Mist and Opal Dawn, decorative atmosphere strength, independent motion intensity, and Auto/Low/High quality. Changes stay in the preview until Apply. Auto reduces resolution if sustained rendering cost exceeds its budget; Low uses 1x resolution. Zero motion and reduced motion stop the render loop.
+## Planner and compact buddy
 
-In Discoveries, select an owned or locked item to try it on the live cat. **Equip** saves owned items; **Cancel preview**, Escape or closing restores the previous collection. Locked items are labeled and cannot be equipped. Habitats fill the cat environment and tint the wider planner/island. Existing XP, crate odds and ownership are unchanged.
+- Orbiter opens as a **420 × 220** floating island by default. Click the kitten or planner icon to open the full planner in the same app.
+- The planner contains **My Day, Assignments, Atlas and My Rhythm**, including tests, daily practice, course notes, weekly planning and focus controls.
+- Starting or resuming focus from the native planner returns to the buddy. Reopen the planner during focus whenever needed. Mode switches preserve drafts and the native timer.
+- **Buddy options → Appearance** offers Small, Default and Large presets plus custom dimensions from **360 × 200 to 560 × 300**. Drag the ORBITER heading or use the lower-right grip.
+- Options expand to at least 420 × 560 and discoveries/recaps to at least 420 × 520. They preserve your saved compact dimensions when closed.
+- **Keep above other windows** defaults on for the buddy and can be turned off. It never pins the full planner.
+- Closing the app window keeps Orbiter in the tray. Unsaved planner edits offer Save/Discard/Cancel. Tray **Quit Orbiter** pauses and persists focus before exit.
 
-The live scene uses one WebGL context, including previews. Course portraits are cached. Rendering is capped at 30 FPS and suspended when hidden. See `docs/VERIFICATION-0.6.0.md` for measured resource use and outstanding live release checks.
+### Compact controls and feedback
 
-## Everyday study and appearance
+Window actions and planner controls use consistent SVG icons. The filled primary button changes between **Start, Pause and Resume**. **Finish** ends the current session, while the separate planner icon opens the workspace. The crate/level strip and resize grip have their own space at the smallest supported size.
 
-- Choose an intention and duration in My Day. The hero and timer share that intention; Pause/Resume, Finish, and task details stay in fixed control areas. An in-progress native session must be finished before changing its intention or duration.
-- **Appearance studio**, available through planner preferences and buddy options, previews planner/buddy styling before Apply. Try Tidal Night, Lunar Mist, or Opal Dawn, your accent/material, and atmosphere strength. Cancel preview restores saved choices; Reset resets appearance only. Save preferences also commits the current preview.
-- Frequent menus use short local transitions. The signature wave remains for applied scene changes and Week in orbit. Reduced motion suppresses decoration without blocking typing.
-- Habitats develop from resting stone to pool, lantern, and celestial garden using the existing 0/2/8/20-hour milestones. Course identity and owned cosmetics remain intact.
-- Finish or complete focus to see actual credited time, exam budget reduction, confirmed rewards, and growth in a session recap. Cloud credit can remain pending; confirmed account totals are explicitly labeled as totals. Done acknowledges the recap. Reopen it through **Latest session** or My Day without awarding time again.
-- Before synchronizing the new appearance preferences, apply `supabase/migrations/202610160001_appearance.sql` through Supabase's SQL editor. This local build does not change your hosted database.
+After the native timer accepts Start or Resume, a short dew-light arc travels into the kitten's pool and releases rings. A native session completion triggers a masked lily-and-starlight celebration, followed by the existing session recap. The kitten's face and controls remain clear, and decorative effects never intercept clicks.
 
-## Updates
+Calmer motion, quiet mode, OS reduced motion and zero motion intensity suppress these animations. Completion still opens its recap promptly. Duplicate timer/account updates do not replay the celebration or cancel the reduced-motion recap. A locally displayed zero alone does not award time or trigger victory.
 
-Open **Check for updates** in planner preferences or buddy settings. Startup checks are optional. Save open edits, then choose **Download and restart** to install a verified release; focus pauses before installation. The first updater-enabled version requires manual installation. The release feed must be published on GitHub before checks can return updates. See [update and signing instructions](../docs/UPDATES.md).
+## Study sessions and discoveries
 
-## Time and progress
+Create assignments, tests and recurring practice in the full planner. Choose an intention and duration there or in buddy options; options include 25/50/60-minute presets and a custom duration. Finish an in-progress session before changing its intention or duration.
 
-- Locking Windows or sleeping pauses focus. Resuming is deliberate. Restart/crash recovery starts paused; at most the uncheckpointed portion (up to 30 seconds) can be lost, and unattended time is never credited.
-- Focus uses a monotonic clock. Recorded time is split at local midnight and linked to the selected item. Tests have one test date and a decreasing preparation budget. Manual study logs and imported history remain separate from earned XP.
-- Each whole focused minute earns 1 XP, each 100 XP advances a level, and each 30 minutes earns a crate. Partial minutes accumulate across sessions. The shorter interval also applies to previously tracked focus; existing openings and ownership are retained.
-- The island and My Day show a crate and level bar. Click a ready crate to reveal a discovery, then Equip; click ✧ for the preview collection. Unready crates explain the remaining focus time.
-- 51 original cosmetics: the previous 15 plus 12 looks, 12 accessories, and 12 habitat decorations. Totals: 26 common, 17 rare, eight mythic. Three starter cosmetics remain equipped. Available tiers use weights 70/25/5; completed tiers redistribute proportionally. Every draw is new. Complete collections earn visible constellation stars.
-- Cats grow through Baby, Kitten (2 hours), Young Cat (8 hours), and Adult (20 hours), with gradual changes between milestones. Each course tracks its own native focus; the main cat uses overall focus. Historical total focus counts for the main cat. Course growth starts with newly attributable native focus and retains the course captured at session start.
-- There are no purchases, advertising, expiry dates, streak penalties or global input tracking.
+Windows owns the timer, credited focus and rewards. Manual logs and imported study history do not create native XP. Focus can be linked to a task and its course companion. A session recap shows actual credited time, applicable exam-preparation reduction, growth and reward status. Pending cloud credit and confirmed account totals are labeled separately. **Done** acknowledges the recap; **Latest session** reopens it without awarding time again.
 
-## Storage, recovery and local sync
+- Each whole native focus minute earns 1 XP; each 100 XP advances a level; each 30 focus minutes earns a crate. Partial minutes accumulate.
+- Discoveries contains a 51-item catalog across appearances, accessories, trails and habitats. The recent visual refresh covered 14 upgraded item visuals; catalog size does not mean all 51 received that refresh.
+- Preview an owned or locked item on the kitten. **Equip** saves owned items; **Cancel preview** or leaving the buddy preview restores saved equipment. In the full planner, Escape or closing the preview dialog also restores it. Locked previews do not grant ownership.
+- Crate tier weights are Common 70%, Rare 25% and Mythic 5%, redistributed when a tier is exhausted. Draws select unowned items; complete collections earn constellation stars.
+- Companions grow through Baby, Kitten (2 hours), Young Cat (8 hours) and Adult (20 hours). Course growth uses attributable native focus; the main companion uses total native focus.
 
-Ordinary profiles live in `%LOCALAPPDATA%\com.kgsato.orbit`. `orbit.sqlite3` stores workspace, timer, cosmetics, cat growth and settings in atomic transactions with a versioned schema. `backups` contains pre-import Scheduler JSON snapshots. **Show recovery backups** opens that folder. Export/import JSON restores study data and course identities; it does not export or grant reward balances or growth credits. To preserve the entire profile, quit Orbiter before copying its data directory.
+Courses retain their own coat, ear, scarf and charm identity. Equipment does not replace that identity. The original modeled kitten and export notes are maintained in [design/avatar](../design/avatar/README.md).
 
-The local website binds to `127.0.0.1:18743` only, without firewall changes. Tray-generated pairing links expire after 60 seconds and are single use. Paired sessions expire after 12 hours or app restart. Browser writes use CSRF tokens and edit revisions; SSE delivers changes. A conflicting browser draft is retained in that tab's session storage: **Your workspace → Export unsaved draft**, then **Reload shared workspace**, before reapplying edits. A conflicting companion form stays open for review.
+## Pond and appearance
 
-The native process owns timer and focus history. Browser clients cannot grant rewards or overwrite native elapsed time. If the local port is occupied, the buddy still works and shows the website connection error. Account sync and hosted browser access are separate from loopback pairing; see [private beta setup](../docs/PRIVATE-BETA.md) for their implemented workflow and limitations.
+The full planner and buddy share a blue pond with koi, lily pads, underwater light and moving mist. **Tidal Night, Lunar Mist and Opal Dawn** are lighting choices within that direction.
 
-Windows account access protects these local files; the database is not encrypted at rest. No telemetry or remote application content is loaded. WebView2 is the shared Windows runtime and may be installed by the installer if absent. This personal installer is **unsigned**, not a signed public distribution or security certification.
+Appearance studio previews accents, materials, scene lighting, atmosphere, motion intensity and **Auto/Low/High** graphics settings before Apply. Cancel restores saved appearance. Solid/quiet materials provide opaque surfaces. Low quality and reduced/zero motion stop ambient rendering; a static illustration is available when graphics initialization fails.
+
+Navigation and dialogs use the shared water-to-glass transition controller. Incoming panels reveal with the wave while form text and controls stay stationary. Popup input remains available during decoration. Quiet/reduced motion suppresses effects.
+
+The scene reuses one WebGL context, including equipment previews. Portraits are cached, motion is capped at 30 FPS and rendering suspends when hidden. These implementation limits are not a promise of measured CPU/RAM or a sustained frame rate on every PC.
+
+## Storage, backups and connection options
+
+The normal native data directory is `%LOCALAPPDATA%\com.kgsato.orbit`. Its `orbit.sqlite3` database stores workspace, timer, cosmetics, growth and settings. Recovery backups are accessible through buddy options. Keep this identifier and location unchanged during upgrades.
+
+**Import backup** replaces study data and creates a recovery copy. JSON export/import preserves study data and course identities; it does not export or grant native reward balances or growth credits. To back up the full profile, quit Orbiter before copying its data directory. Keep browser exports from their original address/profile before moving them to Windows.
+
+Two connection paths exist:
+
+| Connection | Purpose |
+| --- | --- |
+| Optional paired browser on this PC | Loopback service at `127.0.0.1:18743`; tray-generated links are single-use and expire after 60 seconds. Sessions expire after 12 hours or restart. The native process retains timer/reward authority. |
+| Hosted private-beta account | Separate sign-in and workspace synchronization through Supabase. Setup, allowlisting, conflicts and validation requirements are in [private-beta documentation](../docs/PRIVATE-BETA.md). |
+
+The bundled planner works offline without either connection. The optional paired-browser action opens an external browser. If its port is occupied, the native app still works. Browser drafts use revisions/conflict handling; finish or export a draft before replacing its workspace.
+
+Local files rely on Windows account permissions; the SQLite database is not encrypted at rest. Hosted account sessions use separate credential handling. Do not describe the account-enabled Windows/browser app as making no network requests; that description applies to the separately prepared offline iPhone beta.
+
+## Updates and version mismatches
+
+Open **Check for updates** from planner preferences or buddy options. Automatic startup checks are optional; checks do not automatically install updates. The updater uses signed versioned installers and a published GitHub feed. A local build does not update that feed.
+
+Save drafts before installing. Failed download/signature verification leaves the timer running; after verification, the update workflow pauses/persists focus and creates a workspace backup before launching setup. Resume deliberately after restart. Updater signatures are separate from Windows Authenticode signing.
+
+If you still see the previous UI, check the running executable path/version and quit older portable copies before reinstalling. Reinstalling a version may show the maintenance screen; that screen alone does not establish which executable is currently rendering the app. See [update and release instructions](../docs/UPDATES.md).
 
 ## Development
 
-Prerequisites: current Node/npm, Python for the existing asset build, Rust MSVC toolchain, Microsoft C++ build tools, and WebView2. Open a new terminal after installing Rust so Cargo is on PATH.
+Prerequisites are Node/npm, Python 3.11+ for the current preparation checks, the Rust MSVC toolchain, Microsoft C++ build tools and WebView2. Preserve the repository's dependency versions and lockfiles. Run these commands from the repository root in PowerShell as appropriate:
 
 ```powershell
-npm install
-npm run desktop:dev
-npm run desktop:build
-cargo test --manifest-path desktop/src-tauri/Cargo.toml
-node scripts/test_unified.cjs
-node scripts/test_island.cjs
+npm.cmd ci
+npm.cmd run desktop:dev
 ```
 
-Source: `desktop/ui/native-shell.js` owns the isolated buddy component; `src/mascot/cat.js` owns the 3D model; `desktop/src-tauri/src` owns persistence, scheduling, native windows and loopback service. Root `Application.html` remains Scheduler's source of truth. `scripts/prepare_desktop.py` embeds approved assets and generates the Windows icon. Build outputs are ignored. The combined signed-updater packaging script stages the installer under `build/release`; inspect [update instructions](../docs/UPDATES.md) and current scripts before building.
+To regenerate source-derived assets and prepare the native frontend:
 
-Use `--profile-dir <absolute-path>` for an isolated test profile, `--hide` to close the buddy to the tray, and `--quit` to stop an existing instance. `--quiet` is used by optional autostart. `--measure` writes a local readiness record; `--measure-expanded` opens the full planner; `--planner` opens it in an existing instance. Neither measurement flag is active during ordinary use. Debug builds alone support the one-use QA pairing-file hook.
+```powershell
+npm.cmd run build:core
+npm.cmd run desktop:prepare
+```
 
-Performance script: `scripts/measure_desktop.ps1` (also `-Expanded`) measures readiness, the full native/WebView2 process tree, 20-second idle CPU, private memory and summed working sets, and confirms tray survival. It uses an isolated profile. Results and screenshots are in ignored `build/` outputs.
+For a native build, use `npm.cmd run desktop:build`. For the signed local installer/update artifacts, follow [docs/UPDATES.md](../docs/UPDATES.md); its combined script performs regeneration, native compilation, packaging and local staging with the original updater key.
 
-Historical island and unified-window evidence is retained in `design/ORBITER-ISLAND-VERIFICATION.md` and `design/ORBITER-UNIFIED-VERIFICATION.md`. For current scope, start with the [checkpoint](../docs/agents/CHECKPOINT.md) and the verification report for the exact revision being delivered. Earlier measurements do not validate later artwork or binaries. Physical sleep/reboot, multiple-monitor/scaling, and notification checks require their own evidence.
+Relevant focused checks include:
 
-## Primary references
+```powershell
+node scripts/test_buddy_focus.cjs
+node scripts/test_island.cjs
+node scripts/test_unified.cjs
+cargo test --manifest-path desktop/src-tauri/Cargo.toml
+```
 
-- [Tauri architecture](https://v2.tauri.app/concept/architecture/), [tray integration](https://v2.tauri.app/learn/system-tray/), [Windows packaging](https://v2.tauri.app/distribute/windows-installer/)
-- [Tauri runtime authority](https://v2.tauri.app/security/runtime-authority/), [single instance](https://v2.tauri.app/plugin/single-instance/), [autostart](https://v2.tauri.app/plugin/autostart/)
-- [WebView2 deployment](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution), [Windows suspend events](https://learn.microsoft.com/en-us/windows/win32/power/pbt-apmsuspend)
-- [Playwright browser testing APIs](https://playwright.dev/docs/api/class-browsertype)
-## October 14 UI polish
+The browser scripts use disposable fixtures; inspect them before running. The compact test records layout results and animation frames under ignored `build/buddy-focus/`. Native process tests must account for application-wide single-instance routing: a separate data directory alone does not isolate a running app. Never send hide/quit test commands to a real study session.
 
-The 0.4 installer refresh adds grouped buddy settings, independently scrolling Discoveries, a padded export deck, centered close controls, wider Test actions, and faster wave transitions. Settings opens at 560 px tall and Discoveries at 520 px tall; these temporary expansions do not replace your saved compact size. Open owned cosmetics through **Buddy options → Your companion → Explore discoveries**.
+`desktop/ui/` owns the buddy, native adapter and updater UI. `desktop/src-tauri/src/` owns native windows, persistence, focus/reward authority and the local service. Root `Application.html` and shared `src/`/`web/` modules remain canonical; [project workflow](../docs/agents/WORKFLOW.md) explains generation.
 
-The existing installed app does not update just because source files changed. After saving/finishing your current session, Quit Orbiter from its tray, run the refreshed installer, and reopen it. Browser users should reload their usual URL to get the regenerated source without changing storage origins.
+## Verification boundary
 
+The current compact work passed 18 generated-native-HTML size/state cases with pairwise overlap and pointer checks, plus Start/Resume, failure, completion, duplicate updates, reduced motion and neighboring island/unified regressions. The local 0.5.3 package passed binary-version, checksum and original-key signature checks; its embedded buddy JS/CSS were compared with production source. A guard-only installer fixture detected the older portable process without terminating it.
 
-## Orbiter 0.5 pond workspace
-
-The blue lily pond now sits behind the full scheduler and compact buddy. Mist moves automatically and parts under cursor sweeps; it stops with Low quality, reduced motion, quiet mode or zero motion intensity. If it looks still, check Appearance settings before increasing atmosphere. Keep Auto quality for the conservative default.
-
-**Historical 0.5.0 migration note:** the pond release was labeled 0.5.0 after local 0.6.x visual-development builds. This is not the current requested version. An installed higher-numbered development build will not receive a lower-numbered build through normal updater version ordering; determine the actual installed and target versions before choosing an authorized manual installation. Save and Quit Orbiter from its tray before installing. Preserve the existing database and signing-key identifiers.
+Those checks do not establish a completed installed upgrade, real native expiry on this PC, physical-monitor scaling, live hosted sync or iPhone readiness. See the [current checkpoint](../docs/agents/CHECKPOINT.md) and [compact review notes](../design/compact-buddy/README.md) for scope and remaining gaps.
