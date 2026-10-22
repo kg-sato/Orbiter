@@ -11204,7 +11204,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 </script>
-</head>
+    <style id="phone-toolbar-controls">
+      .masthead #quick-capture::before { display: none; }
+      .masthead #quick-capture .capture-icon { flex: 0 0 20px; width: 20px; height: 20px; }
+      @media (max-width: 600px) {
+        .masthead #jump-open, .masthead #mobile-more { width: 44px; min-width: 44px; }
+      }
+    </style>
+  </head>
   <body>
     <div class="orbital-backdrop" aria-hidden="true">
 <svg id="liquid-landscape" class="celestial-landscape" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
@@ -11363,7 +11370,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
               title="Quick capture (Ctrl/⌘ Shift K)"
               aria-label="Quick capture assignment"
             >
-              Capture
+              <svg class="icon capture-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4V3h6v1M9 9h6M9 13h4M9 17h6"/></svg><span class="capture-label">Capture</span>
             </button>
             <button id="import" title="Import a JSON backup">Import</button
             ><button
