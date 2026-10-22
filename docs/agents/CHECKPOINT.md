@@ -15,6 +15,15 @@ Updated **2026-10-21** from this chat and the local repository. This is a handof
 
 ## Established direction and constraints
 
+### Compact buddy refinement — 2026-10-22
+
+- Uncommitted desktop-only changes improve SVG buttons/icons and the 360–560 × 200–300 compact layout; no version bump, installer, timer/reward rule or storage change.
+- Accepted native Start/Resume states trigger a dew arc and pool rings. A new recap on an active-to-stopped timer triggers a masked lily/starlight celebration before the existing recap. Reduced/zero motion uses prompt static acknowledgement; duplicate snapshots do not replay or cancel completion.
+- Actual generated native HTML passed 18 size/state geometry and pointer-hit checks, failed-action/completion/deduplication/motion tests, and existing island/unified regressions. Early/middle/settled frames inspected. See `../../design/compact-buddy/README.md` and ignored `build/buddy-focus/buddy-focus.webm`.
+- Installed Windows binary, real native expiry and physical display scaling remain unverified; source/browser fixture evidence must not be described as an installed update.
+- The local 0.5.3 installer was subsequently built and cryptographically verified, including original-key continuity, trusted comment, checksum and packaged source-asset equality. No install/publish was performed. Read-only desktop inspection on 2026-10-22 found the running app was the portable `build/release/orbit-companion-0.5.0.exe` (0.5.0), while `AppData/Local/Orbiter/orbit-companion.exe` was 0.4.0. Recheck these changing facts before diagnosing an installed UI; neither was the newly built 0.5.3. Do not terminate an active study process without authorization.
+- User supplied a 0.5.3 maintenance-screen screenshot; registry/version observations alone were insufficient to establish what UI was loaded. Decompressed Tauri asset blobs were then verified byte-for-byte against current buddy JS/CSS and found embedded in the actual 0.5.3 binary. Installer running-app detection only registered the normal target path, missing the renamed 0.5.0 portable process that shares the single-instance identity. Added `NSIS_HOOK_PREINSTALL` to block all `orbit-companion*` processes and ask for tray Quit without terminating study. A guard-only NSIS fixture returned exit 10 while preserving the running process. Repaired local artifacts are under ignored `build/release/compact-repair/`; installation and end-to-end replacement remain unverified.
+
 One Windows application with planner and floating buddy modes; a blue, ethereal pond; a soft collectible kitten; meaningful visible equipment; glass controls with readable opaque/reduced-motion alternatives. Keep the native timer and existing economy authoritative. Preserve data, identities and ownership. Consult the current skills and source for implementation details rather than replaying the full chat.
 
 ## Delivered work summarized from the chat
