@@ -16,6 +16,36 @@ INVENTORY = {RUNTIME: [{"name": "iPhone 17", "isAvailable": True, "deviceTypeIde
 
 
 class RunnerTests(unittest.TestCase):
+    def test_launch_pid_requires_exact_bundle(self):
+        self.assertEqual(runner.launched_pid("fixture.orbiter: 4242", "fixture.orbiter"), 4242)
+        for output in ["other.app: 4242", "fixture.orbiter: 1", "fixture.orbiter: 4242\nfixture.orbiter: 4243"]:
+            with self.assertRaises(RuntimeError):
+                runner.launched_pid(output, "fixture.orbiter")
+
+    def test_force_close_refuses_wrong_uid_or_binary(self):
+        executable = Path.cwd() / "fixture.app/Scheduler"
+        for process in [f"999 S {executable}", "501 S /unrelated/app"]:
+            result = subprocess.CompletedProcess([], 0, process, "")
+            with patch.object(runner.platform, "system", return_value="Darwin"), patch.object(runner.os, "getuid", return_value=501, create=True), patch.object(runner.subprocess, "run", return_value=result), patch.object(runner.os, "kill") as kill:
+                with self.assertRaisesRegex(RuntimeError, "does not match"):
+                    runner.stop_launched_app(4242, executable)
+                kill.assert_not_called()
+
+    def test_force_close_refuses_system_and_own_pid(self):
+        with patch.object(runner.platform, "system", return_value="Darwin"), patch.object(runner.os, "kill") as kill, patch.object(runner.subprocess, "run") as process:
+            for pid in (0, 1, runner.os.getpid()):
+                with self.assertRaisesRegex(RuntimeError, "unsafe"):
+                    runner.stop_launched_app(pid, Path("unused"))
+            kill.assert_not_called()
+            process.assert_not_called()
+
+    def test_force_close_checks_exact_pid_and_observes_exit(self):
+        executable = Path.cwd() / "fixture.app/Scheduler"
+        results = [subprocess.CompletedProcess([], 0, f"501 S {executable} --fixture", ""), subprocess.CompletedProcess([], 1, "", "")]
+        with patch.object(runner.platform, "system", return_value="Darwin"), patch.object(runner.os, "getuid", return_value=501, create=True), patch.object(runner.subprocess, "run", side_effect=results), patch.object(runner.os, "kill") as kill:
+            self.assertGreater(runner.stop_launched_app(4242, executable), 0)
+            kill.assert_called_once_with(4242, 9)
+
     def test_command_timeout_preserves_bounded_boot_diagnostics(self):
         error = subprocess.TimeoutExpired(["xcrun"], 480, output=b"Data migration in progress")
         with patch.object(runner.subprocess, "run", side_effect=error):
@@ -60,16 +90,18 @@ class RunnerTests(unittest.TestCase):
             if args[:3] == ("xcrun", "simctl", "create"):
                 return created
             if args[:3] == ("xcrun", "simctl", "get_app_container"):
-                return str(root / "container")
+                return str(root / DEVICE / "Scheduler.app") if args[-1] == "app" else str(root / "container")
+            if args[:3] == ("xcrun", "simctl", "launch"):
+                return "fixture.orbiter: 4242"
             return "Xcode fixture" if args[0] == "xcodebuild" else ""
         documents = root / "container/Documents"
         documents.mkdir(parents=True)
         for phase in ("seed", "verify"):
             if not missing_snapshot:
                 (documents / f"orbiter-smoke-{phase}.png").write_bytes(b"\x89PNG\r\n\x1a\nfixture")
-        reports = [{"success": not fail, "phase": phase, "checks": ["fixture-check"], "errors": [], "version": "0.5.3", "expectedExpiry": time.time() * 1000 + (-1000 if expired else 45000)} for phase in ("seed", "verify")]
+        reports = [{"success": not fail, "phase": phase, "checks": ["fixture-check"], "errors": [], "version": "0.5.3", "expectedExpiry": time.time() * 1000 + (-1000 if expired else 180000)} for phase in ("seed", "verify")]
         with patch.object(runner.platform, "system", return_value="Darwin"), patch.object(runner, "command", side_effect=command), \
-             patch.object(runner, "wait_report", side_effect=reports), patch.object(runner.time, "sleep"):
+             patch.object(runner, "wait_report", side_effect=reports), patch.object(runner.time, "sleep"), patch.object(runner, "stop_launched_app", side_effect=lambda *args: calls.append(("stop-verified-app", args[0])) or time.time() * 1000):
             if fail or created != DEVICE or expired or missing_snapshot:
                 with self.assertRaises((RuntimeError, ValueError)):
                     runner.run(app, root / "evidence")
@@ -91,7 +123,7 @@ class RunnerTests(unittest.TestCase):
     def test_seed_termination_is_not_delayed_by_simulator_screenshot(self):
         calls, _, _ = self.simulate()
         seed = next(i for i, args in enumerate(calls) if "--orbiter-smoke-phase=seed" in args)
-        stopped = next(i for i in range(seed + 1, len(calls)) if calls[i][:3] == ("xcrun", "simctl", "terminate"))
+        stopped = next(i for i in range(seed + 1, len(calls)) if calls[i][0] == "stop-verified-app")
         self.assertFalse(any(args[:3] == ("xcrun", "simctl", "io") for args in calls[seed:stopped]))
 
     def test_failed_check_stops_and_keeps_evidence(self):

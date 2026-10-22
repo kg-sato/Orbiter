@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 import platform
 import plistlib
+import re
+import signal
 import subprocess
 import shutil
 import time
@@ -65,6 +67,42 @@ def wait_report(path: Path, timeout: int = 120) -> dict:
     raise TimeoutError(f"Native smoke report did not arrive: {path.name}")
 
 
+def launched_pid(output: str, bundle: str) -> int:
+    matches = re.findall(r"^" + re.escape(bundle) + r":\s*(\d+)\s*$", output, re.M)
+    if len(matches) != 1 or not 1 < int(matches[0]) < 2**31:
+        raise RuntimeError("Simulator did not return one valid app PID")
+    return int(matches[0])
+
+
+def stop_launched_app(pid: int, executable: Path) -> float:
+    """Force-close only the launched app after verifying its host UID and exact binary.
+
+    simctl terminate can hang on hosted runners. This is a crash/relaunch acceptance
+    check on fictional data, not a graceful app-exit or physical-device check.
+    """
+    if platform.system() != "Darwin" or pid <= 1 or pid == os.getpid():
+        raise RuntimeError("Refusing unsafe simulator app PID")
+    result = subprocess.run(["ps", "-ww", "-p", str(pid), "-o", "uid=,stat=,args="],
+                            capture_output=True, text=True, timeout=10)
+    parts = result.stdout.strip().split(None, 2)
+    expected = str(executable)
+    if (result.returncode != 0 or len(parts) != 3 or parts[0] != str(os.getuid())
+            or not (parts[2] == expected or parts[2].startswith(expected + " "))):
+        raise RuntimeError("Launched PID does not match this runner and disposable app binary")
+    print(f"Force-closing verified disposable app PID {pid}", flush=True)
+    os.kill(pid, getattr(signal, "SIGKILL", 9))
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        state = subprocess.run(["ps", "-p", str(pid), "-o", "stat="],
+                               capture_output=True, text=True, timeout=5)
+        if (state.returncode == 1 and not state.stdout.strip()) or state.stdout.strip().startswith("Z"):
+            return time.time() * 1000
+        if state.returncode != 0:
+            raise RuntimeError("Could not verify disposable app process exit")
+        time.sleep(0.1)
+    raise RuntimeError("Disposable app process did not exit after force-close")
+
+
 def run(app: Path, output: Path, device_name: str | None = None) -> None:
     if platform.system() != "Darwin":
         raise RuntimeError("Native iPhone simulator checks require macOS with Xcode; no browser substitute was run.")
@@ -88,10 +126,16 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
         command("xcrun", "simctl", "bootstatus", simulator, "-b", timeout=480)
         command("xcrun", "simctl", "install", simulator, str(app), timeout=120)
         container = Path(command("xcrun", "simctl", "get_app_container", simulator, bundle, "data"))
+        bundle_container = Path(command("xcrun", "simctl", "get_app_container", simulator, bundle, "app"))
+        if simulator.lower() not in str(bundle_container).lower():
+            raise RuntimeError("Installed app container is outside the created simulator")
+        executable = bundle_container / info.get("CFBundleExecutable", app.stem)
+        metadata["terminationMethod"] = "SIGKILL of launched PID after UID/binary verification"
         for phase in ("seed", "verify"):
             current_phase = phase
             report = container / "Documents" / f"orbiter-smoke-{phase}.json"
-            command("xcrun", "simctl", "launch", simulator, bundle, f"--orbiter-smoke-phase={phase}")
+            launch = command("xcrun", "simctl", "launch", simulator, bundle, f"--orbiter-smoke-phase={phase}")
+            pid = launched_pid(launch, bundle)
             result = wait_report(report)
             (output / report.name).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
             # Both native phases save a real WKWebView PNG before their JSON report.
@@ -105,11 +149,10 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
             shutil.copy2(native_snapshot, output / native_snapshot.name)
             if result.get("success") is not True:
                 raise RuntimeError(f"Native {phase} checks failed; inspect {report.name}")
-            command("xcrun", "simctl", "terminate", simulator, bundle)
+            stopped_at = stop_launched_app(pid, executable)
             if phase == "seed":
                 # The seed's fictional timer expires while the app process is stopped.
                 expiry = result.get("expectedExpiry")
-                stopped_at = time.time() * 1000
                 if not isinstance(expiry, (int, float)) or not 0 < expiry - stopped_at <= 240000:
                     raise RuntimeError("Cannot prove process stopped before fictional timer expired")
                 metadata["stoppedBeforeExpiry"] = True
