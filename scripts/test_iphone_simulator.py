@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import plistlib
+import subprocess
 import tempfile
 import time
 import unittest
@@ -15,6 +16,12 @@ INVENTORY = {RUNTIME: [{"name": "iPhone 17", "isAvailable": True, "deviceTypeIde
 
 
 class RunnerTests(unittest.TestCase):
+    def test_command_timeout_preserves_bounded_boot_diagnostics(self):
+        error = subprocess.TimeoutExpired(["xcrun"], 480, output=b"Data migration in progress")
+        with patch.object(runner.subprocess, "run", side_effect=error):
+            with self.assertRaisesRegex(RuntimeError, "Data migration in progress"):
+                runner.command("xcrun", "simctl", "bootstatus", timeout=480)
+
     def test_select_only_available_iphone_on_latest_runtime(self):
         devices = dict(INVENTORY)
         devices["com.apple.CoreSimulator.SimRuntime.iOS-18-0"] = [

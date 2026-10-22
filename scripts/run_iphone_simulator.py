@@ -18,7 +18,15 @@ import uuid
 
 
 def command(*args: str, timeout: int = 90, check: bool = True) -> str:
-    result = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    if args[:2] == ("xcrun", "simctl"):
+        print("Simulator operation: " + args[2], flush=True)
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        partial = error.stdout or ""
+        if isinstance(partial, bytes):
+            partial = partial.decode("utf-8", errors="replace")
+        raise RuntimeError(f"{args[0:3]} timed out after {timeout}s. Last output: {partial[-2500:]}") from error
     if check and result.returncode:
         raise RuntimeError(f"{args[0:3]} failed ({result.returncode}): {result.stderr[-2500:]}")
     return result.stdout.strip()
@@ -77,7 +85,7 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
         # Refuse to send mutating device commands unless creation returned exactly one UUID.
         simulator = str(uuid.UUID(created))
         command("xcrun", "simctl", "boot", simulator)
-        command("xcrun", "simctl", "bootstatus", simulator, "-b", timeout=240)
+        command("xcrun", "simctl", "bootstatus", simulator, "-b", timeout=480)
         command("xcrun", "simctl", "install", simulator, str(app), timeout=120)
         container = Path(command("xcrun", "simctl", "get_app_container", simulator, bundle, "data"))
         for phase in ("seed", "verify"):
