@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src data: blob:; base-uri 'none'; form-action 'none'">
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -10757,7 +10758,13 @@ body.solid-glass dialog.popup-lab :is(input,select,textarea),body[data-material=
 @media(max-width:540px){#export-dialog .export-option{margin-inline:14px;padding:18px;}}
 
 </style>
-<link rel="stylesheet" href="./web/account.css">
+<style>#account-dialog{padding:0;width:min(640px,calc(100vw - 28px));max-height:90dvh;color:#edf4f6;border:1px solid #c7e2df60;border-radius:30px;background:linear-gradient(145deg,#304d5af5,#192c40f8);box-shadow:0 22px 80px #08132266;overflow:auto}
+#account-dialog .jump-heading{padding:26px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d3e5e42a}
+#account-dialog h2{font-size:25px;margin:8px 0}#account-close{display:grid;place-items:center;width:42px;height:42px;padding:0;line-height:1;font-size:24px;border-radius:14px;flex-shrink:0}
+.account-body{padding:24px}.account-body>p{line-height:1.6;color:#c0d6dd;font-size:13px}.account-body form,.account-body section{padding:18px;margin:16px 0;border:1px solid #c4dcd52b;border-radius:22px;background:#d2e5e80b}
+.account-body [hidden]{display:none!important}.account-body input{width:100%;margin:10px 0 16px;padding:12px;border-radius:14px;background:#daeeee0c;color:inherit;border:1px solid #c4dcd540}.account-body label{font-size:12px}.account-body button{min-height:42px;padding:10px 16px;border-radius:14px}.account-actions{display:flex;gap:10px;flex-wrap:wrap}
+.account-conflict pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.5 monospace;max-height:200px;overflow:auto}.account-conflict summary{cursor:pointer;padding:10px 0}.account-body h3{font-size:16px}#account-status{min-height:22px}
+</style>
 <style id="orbiter-refinement-styles">
 /* Shared daily controls and original moonlit scenes. Text never inherits atmosphere opacity. */
 :root { --atmosphere:.5; --orb-press:90ms; --orb-local:180ms; --orb-panel:240ms; }
@@ -12349,10 +12356,20 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         <div class="profile-intro"><h3 id="profile-overview-name">Your workspace</h3><p>A little space for your pace. Your profile, study rhythm and pond, together.</p></div>
         <dl class="profile-facts"><div><dt>Focus tracked</dt><dd id="profile-focus-total">0m</dd></div><div><dt>Course companions</dt><dd id="profile-course-count">0</dd></div><div><dt>Weekly intention</dt><dd id="profile-weekly-goal">10h</dd></div></dl>
       </section>
-      <section class="account-entry" aria-label="Account sync">
-        <p>Your workspace, saved to your account.</p>
-        <button type="button" id="open-account">Account &amp; sync</button>
-      </section>
+      <section class="account-entry" aria-label="iPhone storage and privacy">
+        <p><strong>Orbiter 0.5.3 · Offline iPhone beta</strong></p>
+        <p>Your study data stays on this iPhone. Account sync is unavailable in this beta.
+        Use Export and Import in the workspace menu to transfer a JSON copy with Files.</p>
+        <details id="iphone-privacy"><summary>Privacy and your data</summary>
+        <p>This iPhone build sends no study data to the developer and includes no analytics,
+        advertising or tracking. Your schedule, notes, focus history and preferences are stored
+        locally. iOS device backups may include app data according to your device settings.</p>
+        <p>Files exports go only to the location you choose, which may be iCloud Drive or another
+        provider. Import replaces your workspace after validation; export a backup first.
+        Deleting the app can delete its local data. Keep a separate JSON backup.</p>
+        <p>Optional focus reminders use local iOS notifications, with your permission.
+        Notification permission can be changed in iPhone Settings. No account is required.</p>
+        </details></section>
       <form id="settings-form">
         <section class="popup-group" aria-labelledby="personal-label">
           <div class="popup-group-heading">
@@ -22569,51 +22586,6 @@ var StudyCore;
         };
       })();
     </script>
-    <script src="./web/cloud-sync.js" defer></script>
-    <script>/* Native identity/status only: refresh credentials never enter this UI. */
-(() => {
- const bridge=window.SchedulerAccountBridge,cloud=window.OrbiterCloud,entry=document.getElementById('open-account');
- if(!entry||!bridge?.enabled||!cloud)return;
- if(location.origin==='http://127.0.0.1:18743'&&!window.__TAURI__){entry.textContent='Account managed in Orbiter for Windows';entry.disabled=true;return;}
- const dialog=document.createElement('dialog');dialog.id='account-dialog';dialog.setAttribute('aria-labelledby','account-title');
- dialog.innerHTML=`<header class="jump-heading"><div><p class="eyebrow">YOUR SPACE / CONNECTED</p><h2 id="account-title">Across your little universe.</h2></div><button id="account-close" aria-label="Close account">×</button></header>
- <div class="account-body"><p>Sign in securely with a link from your email.</p>
- <form id="account-auth"><label for="account-email">Email address</label><input id="account-email" type="email" autocomplete="email" required maxlength="254"><button id="account-send" type="submit">Email me a sign-in link</button></form>
- <p id="account-link-help" hidden></p><button id="account-show-code" type="button" hidden>My email contains a numeric code instead</button>
- <form id="account-verify" hidden><label for="account-code">Code from your email</label><input id="account-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required><button type="submit">Connect my space</button></form>
- <section id="account-workspace" hidden><p id="account-identity"></p><p id="account-progress"></p>
- <section id="account-migration" hidden><h3>Connect this device</h3><p id="account-preview"></p><p>Your current workspace is backed up before connecting. Matching records with different content are kept for review.</p><div class="account-actions"><button id="account-merge">Merge this device into my account</button><button id="account-remote">Use my account workspace</button></div></section>
- <div id="account-conflicts"></div><div class="account-actions"><button id="account-sync">Sync now</button><button id="account-logout">Sign out</button></div></section>
- <p id="account-status" role="status" aria-live="polite"></p><button id="account-backup">Download local backup</button></div>`;
- (document.getElementById('native-planner')||document.body).append(dialog);
- const $=id=>dialog.querySelector('#'+id);let busy=false,identity=null,cooldown=0,codeEmail='',parentDialog=null;
- const status=message=>$('account-status').textContent=message;
- async function paint(){const s=await cloud.status();identity=s.account;
-  $('account-auth').hidden=!!identity;if(identity)$('account-verify').hidden=true;$('account-workspace').hidden=!identity;$('account-link-help').hidden=!!identity||!codeEmail;$('account-show-code').hidden=!!identity||!codeEmail;
-  $('account-identity').textContent=identity?'Signed in as '+identity.email:'';
-  $('account-progress').textContent=s.pending?`${s.pending} changes saved here, waiting to sync.`:'Local edits save automatically when connected.';
-  $('account-migration').hidden=!identity||!!s.enrolled;$('account-conflicts').replaceChildren();
-  for(const [key,c] of Object.entries(s.conflicts||{})){
-   const row=document.createElement('section');row.className='account-conflict';const h=document.createElement('h3');h.textContent='Review '+JSON.parse(key)[0];row.append(h);
-   for(const [label,choice,value] of [['Keep this device','local',c.local],['Keep account version','remote',c.remote]]){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre'),b=document.createElement('button');summary.textContent=label;pre.textContent=JSON.stringify(value,null,2);b.textContent='Choose '+label.toLowerCase();b.onclick=()=>run(()=>cloud.resolve(key,choice));details.append(summary,pre,b);row.append(details);} $('account-conflicts').append(row);
-  }
- }
- async function run(fn){if(busy)return;busy=true;dialog.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){status(String(e.message||e));}finally{busy=false;dialog.querySelectorAll('button').forEach(b=>b.disabled=false);$('account-send').disabled=Date.now()<cooldown;await paint().catch(e=>status(String(e)));}}
- const preview=async()=>{const p=await cloud.preview();$('account-preview').textContent=`This device: ${p.localCount} records · Account: ${p.remoteCount} records`;};
- entry.onclick=()=>run(async()=>{const parent=entry.closest('dialog');parentDialog=parent?.open?parent:null;if(parentDialog)parentDialog.close();dialog.showModal();await paint();if(identity)await preview();});$('account-close').onclick=()=>dialog.close();
- window.OrbiterAccount={open:()=>entry.click()};
- dialog.addEventListener('close',()=>{if(parentDialog?.isConnected&&!parentDialog.open)parentDialog.showModal();parentDialog=null;});
- $('account-auth').onsubmit=e=>{e.preventDefault();run(async()=>{if(Date.now()<cooldown)throw Error('Wait a minute before requesting another link.');const email=$('account-email').value.trim();await cloud.sendCode(email);codeEmail=email;cooldown=Date.now()+60000;status('Sign-in link sent.');$('account-link-help').textContent=window.__TAURI__?'Open the newest email link on this PC and keep Orbiter running. It will bring you back to Orbiter.':'Open the newest email link in this same browser. You will choose how to connect your workspace after signing in.';$('account-verify').hidden=true;setTimeout(()=>{$('account-send').disabled=false;},60000);});};
- $('account-show-code').onclick=()=>{$('account-verify').hidden=false;$('account-code').focus();};
- $('account-verify').onsubmit=e=>{e.preventDefault();run(async()=>{await cloud.verify(codeEmail,$('account-code').value.trim());$('account-code').value='';await preview();status('Signed in. Choose how to connect this device.');});};
- for(const [id,choice] of [['account-merge','merge'],['account-remote','remote']])$(id).onclick=()=>run(async()=>{if(window.OrbiterUI?.dirty())throw Error('Save or close your other editor before connecting.');await cloud.enroll(choice);status('Connected. Future edits sync automatically.');});
- $('account-sync').onclick=()=>run(()=>cloud.sync());$('account-logout').onclick=()=>run(async()=>{if(window.OrbiterUI?.dirty())throw Error('Save or close your editor before signing out.');await cloud.signOut();codeEmail='';status('Signed out. Your account queue remains separate from local mode.');});
- $('account-backup').onclick=()=>{const url=URL.createObjectURL(new Blob([bridge.snapshot()],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Orbiter-before-sync.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
- window.addEventListener('orbiter-cloud-status',e=>{if(e.detail.message)status(e.detail.message);if(dialog.open&&!busy)paint().catch(()=>{});});
- if(window.__TAURI__)window.__TAURI__.event.listen('orbiter-open-account',()=>window.OrbiterAccount.open());
- cloud.ready().then(async result=>{await paint();if(result?.fromLink){window.OrbiterAccount.open();status(identity?'Signed in. Choose how to connect this device.':'Request a new sign-in link in this browser.');}}).catch(e=>{status('Account connection unavailable: '+String(e.message||e));if(e.fromLink)window.OrbiterAccount.open();});
-})();
-</script>
 
 <style>
       #orbit-wisp { position:fixed; right:24px; bottom:22px; width:140px; height:132px; z-index:12; pointer-events:none; filter:drop-shadow(0 8px 15px #080f2033); }

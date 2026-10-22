@@ -1,67 +1,86 @@
-# Scheduler · Study edition
+# Orbiter
 
-An offline planner for a university student's classes, assignments, focused work, and breathing room. A single HTML application powers both the browser and a SwiftUI/WebKit iPhone container.
+A study planner with a small companion to keep you company while you work. Plan your week, manage assignments and tests, keep course notes, and turn focused study into growth for your kitten and its pond habitat.
 
-## Open locally
+**Current source version: 0.5.3.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
 
-Open `Application.html` in a modern browser, or serve the project with:
+## What you can do
 
-```sh
+- **My Day:** see your schedule, choose a study intention, capture tasks and start a focus session.
+- **Assignments, tests and daily practice:** track deadlines, preparation and recurring study work.
+- **Atlas:** organize course notes and keep a distinct companion identity for each course.
+- **My Rhythm:** arrange study time and review your week.
+- **Focus:** start, pause, resume and finish sessions; review credited time and companion growth afterward.
+- **Discoveries:** earn cosmetics through native Windows focus, preview equipment and build your companion's collection.
+
+The interface uses a blue pond with koi, lily pads and moving mist. Tidal Night, Lunar Mist and Opal Dawn provide different lighting. Appearance controls include accent, material, atmosphere, motion intensity and graphics quality, with reduced-motion and static fallbacks.
+
+## Choose your version
+
+| Surface | Current behavior |
+| --- | --- |
+| Windows | One native app with a full planner and compact floating buddy. Rust/SQLite own the timer, rewards, growth and local persistence. Optional account sync and a paired browser are separate connection paths. |
+| Browser | Planner and local browser storage; hosted private-beta accounts can connect supported workspace data. Browser-only study history does not replace native Windows credit authority. |
+| iPhone | Prepared offline SwiftUI/WebKit beta with local storage, Files transfer and optional local reminders. Account sync is unavailable in this build. Native compilation, signing, device tests and TestFlight delivery remain outstanding. |
+
+### Windows companion
+
+The compact buddy defaults to **420 × 220**, with supported sizes from **360 × 200 to 560 × 300**. Open the full planner from the kitten or planner icon, and return to the buddy without losing the running timer or planner drafts.
+
+The current compact controls use SVG icons and a filled Start/Pause/Resume button. Start and Resume send a dew-light arc into the pond. Native session completion opens a lily-and-starlight celebration before the session recap. Calm, quiet, reduced-motion and zero-motion settings suppress that decoration.
+
+See [Windows use and installation](desktop/README.md).
+
+### Browser preview
+
+Use the existing project server if one is already running. In VS Code, choose **Tasks → Run Task → Preview Scheduler**, or run this from the repository root in PowerShell:
+
+```powershell
 python -m http.server 8002 --bind 127.0.0.1
 ```
 
-- **Your workspace:** http://127.0.0.1:8002/Application.html
-- **Fictional student preview:** http://127.0.0.1:8002/design/scheduler-ui-preview/
+Open the [planner](http://127.0.0.1:8002/Application.html) or the [fictional preview](http://127.0.0.1:8002/design/scheduler-ui-preview/).
 
-VS Code also has a **Preview Scheduler** task. If port 8002 is already serving this project, use the existing server rather than starting a second one.
+Browser storage belongs to the exact address and browser profile. Changing ports does not move saved data. This static preview does not enable hosted accounts or validate the installed Windows app. See [private-beta accounts and hosting](docs/PRIVATE-BETA.md) for that setup.
 
-Browser storage is specific to the file location/browser profile or server origin. Use Export/Import to move your real schedule between locations or ports. The preview has its own session storage and does not replace your schedule.
+## Data and installation
 
-## What is included
+Windows saves its workspace, timer, growth, inventory and settings locally. JSON import/export transfers study data; it does not grant native reward balances. Back up your workspace before replacing data.
 
-- Selected-day agenda, full week grid, free-time gaps, and current/upcoming event context.
-- Course labels and event types; event editing, overlapping lanes, mouse/touch dragging in week view, and keyboard slot navigation.
-- Recurring **My rhythm** template with independent saved weeks.
-- Assignment desk with deadlines, completion, and study-block planning.
-- Focus timer, assignment intentions, completed-session history, and a configurable weekly goal.
-- Name, reduced-motion, and solid-surface preferences; system accessibility preferences are respected.
-- Local storage, full JSON backup/restore, and native Files import/export in the iPhone wrapper.
+A source update does not replace a running app. Save your work and choose **Quit Orbiter** from the tray before installing a new Windows build; closing the window leaves it in the tray. Avoid launching older portable copies alongside the installed app because they share its single-instance identity. The repaired installer checks for those copies before replacing application files.
 
-## Development workflow
+Local installers and signed updater files are generated under ignored `build/` directories. They are not included in a Git clone, and building them does not publish an update. See [Windows update delivery](docs/UPDATES.md).
 
-Read `AGENTS.md`. Leave work local and uncommitted for the owner to review in VS Code. Do not push unless explicitly asked.
+## Development
 
-The root `Application.html` is the source of truth. After editing it:
+Root `Application.html` is canonical. Shared renderer and presentation modules are embedded into it by the existing build scripts; generated copies should not be edited directly.
 
-```sh
-python scripts/sync_app.py
-python scripts/sync_preview.py
+With project dependencies installed, run from the repository root in PowerShell:
+
+```powershell
+npm.cmd run build:core
+npm.cmd run desktop:prepare
 ```
+
+The first command embeds shared modules and regenerates the offline iPhone and fictional preview copies. The second prepares the Windows frontend. Native development, build prerequisites and focused checks are described in [desktop/README.md](desktop/README.md#development).
 
 | Path | Purpose |
 | --- | --- |
-| `Application.html` | Main application: UI, styling, scheduling, and study workspace |
-| `Scheduler/` | SwiftUI/WebKit wrapper, app icon, bundled HTML, privacy manifest |
-| `Scheduler.xcodeproj/` | Xcode project and shared scheme |
-| `design/UI-DIRECTION.md` | Current direction and retained brainstorm |
-| `design/RESEARCH-AND-DESIGN.md` | Research, visual identity, motion, compatibility, and review notes |
-| `design/scheduler-ui-preview/index.html` | Generated interactive sample workspace |
-| `.vscode/tasks.json` | Local preview and sync tasks |
-| `.github/workflows/testflight.yml` | Manually triggered native build/upload workflow |
-| `docs/TESTFLIGHT.md` | Signing and TestFlight setup |
+| `Application.html` | Canonical planner UI and integration |
+| `src/study-core.ts` | Shared study logic |
+| `src/mascot/`, `src/pond/`, `web/` | Kitten, equipment, pond, motion and browser/account modules |
+| `desktop/ui/` | Compact buddy, native planner adapter and updater UI |
+| `desktop/src-tauri/` | Native timer, SQLite persistence, windows, rewards and sync |
+| `Scheduler/`, `Scheduler.xcodeproj/` | iPhone wrapper and generated offline bundle |
+| `design/` | Reference studies, review notes and design history |
+| `scripts/` | Generation, packaging and verification tools |
+| `build/` | Ignored generated frontends, captures and local installers |
 
-## Data behavior
+## Project guidance and verification
 
-New weeks copy the recurring template. Edits remain in the displayed week unless **Also update my rhythm** is selected. Editing in **My rhythm** affects future, uninitialized weeks only. Already saved weeks keep their plans.
+- [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).
+- [Compact buddy design and test scope](design/compact-buddy/README.md).
+- [iPhone preparation and remaining TestFlight steps](docs/TESTFLIGHT.md).
+- [Offline iPhone privacy-policy draft](docs/IPHONE-PRIVACY.md).
 
-Events use 30-minute steps between 06:00 and 23:00. Assignment planning opens a proposed event for review and does not mark the assignment complete. Courses are derived from the labels on events and assignments.
-
-The updated importer accepts the previous schedule format. New backups include optional study data and course/type fields, which the older app's strict importer cannot read. Import replaces the workspace represented by that backup; importing an old backup does not preserve newer study records.
-
-The timer uses elapsed wall-clock time and catches up on return. It provides no native background alarm or notification. Only completed sessions contribute to the goal. Data remains on the device, with no cloud sync or telemetry.
-
-## Review and release status
-
-This redesign has had visual browser review and source inspection. No automated test suite was added or run for this iteration. Earlier verification claims for the previous interface do not validate these changes.
-
-The iPhone HTML bundle has been synced, but this revision has not been compiled or run on an iPhone. It is not yet ready to claim TestFlight or App Store approval. Native layout, accessibility, data recovery, scheduling, timers, and signing still need a release validation pass. See [TestFlight setup](docs/TESTFLIGHT.md).
+The compact UI passed browser tests against generated native HTML, including 18 size/state combinations, overlap and pointer checks, focus feedback and reduced-motion completion. Local Windows packages have also passed version, checksum and updater-signature checks. These results do not establish an installed upgrade, real native timer expiry, physical-monitor scaling, live cloud reconciliation or iPhone device behavior. Keep those checks separate when preparing a release.

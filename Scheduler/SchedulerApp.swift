@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import WebKit
 import UniformTypeIdentifiers
 import UserNotifications
@@ -33,6 +34,21 @@ struct ScheduleScreen: View {
     var body: some View {
         ScheduleWebView(bridge: bridge)
             .background(Color(red: 0.082, green: 0.078, blue: 0.114))
+            .overlay {
+                if let error = bridge.loadingError {
+                    VStack(spacing: 16) {
+                        Text("Could not open your planner").font(.headline)
+                        Text(error).multilineTextAlignment(.center)
+                        Button("Try again") {
+                            bridge.loadingError = nil
+                            bridge.webView?.reload()
+                        }
+                    }
+                    .padding(24)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(red: 0.082, green: 0.078, blue: 0.114))
+                }
+            }
             .fileImporter(isPresented: $bridge.importing, allowedContentTypes: [.json]) { result in
                 switch result {
                 case .success(let url):
@@ -63,7 +79,8 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
     @Published var exporting = false
     @Published var document = ScheduleDocument()
     @Published var exportType: UTType = .json
-    @Published var exportFilename = "week-by-week"
+    @Published var exportFilename = "Orbiter-backup"
+    @Published var loadingError: String?
     weak var webView: WKWebView?
     private var reminderGeneration = 0
     private let focusReminderID = "scheduler.focus.complete"
@@ -119,7 +136,9 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         // Accept Files requests only from the bundled main document, not embedded or remote pages.
-        guard message.frameInfo.isMainFrame, message.frameInfo.request.url?.isFileURL == true,
+        guard message.frameInfo.isMainFrame,
+              let bundledURL = Bundle.main.url(forResource: "Application", withExtension: "html"),
+              message.frameInfo.request.url?.standardizedFileURL == bundledURL.standardizedFileURL,
               let body = message.body as? [String: Any], let action = body["action"] as? String else { return }
         if action == "haptic" {
             UISelectionFeedbackGenerator().selectionChanged()
@@ -135,7 +154,7 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
             importing = true
         } else if action == "export", let text = body["text"] as? String {
             exportType = .json
-            exportFilename = "week-by-week"
+            exportFilename = "Orbiter-backup"
             document = ScheduleDocument(text: text)
             exporting = true
         } else if action == "exportCalendar", let text = body["text"] as? String {
@@ -162,11 +181,11 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
 struct ScheduleWebView: UIViewRepresentable {
     let bridge: ScheduleBridge
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator { Coordinator(bridge: bridge) }
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
-        // Persist web storage across launches. This remains device-local until account sync is implemented.
+        // Offline iPhone beta: preserve this data store and its existing storage keys.
         configuration.websiteDataStore = .default()
         configuration.userContentController.add(bridge, name: "scheduleFiles")
         let view = WKWebView(frame: .zero, configuration: configuration)
@@ -179,6 +198,8 @@ struct ScheduleWebView: UIViewRepresentable {
         if let url = Bundle.main.url(forResource: "Application", withExtension: "html") {
             context.coordinator.allowedURL = url
             view.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        } else {
+            bridge.loadingError = "The bundled planner is missing. Reinstall this beta; your existing data has not been cleared."
         }
         return view
     }
@@ -192,7 +213,18 @@ struct ScheduleWebView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {
+        private let bridge: ScheduleBridge
+        init(bridge: ScheduleBridge) { self.bridge = bridge }
         var allowedURL: URL?
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            bridge.loadingError = nil
+        }
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            bridge.loadingError = "Your saved data has not been cleared. Try reopening the planner."
+        }
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            bridge.loadingError = "Your saved data has not been cleared. Try reopening the planner."
+        }
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             guard let url = navigationAction.request.url else { decisionHandler(.cancel); return }
