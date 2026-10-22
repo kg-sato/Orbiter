@@ -43,7 +43,7 @@ class RunnerTests(unittest.TestCase):
                 runner.run(Path("unused"), Path("unused"))
             command.assert_not_called()
 
-    def simulate(self, fail=False, created=DEVICE, expired=False):
+    def simulate(self, fail=False, created=DEVICE, expired=False, missing_snapshot=False):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
@@ -62,10 +62,15 @@ class RunnerTests(unittest.TestCase):
             if args[:3] == ("xcrun", "simctl", "get_app_container"):
                 return str(root / "container")
             return "Xcode fixture" if args[0] == "xcodebuild" else ""
+        documents = root / "container/Documents"
+        documents.mkdir(parents=True)
+        for phase in ("seed", "verify"):
+            if not missing_snapshot:
+                (documents / f"orbiter-smoke-{phase}.png").write_bytes(b"\x89PNG\r\n\x1a\nfixture")
         reports = [{"success": not fail, "phase": phase, "checks": ["fixture-check"], "errors": [], "version": "0.5.3", "expectedExpiry": time.time() * 1000 + (-1000 if expired else 45000)} for phase in ("seed", "verify")]
         with patch.object(runner.platform, "system", return_value="Darwin"), patch.object(runner, "command", side_effect=command), \
              patch.object(runner, "wait_report", side_effect=reports), patch.object(runner.time, "sleep"):
-            if fail or created != DEVICE or expired:
+            if fail or created != DEVICE or expired or missing_snapshot:
                 with self.assertRaises((RuntimeError, ValueError)):
                     runner.run(app, root / "evidence")
             else:
@@ -78,6 +83,9 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(launches, ["--orbiter-smoke-phase=seed", "--orbiter-smoke-phase=verify"])
         self.assertEqual(metadata["status"], "passed")
         self.assertTrue((evidence / "orbiter-smoke-verify.json").is_file())
+        self.assertTrue((evidence / "orbiter-smoke-seed.png").is_file())
+        self.assertTrue((evidence / "orbiter-smoke-verify.png").is_file())
+        self.assertFalse(any(args[:3] == ("xcrun", "simctl", "io") for args in calls))
         self.assertEqual(calls[-2:], [("xcrun", "simctl", "shutdown", DEVICE), ("xcrun", "simctl", "delete", DEVICE)])
 
     def test_seed_termination_is_not_delayed_by_simulator_screenshot(self):
@@ -98,6 +106,12 @@ class RunnerTests(unittest.TestCase):
         calls, metadata, _ = self.simulate(expired=True)
         self.assertEqual(metadata["status"], "failed")
         self.assertNotIn("stoppedBeforeExpiry", metadata)
+        self.assertFalse(any("--orbiter-smoke-phase=verify" in args for args in calls))
+
+    def test_missing_native_snapshot_cannot_pass(self):
+        calls, metadata, _ = self.simulate(missing_snapshot=True)
+        self.assertEqual(metadata["status"], "failed")
+        self.assertIn("screenshot is missing or invalid", metadata["error"])
         self.assertFalse(any("--orbiter-smoke-phase=verify" in args for args in calls))
 
     def test_setup_failure_still_writes_report(self):

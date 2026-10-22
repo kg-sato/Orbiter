@@ -94,16 +94,15 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
             command("xcrun", "simctl", "launch", simulator, bundle, f"--orbiter-smoke-phase={phase}")
             result = wait_report(report)
             (output / report.name).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-            # Seed already includes a WKWebView snapshot. A full simulator screenshot can
-            # stall for tens of seconds, so never put it before the timed termination.
-            if phase == "verify":
-                command("xcrun", "simctl", "io", simulator, "screenshot", str(output / f"{phase}.png"))
+            # Both native phases save a real WKWebView PNG before their JSON report.
+            # simctl framebuffer screenshots can stall independently of app behavior.
             if (result.get("phase") != phase or result.get("version") != info.get("CFBundleShortVersionString")
                     or not result.get("checks") or result.get("errors") != []):
                 raise RuntimeError(f"Incomplete or mismatched native {phase} report")
             native_snapshot = container / "Documents" / f"orbiter-smoke-{phase}.png"
-            if native_snapshot.is_file():
-                shutil.copy2(native_snapshot, output / native_snapshot.name)
+            if not native_snapshot.is_file() or native_snapshot.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
+                raise RuntimeError(f"Native {phase} screenshot is missing or invalid")
+            shutil.copy2(native_snapshot, output / native_snapshot.name)
             if result.get("success") is not True:
                 raise RuntimeError(f"Native {phase} checks failed; inspect {report.name}")
             command("xcrun", "simctl", "terminate", simulator, bundle)
@@ -120,7 +119,7 @@ def run(app: Path, output: Path, device_name: str | None = None) -> None:
         metadata.update(status="failed", phase=current_phase, error=str(error))
         if simulator:
             try:
-                command("xcrun", "simctl", "io", simulator, "screenshot", str(output / "failure.png"), check=False)
+                command("xcrun", "simctl", "io", simulator, "screenshot", str(output / "failure.png"), timeout=20, check=False)
             except Exception:
                 pass
         raise
