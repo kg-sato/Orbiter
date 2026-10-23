@@ -156,6 +156,12 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
             exportType = .json
             exportFilename = "Orbiter-backup"
             document = ScheduleDocument(text: text)
+            #if DEBUG && targetEnvironment(simulator)
+            if SimulatorSmoke.phase != nil {
+                SimulatorSmoke.exportedJSON = text
+                return // Observe the real bridge without presenting a system Files sheet in CI.
+            }
+            #endif
             exporting = true
         } else if action == "exportCalendar", let text = body["text"] as? String {
             // The local web app creates a standards-based snapshot; Files owns the save UI.
@@ -188,6 +194,9 @@ struct ScheduleWebView: UIViewRepresentable {
         // Offline iPhone beta: preserve this data store and its existing storage keys.
         configuration.websiteDataStore = .default()
         configuration.userContentController.add(bridge, name: "scheduleFiles")
+        #if DEBUG && targetEnvironment(simulator)
+        SimulatorSmoke.configure(configuration.userContentController)
+        #endif
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
         view.isOpaque = false
@@ -214,10 +223,16 @@ struct ScheduleWebView: UIViewRepresentable {
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         private let bridge: ScheduleBridge
+        #if DEBUG && targetEnvironment(simulator)
+        private let smoke = SimulatorSmoke()
+        #endif
         init(bridge: ScheduleBridge) { self.bridge = bridge }
         var allowedURL: URL?
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             bridge.loadingError = nil
+            #if DEBUG && targetEnvironment(simulator)
+            smoke.run(webView: webView, bridge: bridge)
+            #endif
         }
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
             bridge.loadingError = "Your saved data has not been cleared. Try reopening the planner."
