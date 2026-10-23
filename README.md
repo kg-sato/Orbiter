@@ -81,6 +81,7 @@ The first command embeds shared modules and regenerates the offline iPhone and f
 - [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).
 - [Compact buddy design and test scope](design/compact-buddy/README.md).
 - [iPhone preparation and remaining TestFlight steps](docs/TESTFLIGHT.md).
+- [Prioritized iPhone acceptance: notifications, device, Files, VoiceOver](docs/IPHONE-ACCEPTANCE.md).
 - [Offline iPhone privacy-policy draft](docs/IPHONE-PRIVACY.md).
 
 The compact UI passed browser tests against generated native HTML, including 18 size/state combinations, overlap and pointer checks, focus feedback and reduced-motion completion. Local Windows packages have also passed version, checksum and updater-signature checks. These results do not establish an installed upgrade, real native timer expiry, physical-monitor scaling, live cloud reconciliation or iPhone device behavior. Keep those checks separate when preparing a release.
