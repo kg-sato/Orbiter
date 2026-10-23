@@ -21,7 +21,7 @@ The interface uses a blue pond with koi, lily pads and moving mist. Tidal Night,
 | --- | --- |
 | Windows | One native app with a full planner and compact floating buddy. Rust/SQLite own the timer, rewards, growth and local persistence. Optional account sync and a paired browser are separate connection paths. |
 | Browser | Planner and local browser storage; hosted private-beta accounts can connect supported workspace data. Browser-only study history does not replace native Windows credit authority. |
-| iPhone | Prepared offline SwiftUI/WebKit beta with local storage, Files transfer and optional local reminders. Account sync is unavailable in this build. Native compilation, signing, device tests and TestFlight delivery remain outstanding. |
+| iPhone | Prepared offline SwiftUI/WebKit beta with local storage, Files transfer and optional local reminders. Account sync is unavailable in this build. Unsigned simulator compilation and native WebKit smoke checks are verified. Signing, physical-device acceptance and TestFlight delivery remain outstanding. |
 
 ### Windows companion
 
@@ -81,6 +81,7 @@ The first command embeds shared modules and regenerates the offline iPhone and f
 - [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).
 - [Compact buddy design and test scope](design/compact-buddy/README.md).
 - [iPhone preparation and remaining TestFlight steps](docs/TESTFLIGHT.md).
+- [Prioritized iPhone acceptance: notifications, device, Files, VoiceOver](docs/IPHONE-ACCEPTANCE.md).
 - [Offline iPhone privacy-policy draft](docs/IPHONE-PRIVACY.md).
 
 The compact UI passed browser tests against generated native HTML, including 18 size/state combinations, overlap and pointer checks, focus feedback and reduced-motion completion. Local Windows packages have also passed version, checksum and updater-signature checks. These results do not establish an installed upgrade, real native timer expiry, physical-monitor scaling, live cloud reconciliation or iPhone device behavior. Keep those checks separate when preparing a release.
