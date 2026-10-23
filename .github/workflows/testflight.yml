@@ -35,6 +35,22 @@ jobs:
             -configuration Debug -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath "$RUNNER_TEMP/Scheduler-validation" \
             CODE_SIGNING_ALLOWED=NO build
+      - name: Check simulator runner safety
+        run: python3 scripts/test_iphone_simulator.py
+      - name: Exercise the app in a disposable iPhone simulator
+        timeout-minutes: 20
+        run: |
+          python3 scripts/run_iphone_simulator.py \
+            --app "$RUNNER_TEMP/Scheduler-validation/Build/Products/Debug-iphonesimulator/Scheduler.app" \
+            --output build/iphone-simulator
+      - name: Save simulator evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: iphone-simulator-evidence
+          path: build/iphone-simulator/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Sign and upload
         if: ${{ inputs.upload }}
         env:
