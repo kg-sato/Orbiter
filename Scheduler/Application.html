@@ -11211,7 +11211,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 </script>
-</head>
+    <style id="phone-toolbar-controls">
+      #native-preferences .reminder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+      #native-preferences .reminder-actions button { max-width: 100%; min-height: 44px; }
+      .masthead #quick-capture::before { display: none; }
+      .masthead #quick-capture .capture-icon { flex: 0 0 20px; width: 20px; height: 20px; }
+      @media (max-width: 600px) {
+        .masthead #jump-open, .masthead #mobile-more { width: 44px; min-width: 44px; }
+      }
+    </style>
+  </head>
   <body>
     <div class="orbital-backdrop" aria-hidden="true">
 <svg id="liquid-landscape" class="celestial-landscape" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
@@ -11370,7 +11379,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
               title="Quick capture (Ctrl/⌘ Shift K)"
               aria-label="Quick capture assignment"
             >
-              Capture
+              <svg class="icon capture-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4V3h6v1M9 9h6M9 13h4M9 17h6"/></svg><span class="capture-label">Capture</span>
             </button>
             <button id="import" title="Import a JSON backup">Import</button
             ><button
@@ -12495,13 +12504,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             ><input id="setting-haptics" type="checkbox" />Tactile feedback on
             iPhone</label
           ><label class="preference-check"
-            ><input id="setting-reminders" type="checkbox" />Notify me when
+            ><input id="setting-reminders" type="checkbox" aria-describedby="reminder-status" />Notify me when
             focus sessions finish</label
           >
-          <p class="dialog-description">
+          <p class="dialog-description" id="reminder-status" role="status">
             iPhone notification permission is requested when you save this
             preference.
           </p>
+          <div class="reminder-actions">
+            <button type="button" id="reminder-settings">Open iPhone notification settings</button>
+            <button type="button" id="reminder-retry" hidden>Retry focus reminder</button>
+          </div>
         </div>
         <p class="field-error" id="settings-error" role="alert"></p>
         <div class="dialog-actions">
@@ -20207,6 +20220,8 @@ var StudyCore;
             !window.webkit?.messageHandlers?.scheduleFiles;
           $("setting-haptics").checked = !!p.haptics;
           $("setting-reminders").checked = !!p.reminders;
+          renderReminderStatus();
+          nativeMessage({ action: "reminderStatus" });
           $("setting-accent").value = p.accent;
           $("setting-material").value = p.material;
           appearanceBase=appearanceSignature();resetAppearancePreview(p);$("appearance-status").textContent="";
@@ -20443,8 +20458,11 @@ var StudyCore;
               renderPractices();
               renderExamPrep();
               renderAtlas();
-              $("focus-announcement").textContent =
-                "Focus session complete. Take a break when you need one.";
+              // The iPhone uses the shared status announcement once; the native
+              // foreground notification is silent to avoid a second interruption.
+              if (!window.webkit?.messageHandlers?.scheduleFiles)
+                $("focus-announcement").textContent =
+                  "Focus session complete. Take a break when you need one.";
               announce("Focus session complete. A little progress, recorded.");
             } else timerSaveFailed = true;
           }
@@ -20699,6 +20717,7 @@ var StudyCore;
             $(id).onclick = openSettings;
           $("settings-form").onsubmit = async (event) => {
             event.preventDefault();
+            const remindersWereEnabled = !!studyPreferences().reminders;
             const p = {
               name: $("setting-name").value.trim(),
               goal: Number($("setting-goal").value),
@@ -20740,8 +20759,10 @@ var StudyCore;
               })
             ) {
               $("settings-editor").close();
-              if (p.reminders && window.webkit?.messageHandlers?.scheduleFiles)
+              if (p.reminders && window.webkit?.messageHandlers?.scheduleFiles &&
+                  (!remindersWereEnabled || !["allowed", "quiet", "temporary"].includes(nativeReminderSettings?.authorization)))
                 nativeMessage({ action: "requestReminders" });
+              else nativeMessage({ action: "reminderStatus" });
               render();
               if(priorScene!==p.scenePreset)revealLakeScene($("now-card"));
               announce("Your workspace, a little more you.");
@@ -21142,12 +21163,47 @@ var StudyCore;
             /* Browser-only mode has no native bridge. */
           }
         }
-        function syncNativeFocusReminder() {
+        function syncNativeFocusReminder(force = false) {
           const study = studyData();
+          renderReminderStatus();
           nativeMessage({
             action: "focusReminder",
             endAt: study.preferences.reminders ? study.timer.endAt : null,
+            force,
           });
+        }
+        let nativeReminderSettings = null;
+        function renderReminderStatus() {
+          const status = $("reminder-status"), settings = nativeReminderSettings;
+          const enabled = !!studyPreferences().reminders;
+          const active = Number(studyData().timer.endAt) > Date.now();
+          const allowed = ["allowed", "quiet", "temporary"].includes(settings?.authorization);
+          $("reminder-retry").hidden = !(enabled && active && allowed && settings.pending === false);
+          if (!settings) {
+            status.textContent = "iPhone permission is checked when you save this preference.";
+          } else if (settings.authorization === "blocked") {
+            status.textContent = "Notifications are blocked in iPhone Settings. Your focus timer still works.";
+          } else if (settings.authorization === "notRequested") {
+            status.textContent = "Permission has not been requested. Turn reminders on and save preferences to ask iPhone.";
+          } else if (["allowed", "quiet", "temporary"].includes(settings.authorization)) {
+            const permission = settings.authorization === "quiet" ? "iPhone allows quiet notifications." :
+              settings.authorization === "temporary" ? "iPhone permission is temporary." : "iPhone allows notifications.";
+            status.textContent = (enabled ? permission : "Focus reminders are off. " + permission) +
+              (settings.alerts ? "" : " Banners are off in iPhone Settings.") +
+              (settings.sounds ? "" : " Sounds are off in iPhone Settings.") +
+              " Focus and notification settings can affect delivery.";
+            if (settings.pending === true)
+              status.textContent += " iPhone has a pending focus reminder.";
+            else if (enabled && active && settings.pending === false)
+              status.textContent += " No pending focus reminder was found. You can retry below.";
+          } else {
+            status.textContent = "Notification permission could not be confirmed. Check iPhone Settings.";
+          }
+        }
+        function refreshNativeReminders() {
+          if (!window.webkit?.messageHandlers?.scheduleFiles) return;
+          syncNativeFocusReminder(true);
+          nativeMessage({ action: "reminderStatus" });
         }
         // A connected browser mini-window; no global input monitoring or account secrets.
         function bindCompanion() {
@@ -21318,19 +21374,35 @@ var StudyCore;
               nativeMessage({ action: "haptic" });
           });
           window.addEventListener("nativeReminderPermission", async (event) => {
+            // A delayed system response must not override a newer opt-out.
+            if (!studyPreferences().reminders) return;
+            if (event.detail?.error) {
+              announce("Could not check notification permission. Try saving notification settings again.", true);
+              return;
+            }
             if (event.detail?.granted) {
-              syncNativeFocusReminder();
+              syncNativeFocusReminder(true);
               announce("Focus notifications enabled.");
             } else {
-              await changeStudy((study) => {
+              const saved = await changeStudy((study) => {
                 study.preferences.reminders = false;
               });
+              if (!saved) return;
+              $("setting-reminders").checked = false;
               announce(
                 "Notifications are unavailable. You can enable them in iPhone Settings.",
                 true,
               );
             }
+            renderReminderStatus();
           });
+          window.addEventListener("nativeReminderStatus", (event) => {
+            nativeReminderSettings = event.detail || {};
+            renderReminderStatus();
+          });
+          window.addEventListener("nativeReminderRefresh", refreshNativeReminders);
+          $("reminder-settings").onclick = () => nativeMessage({ action: "openReminderSettings" });
+          $("reminder-retry").onclick = refreshNativeReminders;
           $("quick-capture").onclick = openQuickCapture;
           document.addEventListener("keydown", (event) => {
             if (
@@ -22430,6 +22502,7 @@ var StudyCore;
         bindWebApp();
         bindMobileMenu();
         bindStudyWindows();
+        refreshNativeReminders();
         if (!isDemo && !desktop && state.writable) {
           const cleaned = clone(state.data);
           if (removeStarterEvents(cleaned)) {
