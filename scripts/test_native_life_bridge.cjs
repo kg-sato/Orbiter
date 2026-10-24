@@ -1,0 +1,96 @@
+/* Controlled JavaScript bridge contract; no Apple SDK, protected disk or health data. */
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const source = fs.readFileSync('web/native-life-store.js','utf8');
+function fixture(native = true) {
+  const listeners = {}, messages = [], timers = new Map(); let timer = 0;
+  const window = {addEventListener:(name, fn)=>(listeners[name] ||= []).push(fn)};
+  Object.defineProperty(window,'localStorage',{get(){throw Error('Bridge must not access WebKit journal storage');}});
+  if (native) window.webkit = {messageHandlers:{scheduleFiles:{postMessage:m=>messages.push(m)}}};
+  vm.runInNewContext(source,{window,TextEncoder,setTimeout:fn=>{timers.set(++timer,fn);return timer;},clearTimeout:id=>timers.delete(id)});
+  return {api:window.OrbiterNativeLifeStore,health:window.OrbiterNativeHealth,messages,timers,
+    emit:(name,detail)=>listeners[name]?.forEach(fn=>fn({detail})),
+    reply:(index,value,error)=>listeners.nativeLifeStoreResult.forEach(fn=>fn({detail:{requestId:messages[index].requestId,ok:!error,value,error}}))};
+}
+(async()=>{
+  const f = fixture();
+  assert.equal(f.messages.length,0,'No automatic native requests');
+  const capability = f.api.capabilities();
+  assert.equal(f.messages[0].operation,'capabilities');
+  f.reply(0,{contractVersion:1,owner:'device',read:false,write:false,cloud:false,healthKit:false,reason:'Unavailable pending native validation'});
+  assert.equal((await capability).write,false);
+  for(const operation of ['read','write','clear'])
+    await assert.rejects(f.api[operation]({owner:'device',expectedRevision:0,data:{schemaVersion:1}}),e=>e.code==='unavailable');
+  assert.equal(f.messages.length,1,'Closed capability gate must not send health payloads');
+  await assert.rejects(f.api.requestAccess({consent:true}),e=>e.code==='unavailable');
+  await assert.rejects(f.api.requestAccess({consent:false}),e=>e.code==='optInRequired');
+  await assert.rejects(f.api.read({owner:'account-from-web'}),e=>e.code==='invalidOwner');
+  const enabled = f.api.capabilities();
+  f.reply(1,{contractVersion:1,owner:'device',read:true,write:true,cloud:false,healthKit:false});
+  await enabled; // Synthetic future-enabled backend; production stays disabled.
+  await assert.rejects(f.api.write({owner:'device',expectedRevision:-1,data:{schemaVersion:1}}),e=>e.code==='invalid');
+  await assert.rejects(f.api.write({owner:'device',expectedRevision:0,data:{schemaVersion:2}}),e=>e.code==='invalid');
+  await assert.rejects(f.api.write({owner:'device',expectedRevision:0,data:{schemaVersion:1,note:'x'.repeat(5*1024*1024)}}),e=>e.code==='invalid');
+  assert.equal(f.messages.length,2,'Invalid input must not cross native bridge');
+  const read = f.api.read({owner:'device'}), write = f.api.write({owner:'device',expectedRevision:0,data:{schemaVersion:1,meals:[]}});
+  assert.equal(f.messages[2].operation,'read'); assert.equal(f.messages[3].operation,'write');
+  assert.equal(f.messages[3].expectedRevision,0);
+  f.reply(3,{status:'ok',owner:'device',revision:1,json:'{"schemaVersion":1}'});
+  f.reply(2,{status:'ok',owner:'device',revision:0});
+  assert.equal((await write).revision,1); assert.equal((await read).revision,0,'Out-of-order replies remain correlated');
+  const conflict=f.api.clear({owner:'device',expectedRevision:0});
+  f.reply(4,null,{code:'conflict',message:'Revision changed.'});
+  await assert.rejects(conflict,e=>e.code==='conflict');
+  const absent=fixture(false); await assert.rejects(absent.api.capabilities(),e=>e.code==='unavailable');
+  const timeout=fixture(), waiting=timeout.api.capabilities();
+  const rejected=assert.rejects(waiting,e=>e.code==='timeout');
+  [...timeout.timers.values()][0](); await rejected;
+  assert.equal(timeout.messages.length,1,'Timeout must not retry a write automatically');
+  timeout.reply(0,{contractVersion:1,owner:'device',read:true,write:true});
+  const leaving=fixture(), abandoned=leaving.api.capabilities();
+  const cancelled=assert.rejects(abandoned,e=>e.code==='cancelled');
+  leaving.emit('pagehide'); await cancelled; assert.equal(leaving.timers.size,0);
+  const full=fixture(), requests=Array.from({length:16},()=>full.api.capabilities());
+  const cancellations=requests.map(p=>assert.rejects(p,e=>e.code==='cancelled'));
+  await assert.rejects(full.api.capabilities(),e=>e.code==='busy');
+  assert.equal(full.messages.length,16);full.emit('pagehide');await Promise.all(cancellations);
+  const h=fixture();
+  const hc=h.health.capabilities();
+  const healthReply=(index,value,error)=>h.emit('nativeHealthResult',{requestId:h.messages[index].requestId,ok:!error,value,error});
+  h.reply(0,{contractVersion:1,owner:'device',available:true});
+  assert.equal(h.timers.size,1,'Storage event cannot resolve a Health request');
+  healthReply(0,{contractVersion:1,owner:'device',available:false}); await hc;
+  await assert.rejects(h.health.requestAccess({consent:true}),e=>e.code==='unavailable');
+  await assert.rejects(h.health.requestAccess({consent:false}),e=>e.code==='optInRequired');
+  assert.equal(h.messages.length,1,'Disabled Health must not prompt or read');
+  const available=h.health.capabilities();
+  healthReply(1,{contractVersion:1,owner:'device',available:true}); await available;
+  await assert.rejects(h.health.read(),e=>e.code==='optInRequired');
+  const consent=fixture(), cc=consent.api.capabilities();
+  consent.reply(0,{contractVersion:1,owner:'device',read:true,write:true,available:true,consented:false});await cc;
+  const asking=consent.api.requestAccess({consent:true});
+  const askingRejected=assert.rejects(asking,e=>e.code==='cancelled');
+  assert.equal(consent.messages[1].operation,'requestAccess');
+  const revoke=consent.api.revoke();
+  consent.reply(2,{status:'revoked',owner:'device'});await revoke;
+  consent.reply(1,{status:'consented',owner:'device'});await askingRejected;
+  await assert.rejects(consent.api.read({owner:'device'}),e=>e.code==='unavailable');
+  const access=h.health.requestAccess({consent:true});
+  assert.equal(h.messages[2].action,'health');assert.equal(h.messages[2].operation,'requestAccess');
+  healthReply(2,{status:'requestCompleted',readAccess:'notDisclosed'});
+  assert.equal((await access).readAccess,'notDisclosed');
+  for(const days of [0,32,1.5,true]) await assert.rejects(h.health.read({days}),e=>e.code==='invalid');
+  const healthRead=h.health.read({days:7});
+  healthReply(3,{status:'ok',samples:[],deletedIds:[],readAccess:'notDisclosed'});
+  assert.deepEqual((await healthRead).samples,[]);
+  const disconnected=h.health.disconnect();healthReply(4,{status:'disconnected'});await disconnected;
+  await assert.rejects(h.health.read(),e=>e.code==='optInRequired');
+  const lateAccess=h.health.requestAccess({consent:true});
+  const lateRejected=assert.rejects(lateAccess,e=>e.code==='cancelled');
+  const stop=h.health.disconnect();
+  healthReply(6,{status:'disconnected'}); await stop;
+  healthReply(5,{status:'requestCompleted',readAccess:'notDisclosed'}); await lateRejected;
+  await assert.rejects(h.health.read(),e=>e.code==='optInRequired');
+  console.log('PASS: closed gate/no health writes, ownership/revision/size validation, request correlation, native errors, timeout, cancellation and bounded requests. JS contract only.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

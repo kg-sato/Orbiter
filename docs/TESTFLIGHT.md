@@ -1,5 +1,7 @@
 # Orbiter 0.5.3 — offline iPhone beta
 
+**2026-10-23 workflow update:** the user selected [local Xcode development](XCODE.md) as the current target. This document retains historical simulator/distribution preparation; no TestFlight upload is requested. New native life-storage source remains gated off pending Mac/iPhone validation.
+
 Prepared on Windows on 2026-10-21. Source preparation is not an installable IPA or Apple approval.
 
 ## Shipping scope

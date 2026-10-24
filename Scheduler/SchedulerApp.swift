@@ -38,6 +38,21 @@ struct ScheduleScreen: View {
             .onChange(of: scenePhase) { phase in
                 if phase == .active { bridge.dispatch("nativeReminderRefresh", detail: [:]) }
             }
+<<<<<<< HEAD
+            .alert("Connect Apple Health?", isPresented: $bridge.healthConsentRequested) {
+                Button("Continue") { bridge.confirmHealthAccess() }
+                Button("Cancel", role: .cancel) { bridge.cancelHealthAccess() }
+            } message: {
+                Text("Orbiter will ask to read nutrition, sleep and steps from Apple Health. It will not write to Health or upload these readings. You choose access in Apple's next screen.")
+            }
+            .alert("Enable private journal?", isPresented: $bridge.lifeStoreConsentRequested) {
+                Button("Enable journal") { bridge.confirmLifeStoreAccess() }
+                Button("Cancel", role: .cancel) { bridge.cancelLifeStoreAccess() }
+            } message: {
+                Text("Keep a separate journal on this iPhone for food, sleep, steps, habits and reflections. It is not uploaded or included in study exports. Access lasts for this app session. You can stop access or delete the journal separately.")
+            }
+=======
+>>>>>>> dc7db3f6bb4c7a6e249725b8d44a0697ded53f3a
             .overlay {
                 if let error = bridge.loadingError {
                     VStack(spacing: 16) {
@@ -85,7 +100,20 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
     @Published var exportType: UTType = .json
     @Published var exportFilename = "Orbiter-backup"
     @Published var loadingError: String?
+    @Published var healthConsentRequested = false
+    @Published var lifeStoreConsentRequested = false
     weak var webView: WKWebView?
+    // Native storage foundation exists, but no release/consent approval is implied.
+    // Keep this gate closed until Apple SDK + physical protection/backup checks.
+    private let lifeStoreAvailable = false
+    private var lifeStoreConsent = false
+    private var lifeStoreGeneration = 0
+    private var lifeStoreAccessRequest: String?
+    private let lifeStoreQueue = DispatchQueue(label: "com.kgsato.orbiter.life-store")
+    private let healthIntegrationAvailable = false
+    private var healthConsent = false
+    private var healthGeneration = 0
+    private var healthAccessRequest: String?
     private var reminderGeneration = 0
     private var reminderStatusGeneration = 0
     private var reminderEndAt: Double?
@@ -259,13 +287,198 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
     }
 
 
+    private func healthReply(_ requestId: String, value: [String: Any]) {
+        let status = value["status"] as? String ?? "error"
+        if ["ok", "requestCompleted", "disconnected"].contains(status) {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": true, "value": value])
+        } else {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": false,
+                "error": ["code": status, "message": "The read-only Health operation could not be completed. Study data was not changed."]])
+        }
+    }
+
+    func cancelHealthAccess() {
+        healthConsentRequested = false
+        if let requestId = healthAccessRequest {
+            healthAccessRequest = nil
+            healthReply(requestId, value: ["status": "cancelled"])
+        }
+    }
+
+    func confirmHealthAccess() {
+        healthConsentRequested = false
+        guard healthIntegrationAvailable, lifeStoreAvailable, lifeStoreConsent,
+              let requestId = healthAccessRequest else { cancelHealthAccess(); return }
+        let generation = healthGeneration
+        HealthKitReader.shared.requestAuthorization { [weak self] value in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard self.healthGeneration == generation, self.healthAccessRequest == requestId else { return }
+                self.healthAccessRequest = nil
+                self.healthConsent = value["status"] as? String == "requestCompleted"
+                self.healthReply(requestId, value: value)
+            }
+        }
+    }
+
+    private func handleHealth(_ body: [String: Any]) {
+        guard let requestId = body["requestId"] as? String,
+              requestId.range(of: "^[A-Za-z0-9._-]{1,80}$", options: .regularExpression) != nil else { return }
+        guard let operation = body["operation"] as? String,
+              ["capabilities", "requestAccess", "read", "disconnect"].contains(operation) else {
+            healthReply(requestId, value: ["status": "invalid"]); return
+        }
+        let available = healthIntegrationAvailable && lifeStoreAvailable
+        if operation == "capabilities" {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": true, "value": [
+                "contractVersion": 1, "owner": "device", "provider": "appleHealth",
+                "available": available, "readOnly": true, "cloud": false,
+                "reason": "Apple Health requires validated native storage, owned signing, Xcode and physical iPhone checks."
+            ]])
+            return
+        }
+        if operation == "disconnect" {
+            healthGeneration += 1; healthConsent = false; cancelHealthAccess()
+            if available { HealthKitReader.shared.cancel() }
+            healthReply(requestId, value: ["status": "disconnected"])
+            return
+        }
+        guard available else { healthReply(requestId, value: ["status": "unavailable"]); return }
+        if operation == "requestAccess" {
+            guard body["consent"] as? Bool == true else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+            guard lifeStoreConsent else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+            guard healthAccessRequest == nil, lifeStoreAccessRequest == nil else { healthReply(requestId, value: ["status": "busy"]); return }
+            healthAccessRequest = requestId; healthConsentRequested = true
+            return
+        }
+        guard healthConsent else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+        guard let days = body["days"] as? Int, (1...31).contains(days) else {
+            healthReply(requestId, value: ["status": "invalid"]); return
+        }
+        let generation = healthGeneration
+        HealthKitReader.shared.read(days: days) { [weak self] value in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard self.healthGeneration == generation else {
+                    self.healthReply(requestId, value: ["status": "cancelled"]); return
+                }
+                self.healthReply(requestId, value: value)
+            }
+        }
+    }
+
+    func cancelLifeStoreAccess() {
+        lifeStoreConsentRequested = false
+        if let requestId = lifeStoreAccessRequest {
+            lifeStoreAccessRequest = nil
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                "error": ["code": "cancelled", "message": "Journal consent was cancelled."]])
+        }
+    }
+
+    func confirmLifeStoreAccess() {
+        guard lifeStoreAvailable, let requestId = lifeStoreAccessRequest else { cancelLifeStoreAccess(); return }
+        lifeStoreConsentRequested = false; lifeStoreAccessRequest = nil; lifeStoreConsent = true
+        dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true,
+            "value": ["status": "consented", "owner": "device"]])
+    }
+
+    private func handleLifeStore(_ body: [String: Any]) {
+        guard let requestId = body["requestId"] as? String,
+              requestId.range(of: "^[A-Za-z0-9._-]{1,80}$", options: .regularExpression) != nil else { return }
+        func reject(_ code: String, _ message: String) {
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                     "error": ["code": code, "message": message]])
+        }
+        guard let operation = body["operation"] as? String,
+              ["capabilities", "requestAccess", "revoke", "read", "write", "clear"].contains(operation) else {
+            reject("invalid", "Unsupported life storage operation."); return
+        }
+        if operation == "capabilities" {
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true, "value": [
+                "contractVersion": 1, "owner": "device", "read": lifeStoreAvailable,
+                "available": lifeStoreAvailable, "consented": lifeStoreConsent,
+                "write": lifeStoreAvailable, "cloud": false, "healthKit": false,
+                "reason": "Protected iPhone health storage is not enabled. Native validation and consent are still required."
+            ]])
+            return
+        }
+        if operation == "revoke" {
+            lifeStoreGeneration += 1; lifeStoreConsent = false; cancelLifeStoreAccess()
+            healthGeneration += 1; healthConsent = false; cancelHealthAccess()
+            if healthIntegrationAvailable { HealthKitReader.shared.cancel() }
+            // An already accepted disk operation may complete; revocation is not deletion or rollback.
+            lifeStoreQueue.async { [weak self] in
+                guard let self else { return }
+                DispatchQueue.main.async {
+                self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true,
+                    "value": ["status": "revoked", "owner": "device"]])
+            } }
+            return
+        }
+        // Reject before inspecting health payloads, disk access or consent changes.
+        guard lifeStoreAvailable else {
+            reject("unavailable", "Protected iPhone health storage is not enabled."); return
+        }
+        if operation == "requestAccess" {
+            guard body["consent"] as? Bool == true else { reject("optInRequired", "Confirm journal access first."); return }
+            guard lifeStoreAccessRequest == nil, healthAccessRequest == nil else { reject("busy", "Finish the current consent request."); return }
+            lifeStoreAccessRequest = requestId; lifeStoreConsentRequested = true
+            return
+        }
+        guard let owner = body["owner"] as? String, owner == "device" else {
+            reject("invalidOwner", "Native device ownership is required."); return
+        }
+        guard lifeStoreConsent else { reject("optInRequired", "Native consent is required."); return }
+        // No web-supplied owner/account/consent value can enable the store.
+        let expectedRevision = body["expectedRevision"] as? Int
+        let json = body["json"] as? String
+        guard operation == "read" || (expectedRevision != nil && expectedRevision! >= 0) else {
+            reject("invalid", "A valid expected revision is required."); return
+        }
+        guard operation != "write" || json != nil else {
+            reject("invalid", "Journal JSON is required."); return
+        }
+        let generation = lifeStoreGeneration
+        let acceptedConsent = lifeStoreConsent
+        lifeStoreQueue.async { [weak self] in
+            guard let self else { return }
+            let result: LifeStoreResult
+            if operation == "read" { result = ProtectedLifeStore.shared.read(owner: owner, consent: acceptedConsent) }
+            else if operation == "write" {
+                result = ProtectedLifeStore.shared.write(owner: owner, expectedRevision: expectedRevision!, json: json!, consent: acceptedConsent)
+            } else {
+                result = ProtectedLifeStore.shared.delete(owner: owner, expectedRevision: expectedRevision!, consent: acceptedConsent)
+            }
+            DispatchQueue.main.async {
+                guard self.lifeStoreGeneration == generation, self.lifeStoreConsent else {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                        "error": ["code": "cancelled", "message": "Journal access ended. Reconcile before retrying a change."]])
+                    return
+                }
+                let value = result.dictionary
+                if value["status"] as? String == "ok" {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true, "value": value])
+                } else {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                        "error": ["code": value["status"] as? String ?? "error",
+                                  "message": "The protected journal operation could not be completed. Your study data was not changed."]])
+                }
+            }
+        }
+    }
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         // Accept Files requests only from the bundled main document, not embedded or remote pages.
         guard message.frameInfo.isMainFrame,
               let bundledURL = Bundle.main.url(forResource: "Application", withExtension: "html"),
               message.frameInfo.request.url?.standardizedFileURL == bundledURL.standardizedFileURL,
               let body = message.body as? [String: Any], let action = body["action"] as? String else { return }
-        if action == "haptic" {
+        if action == "health" {
+            handleHealth(body)
+        } else if action == "lifeStore" {
+            handleLifeStore(body)
+        } else if action == "haptic" {
             UISelectionFeedbackGenerator().selectionChanged()
         } else if action == "focusReminder" {
             syncFocusReminder(endAt: body["endAt"] as? Double, force: body["force"] as? Bool ?? false)

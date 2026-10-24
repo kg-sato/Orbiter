@@ -11213,7 +11213,494 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         .masthead #jump-open, .masthead #mobile-more { width: 44px; min-width: 44px; }
       }
     </style>
+<<<<<<< HEAD
+  
+
+
+
+
+
+<style id="orbiter-life-styles">
+/* A shared reading plane for time, health and daily life. */
+:root{--hub-ink:#edf3fa;--hub-muted:#b9cbdc;--hub-line:#b9d6e52b;--hub-mint:#b4e6d5;--hub-lilac:#c8b5eb;--hub-card:linear-gradient(140deg,#203955ed,#182b46e8)}
+.hub-icon{width:21px;height:21px;flex:none;vertical-align:middle}
+.hub-navigation{display:grid;gap:5px;padding:0 0 18px;border-bottom:1px solid var(--hub-line);margin-bottom:18px}
+.hub-navigation button{display:flex;align-items:center;gap:12px;min-height:47px;border:1px solid transparent;border-radius:15px;padding:10px 12px;color:var(--hub-muted);background:transparent!important;box-shadow:none!important;text-align:left;font-size:13px;line-height:1.4;position:relative}
+.hub-navigation button>i{margin-left:auto;width:4px;height:4px;border-radius:50%;background:transparent}
+.hub-navigation button[aria-current=page]{color:#eaf9f4;border-color:#b4e6d552;background:linear-gradient(110deg,#b4e6d525,#c8b5eb10)!important}
+.hub-navigation button:not([aria-current=page]){border-color:transparent!important;background:transparent!important}
+.hub-navigation button[aria-current=page]>.hub-icon{color:var(--hub-mint)}.hub-navigation button[aria-current=page]>i{background:var(--hub-mint);box-shadow:0 0 12px #b4e6d570}
+.hub-study-label{font-size:9px;color:var(--hub-muted);letter-spacing:1.7px;margin:0 10px 10px}
+body[data-hub]:not([data-hub=study]) :is(.side-nav,.hub-study-label,.course-section,.workspace>.greeting,.workspace>.desk-layout,.mobile-nav){display:none!important}
+body[data-hub] .side-nav{gap:3px}body[data-hub] .side-nav button{min-height:39px;font-size:11px}body[data-hub] .sidebar .side-label{display:none}
+body[data-hub] .sidebar{overflow-y:auto}body[data-hub] .sidebar-bottom{margin-top:auto;padding-top:18px}
+body[data-hub] .sidebar .course-section{padding-top:16px;margin-top:12px}body[data-hub] .sidebar .brand{margin-bottom:20px}
+.hub-storage-status{font-size:9px;line-height:1.5;color:var(--hub-muted);display:block;padding:2px 8px 10px}
+.hub-mobile-navigation{display:none}
+body[data-native-mode=buddy] .hub-mobile-navigation{display:none!important}
+#life-hub{padding-block:38px 16px;min-width:0;color:var(--hub-ink);font-family:inherit}
+#life-hub[hidden]{display:none!important}
+#hub-notice{font-size:12px;line-height:1.6;color:var(--hub-mint);min-height:0;overflow-wrap:anywhere}
+#hub-notice:not(:empty){padding:12px 16px;border:1px solid #b4e6d533;border-radius:12px;margin-top:14px;background:#1c3548}
+#hub-notice[data-error=true]{color:#f4d2bb;border-color:#edbfa055;background:#3b3540}
+.hub-page-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;min-width:0}
+.hub-kicker{display:block;font-size:9px;letter-spacing:1.9px;line-height:1.6;font-weight:600;color:var(--hub-mint)}
+.hub-page-heading h1{font-size:clamp(27px,3.2vw,44px);font-weight:580;letter-spacing:-1.5px;line-height:1.17;margin:12px 0 10px;max-width:780px;outline:none;overflow-wrap:anywhere}
+.hub-page-heading p{font-size:13px;line-height:1.8;color:var(--hub-muted);margin:0;max-width:720px}
+.hub-date{display:grid;gap:8px;font-size:10px;color:var(--hub-muted);flex:0 0 155px}.hub-date input{width:100%;font-size:12px;min-height:42px;padding:10px 12px;color-scheme:dark;border-radius:13px}
+.hub-today-grid,.hub-health-grid,.hub-life-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:22px;align-items:start}
+.hub-today-grid{align-items:stretch}
+.hub-card{position:relative;min-width:0;padding:28px;border:1px solid var(--hub-line);border-radius:26px;background:var(--hub-card);box-shadow:inset 0 1px #eefaff0c,0 12px 40px #06142618;overflow:hidden}
+.hub-card h2{font-size:clamp(19px,1.9vw,24px);font-weight:580;letter-spacing:-.6px;line-height:1.3;margin:7px 0 14px}
+.hub-card h3{font-size:17px;letter-spacing:-.3px;margin:10px 0}
+.hub-card p{font-size:12px;line-height:1.8;color:var(--hub-muted);margin:12px 0}
+.hub-card-heading{display:flex;justify-content:space-between;align-items:center;gap:14px}.hub-card-heading>div{min-width:0}.hub-card-heading>svg{color:var(--hub-lilac);width:26px;height:26px}
+#life-hub button,.hub-owned-dialog button,#hub-sanctuary button,.hub-sanctuary-entry{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:42px;max-width:100%;padding:10px 15px;border:1px solid #c1d9e540;border-radius:13px;background:#bed3e313;color:var(--hub-ink);font-family:inherit;font-size:12px;line-height:1.45;cursor:pointer;box-shadow:inset 0 1px #ffffff10;white-space:normal}
+#life-hub button:hover,.hub-owned-dialog button:hover,#hub-sanctuary button:hover{background-color:#c3e6e21f;border-color:#b4e6d577}
+#life-hub button.hub-primary,#hub-sanctuary button.hub-primary{background:linear-gradient(115deg,#c7efe1,#c8b5eb)!important;color:#193449!important;border-color:#e0f7eb88!important;font-weight:600}
+#life-hub button:focus-visible,#life-hub :is(input,textarea,summary):focus-visible,#hub-sanctuary button:focus-visible,.hub-navigation button:focus-visible,.hub-mobile-navigation button:focus-visible,.hub-sanctuary-entry:focus-visible{outline:2px solid var(--hub-mint);outline-offset:4px}
+#life-hub :is(input,textarea){font:inherit;color:var(--hub-ink);font-size:13px;min-width:0;width:100%;border-radius:12px;border:1px solid #b9d6e538;background:#10233bb0;box-shadow:inset 0 1px #091b2c40;min-height:44px;padding:12px;box-sizing:border-box}
+#life-hub textarea{resize:vertical;line-height:1.7;min-height:130px}
+#life-hub :is(input,textarea)::placeholder{color:#9eafc4}
+#life-hub label{display:grid;gap:8px;font-size:11px;color:var(--hub-muted);line-height:1.5}
+#life-hub form{display:grid;gap:16px;padding:0;margin-top:18px}
+.hub-form-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.hub-form-actions button{flex:1 1 auto}#life-hub .hub-add-habit .hub-form-actions{grid-column:1/-1}
+.hub-focus-invitation{min-height:350px;display:flex;align-items:center;isolation:isolate;background:radial-gradient(ellipse at 100% 15%,#b4e6d51c,transparent 60%),var(--hub-card)}
+.hub-focus-invitation>div:first-child{z-index:1;position:relative;max-width:70%}
+.hub-focus-invitation h2{font-size:clamp(27px,2.7vw,39px);line-height:1.2;letter-spacing:-1.1px;margin:15px 0}
+.hub-focus-invitation p{max-width:270px;margin:0 0 22px}
+.hub-focus-mini{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-top:23px}.hub-focus-mini strong{font-variant-numeric:tabular-nums;font-size:23px;letter-spacing:-.6px;font-weight:500}.hub-focus-mini span{font-size:10px;color:var(--hub-muted)}
+.hub-orbit-art{position:absolute;width:220px;height:270px;right:-30px;top:24px;display:grid;place-items:center;transform:rotate(-18deg);z-index:0;color:#e2e6ff}
+.hub-orbit-art i{position:absolute;inset:18%;border:1px solid #b4e6d54a;border-radius:50%;transform:rotateX(28deg)}.hub-orbit-art i:nth-child(2){inset:4%;transform:rotateX(40deg) rotateY(35deg);border-color:#c8b5eb40}.hub-orbit-art i:nth-child(3){inset:32%;box-shadow:0 0 50px #b4e6d51a}.hub-orbit-art>span{width:80px;height:80px;display:grid;place-items:center;transform:rotate(18deg);background:radial-gradient(circle,#c8b5eb30,transparent 70%)}.hub-orbit-art svg{width:54px;height:54px;stroke-width:1;filter:drop-shadow(0 0 20px #c8b5eb77)}
+.hub-constellation{display:grid;place-items:center;position:relative;max-width:330px;margin:0 auto -8px}.hub-constellation svg{width:100%;height:150px}.hub-constellation>span{position:absolute;bottom:12px;font-size:22px;letter-spacing:-.7px;color:var(--hub-mint)}.hub-constellation small{font-size:11px;color:var(--hub-muted);letter-spacing:0}.hub-constellation .lit{filter:drop-shadow(0 0 9px #b4e6d575)}
+.hub-quest-list{display:grid;gap:6px;margin-top:18px}.hub-quest-list>div{display:flex;align-items:center;gap:10px;padding:9px 0;color:var(--hub-muted);font-size:12px}.hub-quest-list svg{width:16px;height:16px;color:#7f92a9}.hub-quest-list small{margin-left:auto;font-size:10px}.hub-quest-list .complete{color:#d6eee4}.hub-quest-list .complete svg{color:var(--hub-mint)}.hub-journey>p{font-size:11px;text-align:center}.hub-journey-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:16px;margin-top:12px;border-top:1px solid var(--hub-line);font-size:10px;color:var(--hub-muted)}
+.hub-permanent-progress{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 0;border-bottom:1px solid var(--hub-line)}.hub-permanent-progress strong{font-size:12px;color:var(--hub-mint);font-weight:550}.hub-permanent-progress span{font-size:10px;color:var(--hub-muted)}
+.hub-agenda ul,.hub-meal-list,.hub-habits{list-style:none;margin:18px 0;padding:0;display:grid;gap:0}.hub-agenda li,.hub-meal-list li{display:flex;align-items:center;gap:13px;padding:16px 0;border-top:1px solid #b9d6e51c;min-width:0}.hub-agenda li>div,.hub-meal-list li>div{flex:1;min-width:0}.hub-agenda strong,.hub-meal-list strong{display:block;font-size:13px;font-weight:550;line-height:1.5;overflow-wrap:anywhere}.hub-agenda small,.hub-meal-list small{display:block;color:var(--hub-muted);font-size:10px;margin-top:4px;line-height:1.6}.hub-agenda-mark{width:36px;height:40px;flex:none;display:grid;place-items:center;color:var(--hub-lilac);border-radius:12px;background:#c8b5eb0e}.hub-agenda li button{padding:10px!important}
+.hub-empty{padding:24px 4px;text-align:center}.hub-empty>span{display:grid;place-items:center;width:54px;height:54px;border-radius:18px;background:#b4e6d50e;color:var(--hub-mint);margin:auto}.hub-empty p{margin:8px 0 18px}.hub-inline-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hub-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;margin:25px 0}.hub-metrics>div{border-left:2px solid #b4e6d54d;padding-left:13px;min-width:0}.hub-metrics>div:nth-child(even){border-color:#c8b5eb55}.hub-metrics small{display:block;font-size:10px;color:var(--hub-muted);line-height:1.5}.hub-metrics strong{display:block;font-size:23px;letter-spacing:-.6px;line-height:1.4;font-weight:550;margin-top:7px;overflow-wrap:anywhere}
+.hub-muted{font-size:11px!important;color:var(--hub-muted)!important}
+.hub-week-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;padding-top:16px}.hub-week-chart>div{display:grid;justify-items:center;gap:8px;min-width:0}.hub-week-chart span{font-size:10px;color:var(--hub-mint)}.hub-week-chart i{width:100%;max-width:34px;height:60px;border-radius:9px;border:1px solid #b9d6e522;background:linear-gradient(to top,#b4e6d555 calc(var(--fill)*100%),#afc9df08 calc(var(--fill)*100%));box-shadow:inset 0 1px #fff1}.hub-week-chart small{font-size:9px;color:var(--hub-muted)}
+.hub-storage-intro{margin-top:22px;display:block;padding:24px 28px}.hub-storage-intro p{max-width:800px}.hub-storage-intro h2{margin-bottom:10px}.hub-storage-intro button{margin-top:8px}
+.hub-health-grid{margin-top:22px;grid-template-columns:minmax(0,1.3fr) minmax(290px,1fr)}.hub-health-aside,.hub-life-aside{display:grid;gap:22px;min-width:0}.hub-source{font-size:9px;line-height:1.5;color:var(--hub-muted);border:1px solid var(--hub-line);padding:6px 9px;border-radius:9px;white-space:nowrap}
+.hub-nutrition-total{display:flex;align-items:baseline;gap:12px;margin:24px 0}.hub-nutrition-total>strong{font-size:60px;line-height:1.1;font-weight:500;letter-spacing:-2px}.hub-nutrition-total>span{font-size:12px;color:var(--hub-muted)}
+.hub-macro-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0 24px}.hub-macro-row>div{position:relative;padding-top:14px;min-width:0}.hub-macro-row i{display:block;position:absolute;top:0;left:0;right:0;height:3px;border-radius:4px;background:var(--macro-color)}.hub-macro-row small{font-size:10px;color:var(--hub-muted)}.hub-macro-row strong{display:block;font-size:22px;font-weight:500;letter-spacing:-.5px;margin-top:5px;overflow-wrap:anywhere}
+.hub-form-disclosure{border-top:1px solid var(--hub-line);margin-top:24px;padding-top:22px}.hub-form-disclosure summary{font-size:14px;color:#d8e9ec;cursor:pointer;padding:5px 0}.hub-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.hub-input-unit{position:relative;display:block}.hub-input-unit input{padding-right:48px!important}.hub-input-unit>span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--hub-muted);pointer-events:none}
+.hub-meal-list li{align-items:start;flex-wrap:wrap;gap:8px}.hub-meal-list li>div{flex:1 1 150px}.hub-meal-list button{min-height:36px!important;padding:8px 10px!important;font-size:10px!important}
+.hub-connections>div{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--hub-line);padding-top:18px;margin-top:18px;font-size:12px}.hub-connections>div>span{display:flex;gap:10px;align-items:center}.hub-connections small{font-size:9px;color:var(--hub-muted)}.hub-connections p{font-size:11px;margin:9px 0}
+.hub-life-grid{margin-top:22px;grid-template-columns:minmax(280px,.85fr) minmax(0,1.3fr)}.hub-life-grid .hub-journey{position:sticky;top:20px}.hub-habits li{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--hub-line);padding:10px 0}.hub-habit-toggle{justify-content:flex-start!important;flex:1;border:0!important;background:transparent!important;box-shadow:none!important;text-align:left;min-width:0}.hub-habit-toggle span{overflow-wrap:anywhere}.hub-habit-toggle[aria-pressed=true]{color:var(--hub-mint)!important}.hub-habit-toggle>.hub-icon{width:24px;height:24px;padding:3px;border:1px solid #b4e6d550;border-radius:8px}.hub-habits li>button:last-child{font-size:10px!important;min-height:34px!important;padding:7px 9px!important}
+#life-hub form.hub-add-habit{grid-template-columns:minmax(0,1fr) 44px;gap:10px}.hub-add-habit button{padding:10px!important}.hub-week-review{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.hub-data-controls{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:22px}.hub-data-controls h2{font-size:17px}.hub-data-controls p{font-size:11px;max-width:500px}.hub-file-button{position:relative;overflow:hidden;border:1px solid #c1d9e540;border-radius:13px;min-height:42px;padding:10px 15px;background:#bed3e313;font-size:12px!important;color:var(--hub-ink)!important;display:grid!important;place-items:center;box-sizing:border-box;cursor:pointer}.hub-file-button input{position:absolute;opacity:0;inset:0;cursor:pointer}.hub-file-button:focus-within{outline:2px solid var(--hub-mint);outline-offset:4px}
+.hub-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap!important;border:0!important}
+.hub-owned-dialog{padding:30px;width:min(540px,calc(100vw - 32px));background:#203650;color:var(--hub-ink);border:1px solid var(--hub-line);border-radius:25px}.hub-owned-dialog h2{font-size:24px;letter-spacing:-.6px;line-height:1.3}.hub-owned-dialog p{font-size:13px;line-height:1.8;color:var(--hub-muted)}.hub-owned-dialog::backdrop{background:#08152a88;backdrop-filter:blur(8px)}
+.hub-sanctuary-entry{width:100%;margin:16px 0 5px;min-height:43px;color:var(--hub-mint);background:#b4e6d50c}
+/* The sanctuary mirrors the authoritative timer; it owns no clock or rewards. */
+body #hub-sanctuary{position:fixed;inset:0;margin:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border:0;border-radius:0;padding:36px 48px;background:#0c1b31!important;color:#edf6f8;overflow:auto;isolation:isolate;box-sizing:border-box}
+#hub-sanctuary::backdrop{background:#0c1b31}
+#hub-sanctuary>header{display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;z-index:2;min-height:45px}#hub-sanctuary>header>span{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:2px;color:#d2e8e8}#hub-sanctuary>header button{background:#b4e6d508;color:#c9dfe4;border-color:#bfd6de30}
+.sanctuary-background{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 25%,#7393ac1f,transparent 65%),linear-gradient(#0b192c,#102d40)}
+.sanctuary-moon{position:absolute;left:calc(50% - 44px);top:16%;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e2eee9,#b8d3d8 60%,#8baab5);box-shadow:0 0 60px #bad6e426,0 0 150px #b4e6d51a;opacity:.85}
+.sanctuary-background>i{position:absolute;left:20%;top:15%;width:3px;height:3px;border-radius:50%;background:#d9f1eb;box-shadow:140px 40px #c8b5eb,380px -25px #cdeee0,580px 180px #c8b5eb,-80px 160px #cdeee0,290px 330px #d4d8ef,630px 5px #bedfda;opacity:.3}.sanctuary-background>i:nth-child(2){top:30%;left:12%;transform:scale(.6);opacity:.25}.sanctuary-background>i:nth-child(3){top:10%;left:70%;transform:scale(.8);opacity:.5}
+.sanctuary-water{position:absolute;left:-20%;right:-20%;top:65%;bottom:-20%;border-radius:48% 48% 0 0;background:repeating-radial-gradient(ellipse at 50% 0,transparent 0 60px,#b4e6d511 61px 62px,transparent 64px 100px);transform:perspective(500px) rotateX(42deg);animation:sanctuary-tide 12s ease-in-out infinite alternate}
+.sanctuary-content{position:relative;z-index:1;display:grid;justify-items:center;text-align:center;align-content:center;min-height:calc(100dvh - 230px);padding:85px 16px 38px;box-sizing:border-box}.sanctuary-content>.hub-kicker{font-size:9px;letter-spacing:3px;color:#c6d9dc}.sanctuary-content h2{font-size:clamp(18px,2vw,27px);font-weight:450;letter-spacing:-.5px;margin:20px 0 12px;line-height:1.4;max-width:650px;overflow-wrap:anywhere}.sanctuary-time{font-size:clamp(64px,13vw,154px);line-height:1.15;font-weight:300;letter-spacing:-6px;font-variant-numeric:tabular-nums;text-shadow:0 0 60px #b4e6d514}.sanctuary-content p{font-size:12px;color:#b4cbd4;line-height:1.7;margin:20px 0 28px}.sanctuary-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.sanctuary-actions button{min-width:140px}
+#hub-sanctuary>footer{position:relative;z-index:1;display:grid;justify-items:center;gap:15px;padding-top:12px}#sanctuary-themes{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}#sanctuary-themes button{min-height:36px;font-size:10px;padding:8px 13px;border-color:#bdd4dd22;background:#a8cdd306}#sanctuary-themes button[aria-pressed=true]{color:#d9f4e8;border-color:#b4e6d566;background:#b4e6d510}#hub-sanctuary>footer p{font-size:10px;line-height:1.7;color:#a6becb;text-align:center;max-width:500px;margin:0}
+#hub-sanctuary[data-theme=moon] .sanctuary-background{background:radial-gradient(ellipse at 50% 15%,#c8b5eb18,transparent 55%),linear-gradient(#171d35,#283c50)}#hub-sanctuary[data-theme=moon] .sanctuary-moon{background:#dbd4eb;box-shadow:0 0 80px #c8b5eb33}
+#hub-sanctuary[data-theme=dawn] .sanctuary-background{background:radial-gradient(ellipse at 50% 55%,#edbfa028,transparent 60%),linear-gradient(#27374a,#49636c)}#hub-sanctuary[data-theme=dawn] .sanctuary-moon{background:#e9d6b7;box-shadow:0 0 80px #edbfa033}
+#hub-sanctuary[data-running=false] .sanctuary-water{animation-play-state:paused}
+#hub-sanctuary[data-hidden=true] .sanctuary-water{animation-play-state:paused}
+@keyframes sanctuary-tide{from{transform:perspective(500px) rotateX(42deg) translateY(0);opacity:.45}to{transform:perspective(500px) rotateX(42deg) translateY(18px);opacity:.8}}
+body.solid-glass .hub-card,body[data-material=quiet] .hub-card{background:#203650}
+body[data-motion-intensity="0"] .sanctuary-water,body.reduced-motion .sanctuary-water,body.calm .sanctuary-water,body.quiet .sanctuary-water{animation:none}
+@media(prefers-reduced-motion:reduce){.sanctuary-water{animation:none}}
+@media(min-width:761px) and (max-width:1100px){.hub-navigation button{padding:10px;gap:8px}.hub-navigation button>i{display:none}.hub-navigation button>span{font-size:11px}.hub-storage-status{font-size:8px}.hub-today-grid,.hub-health-grid,.hub-life-grid{grid-template-columns:1fr}.hub-life-grid .hub-journey{position:relative;top:auto}.hub-health-aside{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-journey{display:block}.hub-constellation{max-width:300px}.hub-quest-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:22px}.hub-card{padding:24px}}
+@media(min-width:761px) and (max-width:900px){.hub-navigation button>span,.hub-navigation button>i{display:none}.hub-navigation button{justify-content:center}.hub-storage-status{display:none}.hub-study-label{font-size:7px;margin-inline:0}.hub-health-aside{grid-template-columns:1fr}}
+@media(max-width:760px){body[data-hub]{padding-bottom:calc(80px + env(safe-area-inset-bottom))}.hub-navigation{display:none}.hub-mobile-navigation{position:fixed;bottom:0;left:0;right:0;z-index:60;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:7px 14px calc(8px + env(safe-area-inset-bottom));background:#152b44f5;border-top:1px solid var(--hub-line);backdrop-filter:blur(16px)}.hub-mobile-navigation button{display:grid;justify-items:center;align-content:center;gap:5px;min-height:50px;border:0;border-radius:13px;background:transparent;color:var(--hub-muted);font-size:9px;padding:6px;box-shadow:none}.hub-mobile-navigation button[aria-current=page]{color:var(--hub-mint);background:#b4e6d513}.hub-mobile-navigation .hub-icon{width:20px;height:20px}body[data-hub=study] .mobile-nav{position:static;display:flex!important;justify-content:center;gap:6px;margin:14px 18px;padding:7px;border:1px solid var(--hub-line);border-radius:16px;background:#1b3049;z-index:auto;width:auto}body[data-hub=study] .mobile-nav button{min-height:42px;flex:1;font-size:9px;padding:7px 4px}body[data-hub=study] .mobile-nav svg{width:17px;height:17px}.hub-page-heading{display:grid;gap:20px;margin-bottom:22px}.hub-page-heading h1{font-size:31px;letter-spacing:-1px}.hub-date{display:flex;align-items:center;justify-content:space-between;font-size:10px}.hub-date input{max-width:170px}.hub-today-grid,.hub-health-grid,.hub-life-grid{grid-template-columns:1fr;gap:16px}.hub-card{padding:22px;border-radius:23px}.hub-focus-invitation{min-height:325px}.hub-focus-invitation h2{font-size:31px}.hub-focus-invitation>div:first-child{max-width:80%}.hub-orbit-art{right:-65px;opacity:.65;top:35px}.hub-life-grid .hub-journey{position:relative;top:auto}.hub-health-aside,.hub-life-aside{gap:16px}.hub-card-heading{flex-wrap:wrap}.hub-card-heading>button{font-size:10px!important}.hub-week-review{grid-template-columns:1fr;gap:15px}.hub-storage-intro{margin-top:16px}.hub-data-controls{display:grid;gap:14px}.hub-nutrition-total>strong{font-size:52px}.hub-macro-row{gap:12px}.hub-fields{gap:14px 12px}.hub-metrics{gap:20px 12px}.hub-quest-list{gap:2px}#life-hub{padding-top:26px}.hub-week-chart{gap:7px}body #hub-sanctuary{padding:22px 20px calc(24px + env(safe-area-inset-bottom))}#hub-sanctuary>header{align-items:start}#hub-sanctuary>header>span{font-size:8px;letter-spacing:1px;max-width:130px;line-height:1.8}#hub-sanctuary>header button{font-size:10px;padding:9px 12px;max-width:145px}.sanctuary-content{min-height:calc(100dvh - 240px);padding-top:90px}.sanctuary-time{letter-spacing:-3px}.sanctuary-moon{top:15%;width:64px;height:64px;left:calc(50% - 32px)}.sanctuary-actions button{min-width:120px}#hub-sanctuary>footer p{font-size:9px}}
+@media(forced-colors:active){.hub-card,.hub-navigation button,.hub-owned-dialog{border:1px solid CanvasText}.hub-constellation svg{forced-color-adjust:none}.hub-quest-list .complete{color:LinkText}}
+.hub-imported-health{margin-bottom:22px}.hub-imported-health .hub-macro-row{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:18px}.hub-imported-health .hub-macro-row strong{font-size:22px;line-height:1.2}.hub-imported-health select{width:100%;max-width:380px;margin-top:8px}.hub-connections .hub-inline-actions{align-items:stretch;gap:8px}.hub-connections .hub-inline-actions button{flex:1 1 150px;white-space:normal}
+@media(max-width:600px){.hub-imported-health .hub-macro-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+</style>
+<script id="orbiter-health-data">
+/* Typed Apple Health observations. No permissions, network, storage or rewards. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.OrbiterHealthData=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const MAX_BYTES=5*1024*1024,MAX_SAMPLES=12000;
+ const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+ const units={energy:'kcal',protein:'g',carbohydrate:'g',fat:'g',sleep:'sleepCategory',steps:'count'};
+ const asleep=new Set(['asleep','asleepUnspecified','asleepCore','asleepDeep','asleepREM']);
+ function fail(message){throw Error('Health observations: '+message);}
+ function text(v,label,max=256){if(typeof v!=='string'||!v.trim()||v.length>max||/[\u0000-\u001f]/.test(v))fail('Invalid '+label+'.');return v;}
+ function timestamp(v){text(v,'timestamp',40);if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(v)||!Number.isFinite(Date.parse(v)))fail('Invalid timestamp.');date(v.slice(0,10));if(Number(v.slice(11,13))>23||Number(v.slice(14,16))>59||Number(v.slice(17,19))>59)fail('Invalid timestamp.');return new Date(v).toISOString();}
+ function number(v,max){if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>max)fail('Value is out of range.');return v;}
+ function zone(v){text(v,'time zone',100);try{new Intl.DateTimeFormat('en',{timeZone:v});}catch{fail('Invalid time zone.');}return v;}
+ function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v)||v<'0001-01-01'||v>'9998-12-31'||new Date(v+'T00:00:00Z').toISOString().slice(0,10)!==v)fail('Invalid calendar date.');return v;}
+ function array(v,label,max=MAX_SAMPLES){if(!Array.isArray(v)||v.length>max)fail('Invalid or excessive '+label+'.');return v;}
+ function budget(v){let raw;try{raw=JSON.stringify(v);}catch{fail('Invalid data.');}if(typeof raw!=='string'||new TextEncoder().encode(raw).length>MAX_BYTES)fail('Data exceeds 5 MB.');}
+ function sample(v){
+  if(!object(v)||!Object.prototype.hasOwnProperty.call(units,v.type)||v.unit!==units[v.type])fail('Unsupported sample or unit.');
+  const result={id:text(v.id,'sample ID',100),type:v.type,start:timestamp(v.start),end:timestamp(v.end),value:null,unit:v.unit,sourceId:text(v.sourceId,'source ID'),sourceName:text(v.sourceName,'source name',160)};
+  if(result.end<result.start)fail('Sample ends before it starts.');
+  if(v.type==='sleep'){const category=v.sleepState??v.value;if(!asleep.has(category)&&!['inBed','awake','unknown'].includes(category))fail('Invalid sleep category.');result.value=typeof v.value==='number'?number(v.value,100):category;result.sleepState=category;if(v.sleepCategory!==undefined)result.sleepCategory=text(v.sleepCategory,'sleep stage',60);}
+  else result.value=number(v.value,v.type==='steps'?10000000:1000000);
+  return result;
+ }
+ function range(v){if(v===null||v===undefined)return null;if(!object(v))fail('Invalid range.');const r={start:timestamp(v.start),end:timestamp(v.end),timeZone:zone(v.timeZone)};if(r.end<=r.start)fail('Invalid range.');return r;}
+ function aggregate(v){if(v===null||v===undefined)return null;if(!object(v)||!['available','unavailableOrNoReadableData'].includes(v.status))fail('Invalid steps statistics.');return{status:v.status,value:v.status==='available'?number(v.value,10000000):null,range:range(v.range),fetchedAt:timestamp(v.fetchedAt),source:'appleHealthStatistics',days:array(v.days??[],'daily steps',31).map(d=>{if(!object(d)||!['available','unavailableOrNoReadableData'].includes(d.status))fail('Invalid daily steps.');return{date:date(d.date),status:d.status,value:d.status==='available'?number(d.value,10000000):null};})};}
+ function create(){return{version:1,provider:'appleHealth',samples:[],range:null,lastFetchedAt:null,selectedNutritionSourceId:null};}
+ function normalize(raw){
+  if(!object(raw)||raw.version!==1||raw.provider!=='appleHealth')fail('Unsupported observation schema.');budget(raw);
+  const samples=array(raw.samples,'samples').map(sample),ids=new Set();for(const s of samples){if(ids.has(s.id))fail('Duplicate sample ID.');ids.add(s.id);}
+  return{version:1,provider:'appleHealth',samples:samples.sort((a,b)=>a.id.localeCompare(b.id)),range:range(raw.range),lastFetchedAt:raw.lastFetchedAt==null?null:timestamp(raw.lastFetchedAt),selectedNutritionSourceId:raw.selectedNutritionSourceId==null?null:text(raw.selectedNutritionSourceId,'nutrition source ID'),stepsAggregate:aggregate(raw.stepsAggregate)};
+ }
+ function applyDelta(state,delta){
+  const s=normalize(state);if(!object(delta))fail('Invalid delta.');budget(delta);
+  const removed=array(delta.deletedIds,'deleted IDs').map(v=>text(v,'deleted sample ID',100)),incoming=array(delta.samples,'samples').map(sample),seen=new Set();
+  for(const v of incoming){if(seen.has(v.id))fail('Duplicate delta sample ID.');seen.add(v.id);}
+  const next=new Map(s.samples.map(v=>[v.id,v]));for(const v of incoming)next.set(v.id,v);for(const id of removed)next.delete(id);
+  return normalize({...s,samples:[...next.values()],range:delta.range===undefined?s.range:range(delta.range),lastFetchedAt:delta.fetchedAt===undefined?s.lastFetchedAt:timestamp(delta.fetchedAt),stepsAggregate:delta.summary?.steps?{...delta.summary.steps,range:delta.range,fetchedAt:delta.fetchedAt}:s.stepsAggregate});
+ }
+ function localDay(ms,timeZone){const p=new Intl.DateTimeFormat('en-US',{timeZone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(ms)),get=t=>p.find(x=>x.type===t).value;return`${get('year').padStart(4,'0')}-${get('month')}-${get('day')}`;}
+ function dayBounds(day,timeZone){date(day);zone(timeZone);const middle=Date.parse(day+'T12:00:00Z'),next=new Date(Date.parse(day+'T00:00:00Z')+86400000).toISOString().slice(0,10);
+  function start(target){let lo=middle-48*3600000,hi=middle+48*3600000;while(hi-lo>1){const m=Math.floor((lo+hi)/2);if(localDay(m,timeZone)<target)lo=m;else hi=m;}return hi;}
+  return{start:start(day),end:start(next)};
+ }
+ function union(intervals){let total=0,end=-Infinity;for(const [a,b]of intervals.sort((x,y)=>x[0]-y[0])){if(b>end){total+=b-Math.max(a,end);end=b;}}return total;}
+ function summary(state,day,timeZone,sourceSelection){
+  const s=normalize(state),bounds=dayBounds(day,timeZone),sources=new Map(),nutrients={energy:'calories',protein:'protein',carbohydrate:'carbs',fat:'fat'},sleep=[];
+  for(const v of s.samples){const start=Date.parse(v.start),end=Date.parse(v.end);
+   if(v.type==='sleep'){if(asleep.has(v.sleepState??v.value)&&end>bounds.start&&start<bounds.end)sleep.push([Math.max(start,bounds.start),Math.min(end,bounds.end)]);continue;}
+   if(!nutrients[v.type]||start<bounds.start||start>=bounds.end)continue;
+   if(!sources.has(v.sourceId))sources.set(v.sourceId,{sourceId:v.sourceId,sourceName:v.sourceName,nutrition:{calories:null,protein:null,carbs:null,fat:null},sampleCount:0});
+   const row=sources.get(v.sourceId),k=nutrients[v.type];row.nutrition[k]=(row.nutrition[k]??0)+v.value;row.sampleCount++;
+  }
+  const providers=[...sources.values()].sort((a,b)=>a.sourceId.localeCompare(b.sourceId)),requested=sourceSelection===undefined?s.selectedNutritionSourceId:sourceSelection;
+  if(requested!==null&&requested!==undefined)text(requested,'nutrition source ID');
+  const selected=requested?sources.get(requested):providers.length===1?providers[0]:null;
+  return{date:day,timeZone,providers,selectedNutritionSourceId:selected?.sourceId||null,selectionRequired:providers.length>1&&!selected,nutrition:selected?{...selected.nutrition}:{calories:null,protein:null,carbs:null,fat:null},sleepHours:sleep.length?union(sleep)/3600000:null,steps:(s.stepsAggregate?.range?.timeZone===timeZone?s.stepsAggregate?.days?.find(d=>d.date===day&&d.status==='available')?.value:undefined)??(s.stepsAggregate?.status==='available'&&s.stepsAggregate.range?.start===new Date(bounds.start).toISOString()&&s.stepsAggregate.range?.end===new Date(bounds.end).toISOString()?s.stepsAggregate.value:null),stepsAggregate:s.stepsAggregate,stepsReason:'Awaiting native HealthKit statistics; raw step samples are never added across sources.',lastFetchedAt:s.lastFetchedAt};
+ }
+ return{create,normalize,applyDelta,summary,dayBounds,MAX_BYTES,MAX_SAMPLES};
+});
+
+</script>
+<script id="orbiter-life-model">
+/* Separate, local life journal. Pure data operations; no study/native reward authority. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.OrbiterLifeModel=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const H=typeof module==='object'&&module.exports?require('./health-data.js'):globalThis.OrbiterHealthData;
+ const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+ const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+ function fail(message){throw new Error('Life journal: '+message);}
+ function number(v,label,max,nullable=false){if(nullable&&(v===null||v===undefined||v===''))return null;if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>max)fail(label+' is out of range.');return v;}
+ function text(v,label,max,empty=false){if(typeof v!=='string')fail(label+' must be text.');const s=v.trim();if(s.length>max||(!empty&&!s))fail(label+' is invalid.');return s;}
+ function validDate(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const [y,m,d]=v.split('-').map(Number),leap=y%4===0&&(y%100!==0||y%400===0);return y>=1&&m>=1&&m<=12&&d>=1&&d<=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31][m-1];}
+ function date(v){if(!validDate(v))fail('Use a valid YYYY-MM-DD date.');return v;}
+ function id(v){if(typeof v!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(v))fail('Invalid record ID.');return v;}
+ function list(v,label,max){if(!Array.isArray(v)||v.length>max)fail(label+' is invalid or too large.');return v;}
+ function map(v,label,max,fn){if(!object(v)||Object.keys(v).length>max)fail(label+' is invalid or too large.');const result={};for(const k of Object.keys(v))result[date(k)]=fn(v[k]);return result;}
+ function manual(v){if(v!==undefined&&v!=='manual')fail('Only manually entered journal records are supported.');return 'manual';}
+ function meal(v){if(!object(v))fail('Invalid meal.');return{id:id(v.id),date:date(v.date),name:text(v.name,'Meal name',160),calories:number(v.calories,'Calories',20000,true),protein:number(v.protein,'Protein',2000,true),carbs:number(v.carbs,'Carbohydrates',5000,true),fat:number(v.fat,'Fat',2000,true),source:manual(v.source)};}
+ function metric(v){if(!object(v))fail('Invalid metrics.');const steps=number(v.steps,'Steps',200000,true);if(steps!==null&&!Number.isInteger(steps))fail('Steps must be a whole number.');return{sleepHours:number(v.sleepHours,'Sleep hours',24,true),steps,source:manual(v.source)};}
+ function habit(v){if(!object(v))fail('Invalid habit.');const completions=list(v.completions,'Habit completions',36500).map(date);if(new Set(completions).size!==completions.length)fail('Duplicate habit completion.');return{id:id(v.id),name:text(v.name,'Habit name',100),completions:completions.slice().sort()};}
+ const questIds=['focus','plan','habit','reflect'];
+ function remembered(v){const ids=list(v,'Remembered intentions',4);if(ids.some(k=>!questIds.includes(k))||new Set(ids).size!==ids.length)fail('Invalid remembered intentions.');return questIds.filter(k=>ids.includes(k));}
+ function create(){return{schemaVersion:1,nextId:1,meals:[],metrics:{},habits:[],reflections:{},journey:{}};}
+ function normalize(raw){
+  if(!object(raw)||raw.schemaVersion!==1)fail('Unsupported journal schema.');
+  if(!Number.isSafeInteger(raw.nextId)||raw.nextId<1||raw.nextId>Number.MAX_SAFE_INTEGER-1)fail('Invalid ID sequence.');
+  const meals=list(raw.meals,'Meals',20000).map(meal),habits=list(raw.habits,'Habits',100).map(habit),ids=meals.concat(habits).map(v=>v.id);
+  if(new Set(ids).size!==ids.length)fail('Duplicate record ID.');
+  return{schemaVersion:1,nextId:raw.nextId,meals,metrics:map(raw.metrics,'Metrics',36500,metric),habits,reflections:map(raw.reflections,'Reflections',36500,v=>text(v,'Reflection',4000,true)),journey:map(raw.journey===undefined?{}:raw.journey,'Journey',36500,remembered),...(raw.health===undefined?{}:{health:H.normalize(raw.health)})};
+ }
+ function fresh(state,kind,requested){if(requested!==undefined){id(requested);if(state.meals.concat(state.habits).some(v=>v.id===requested))fail('Duplicate record ID.');return requested;}let value;do{if(state.nextId>=Number.MAX_SAFE_INTEGER-1)fail('ID sequence exhausted.');value='life-'+kind+'-'+state.nextId++;}while(state.meals.concat(state.habits).some(v=>v.id===value));return value;}
+ function find(items,key){const n=items.findIndex(v=>v.id===id(key));if(n<0)fail('Record not found.');return n;}
+ function addMeal(state,entry){const s=normalize(state);if(!object(entry))fail('Invalid meal.');s.meals.push(meal({...entry,id:fresh(s,'meal',entry.id)}));return normalize(s);}
+ function updateMeal(state,key,patch){const s=normalize(state),n=find(s.meals,key);if(!object(patch)||own(patch,'id')&&patch.id!==key)fail('Cannot replace a record ID.');s.meals[n]=meal({...s.meals[n],...patch,id:key});return s;}
+ function deleteMeal(state,key){const s=normalize(state);s.meals.splice(find(s.meals,key),1);return s;}
+ function setMetrics(state,day,patch){const s=normalize(state);date(day);if(!object(patch))fail('Invalid metrics.');s.metrics[day]=metric({...s.metrics[day],...patch});return normalize(s);}
+ function addHabit(state,entry){const s=normalize(state);if(!object(entry))fail('Invalid habit.');s.habits.push(habit({id:fresh(s,'habit',entry.id),name:entry.name,completions:[]}));return normalize(s);}
+ function updateHabit(state,key,patch){const s=normalize(state),n=find(s.habits,key);if(!object(patch)||own(patch,'id')&&patch.id!==key)fail('Cannot replace a record ID.');s.habits[n].name=text(patch.name,'Habit name',100);return s;}
+ function deleteHabit(state,key){const s=normalize(state);s.habits.splice(find(s.habits,key),1);return s;}
+ function toggleHabit(state,key,day,done){const s=normalize(state),h=s.habits[find(s.habits,key)];date(day);if(done!==undefined&&typeof done!=='boolean')fail('Habit completion must be true or false.');const has=h.completions.includes(day),next=done===undefined?!has:done;h.completions=h.completions.filter(v=>v!==day);if(next)h.completions.push(day);h.completions.sort();return normalize(s);}
+ function setReflection(state,day,value){const s=normalize(state);date(day);const reflection=text(value,'Reflection',4000,true);if(reflection)s.reflections[day]=reflection;else delete s.reflections[day];return normalize(s);}
+ function stats(s,day,context={}){
+  date(day);if(!object(context))fail('Invalid study summary.');const focusMinutes=number(context.focusMinutes??0,'Focus minutes',1440),plannedCount=number(context.plannedCount??0,'Planned items',10000);
+  if(!Number.isInteger(plannedCount))fail('Planned items must be a whole number.');
+  const entries=s.meals.filter(v=>v.date===day),nutrition={calories:0,protein:0,carbs:0,fat:0},nutritionKnown={calories:0,protein:0,carbs:0,fat:0};
+  for(const v of entries)for(const k of Object.keys(nutrition))if(v[k]!==null){nutrition[k]+=v[k];nutritionKnown[k]++;}
+  const done=s.habits.filter(v=>v.completions.includes(day)).length,reflection=s.reflections[day]||'';
+  const quests=[{id:'focus',label:'Make room for focus',complete:focusMinutes>=5},{id:'plan',label:'Choose an intention',complete:plannedCount>=1},{id:'habit',label:'Care for a daily habit',complete:done>0},{id:'reflect',label:'Leave a reflection',complete:!!reflection}];
+  const earned=quests.filter(v=>v.complete).length;
+  return{date:day,mealCount:entries.length,nutrition,nutritionKnown,metrics:s.metrics[day]||{sleepHours:null,steps:null,source:'manual'},habits:{done,total:s.habits.length},reflection,focusMinutes,plannedCount,quests,constellation:{earned,total:4,complete:earned===4}};
+ }
+ function summary(state,day,context){return stats(normalize(state),day,context);}
+ // The caller persists this immutable result only after a user save or trusted study event.
+ // A date/quest pair can be remembered once; observations never create intentions.
+ function rememberJourney(state,day,context){const s=normalize(state),achieved=stats(s,day,context).quests.filter(q=>q.complete).map(q=>q.id),previous=s.journey[day]||[];if(achieved.length)s.journey[day]=questIds.filter(k=>previous.includes(k)||achieved.includes(k));return normalize(s);}
+ function journey(state){const s=normalize(state),entries=Object.values(s.journey).filter(v=>v.length),lights=entries.reduce((sum,v)=>sum+v.length,0),thresholds=[0,4,12,28,56],labels=['A quiet beginning','First moonlight','A growing garden','A little constellation','A garden of stars'];let stage=0;while(stage+1<thresholds.length&&lights>=thresholds[stage+1])stage++;return{lights,days:entries.length,stage,label:labels[stage],nextAt:thresholds[stage+1]??null};}
+ function recent(state,endDate,contextByDate={}){const s=normalize(state);date(endDate);if(!object(contextByDate))fail('Invalid study history.');const result=[],cursor=new Date(endDate+'T12:00:00Z');for(let i=0;i<7;i++){const day=cursor.toISOString().slice(0,10);if(!validDate(day))break;result.unshift(stats(s,day,own(contextByDate,day)?contextByDate[day]:{}));cursor.setUTCDate(cursor.getUTCDate()-1);}return result;}
+ function exportJSON(state){return JSON.stringify(normalize(state),null,2);}
+ function importJSON(value){if(typeof value!=='string'||value.length>5*1024*1024)fail('Backup must be JSON text under 5 MB.');let raw;try{raw=JSON.parse(value);}catch{fail('Backup is not valid JSON.');}return normalize(raw);}
+ return{create,normalize,validDate,addMeal,updateMeal,deleteMeal,setMetrics,addHabit,updateHabit,deleteHabit,toggleHabit,setReflection,summary,rememberJourney,journey,recent,exportJSON,importJSON};
+});
+
+</script>
+<script id="orbiter-native-life-journal">
+/* Async protected journal controller. No WebKit storage, account tokens or automatic writes. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.OrbiterNativeLifeJournal=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  'use strict';
+  const fail=(code,message)=>Object.assign(new Error(message),{code});
+  function create({bridge,model,owner=()=> 'device'}) {
+    let epoch=0, phase='closed', enabled=false, busy=false, revision=null, data=null, error='';
+    const clone=value=>value===null?null:model.normalize(value);
+    const snapshot=()=>clone(data);
+    const status=()=>({phase,enabled,busy,revision,error});
+    function invalidate(){epoch++;phase='closed';enabled=false;busy=false;revision=null;data=null;error='';}
+    function guard(token,who){if(token!==epoch||who!==owner()) { if(token===epoch)invalidate();throw fail('cancelled','Journal ownership changed. Your draft was not saved.');}}
+    function decode(value) {
+      if(value?.status!=='ok'||value.owner!=='device'||!Number.isSafeInteger(value.revision)||value.revision<0)
+        throw fail('invalid','Unsupported protected journal response.');
+      let next;
+      try{next=value.json===undefined?model.create():model.importJSON(value.json);}
+      catch(_){throw fail('corrupt','The protected journal could not be read. Its original data was kept.');}
+      return {revision:value.revision,data:clone(next)};
+    }
+    async function run(task,{mutation=false}={}) {
+      if(busy)throw fail('busy','Wait for the current journal operation.');
+      const token=epoch,who=owner();busy=true;error='';
+      try{return await task(()=>guard(token,who));}
+      catch(e){guard(token,who);error=e.message||'Protected journal unavailable.';
+        if(mutation&&['timeout','error','invalid','unavailable'].includes(e.code))phase='uncertain';
+        else if(e.code==='conflict')phase='uncertain';
+        else phase=enabled?'error':'disabled';
+        throw e;
+      }finally{if(token===epoch){busy=false;}}
+    }
+    async function load(check) {
+      const value=await bridge.read({owner:'device'});check();
+      const next=decode(value);revision=next.revision;data=next.data;enabled=true;phase='ready';return snapshot();
+    }
+    async function open(){return run(async check=>{
+      if(!bridge)throw fail('unavailable','The protected iPhone journal is unavailable.');
+      const c=await bridge.capabilities();check();
+      if(!c.read||!c.write){phase='disabled';enabled=false;error=c.reason||'Protected journal unavailable.';return null;}
+      if(c.consented!==true){phase='disabled';enabled=false;return null;}
+      return load(check);
+    });}
+    async function enable(){return run(async check=>{
+      if(!bridge)throw fail('unavailable','The protected iPhone journal is unavailable.');
+      const c=await bridge.capabilities();check();
+      if(!c.read||!c.write)throw fail('unavailable',c.reason||'Protected journal unavailable.');
+      const result=await bridge.requestAccess({consent:true});check();
+      if(result?.status!=='consented'||result.owner!=='device')throw fail('optInRequired','Native journal consent was not completed.');
+      return load(check);
+    });}
+    async function save(next){
+      if(!enabled||phase!=='ready')throw fail('reconcileRequired','Read and reconcile the protected journal before saving. Your draft was kept.');
+      const candidate=clone(next),expected=revision;
+      return run(async check=>{
+        const result=await bridge.write({owner:'device',expectedRevision:expected,data:candidate});check();
+        const saved=decode(result);
+        if(saved.revision!==expected+1||model.exportJSON(saved.data)!==model.exportJSON(candidate))
+          throw fail('invalid','The saved journal could not be confirmed. Reconcile before trying again.');
+        revision=saved.revision;data=saved.data;phase='ready';return snapshot();
+      },{mutation:true});
+    }
+    async function clear(){
+      if(!enabled||phase!=='ready')throw fail('reconcileRequired','Read and reconcile the protected journal before deleting.');
+      const expected=revision;
+      return run(async check=>{
+        const result=await bridge.clear({owner:'device',expectedRevision:expected});check();
+        const cleared=decode(result);
+        if(cleared.revision!==expected+1||result.json!==undefined)throw fail('invalid','Deletion could not be confirmed. Reconcile before trying again.');
+        revision=cleared.revision;data=cleared.data;phase='ready';return snapshot();
+      },{mutation:true});
+    }
+    async function revoke(){
+      // Immediately invalidate local work; native revoke is ordered behind accepted disk operations.
+      invalidate();
+      return run(async check=>{await bridge.revoke();check();phase='disabled';return null;});
+    }
+    async function reconcile(){return open();} // Explicit read; never replays a failed mutation.
+    return Object.freeze({open,enable,save,clear,revoke,reconcile,status,snapshot,invalidate});
+  }
+  return Object.freeze({create});
+});
+
+</script>
+<script id="orbiter-life-sync">
+/* Separate opt-in journal sync. No study codec, reward authority or credential storage. */
+(function(root){
+ 'use strict';
+ function create(options){
+  const {model:M,owner,readLocal,replaceLocal,storage,request}=options;
+  let busy=false,epoch=0,conflict=null,message='Not connected';
+  const key=()=>`orbiter.life.sync.v1:${owner()}`;
+  function meta(){try{return JSON.parse(storage.getItem(key())||'null');}catch{return null;}}
+  function save(value){storage.setItem(key(),JSON.stringify(value));}
+  function status(){const m=meta();return{busy,connected:!!m?.connected,revision:m?.revision??0,lastSync:m?.lastSync||null,conflict:!!conflict,message};}
+  function emit(text){if(text)message=text;options.changed?.(status());}
+  function validate(row){if(!row||!Number.isSafeInteger(row.revision)||row.revision<0||typeof row.enabled!=='boolean'||typeof row.deleted!=='boolean')throw Error('The server returned an invalid journal response.');return{...row,journal:row.journal==null?null:M.normalize(row.journal)};}
+  async function run(fn){if(busy)throw Error('A journal connection is already in progress.');if(owner()==='guest')throw Error('Sign in to Orbiter before connecting your journal.');busy=true;const who=owner(),token=epoch;emit();
+   const guard=()=>{if(owner()!==who||epoch!==token)throw Error('The account or journal changed. Your local journal is unchanged.');};
+   const rpc=async(op,args={})=>{guard();const row=validate(await request(op,args,who));guard();return row;};
+   try{return await fn({who,guard,rpc});}catch(e){emit(e.message||String(e));throw e;}finally{busy=false;emit();}
+  }
+  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  function remember(row,connected=true){save({connected,revision:row.revision,base:row.journal,lastSync:new Date().toISOString()});}
+  function clash(row,local){conflict={row,local};emit('Both devices have journal changes. Choose which version to keep; nothing was replaced.');return status();}
+  async function synchronize(ctx,first=false){const {guard,rpc}=ctx,local=M.normalize(readLocal()),m=meta(),row=await rpc('pull');guard();if(!same(local,M.normalize(readLocal())))throw Error('Your journal changed while checking. Sync again after saving.');
+   if(!row.enabled){if(!first){save({...m,connected:false});emit('Account sharing is off. Your local journal is kept.');return status();}const enabled=await rpc('consent',{p_id:crypto.randomUUID(),p_expected:row.revision,p_enabled:true});if(enabled.conflict)return clash(enabled,local);return reconcile(enabled,local,null,ctx,true);}
+   return reconcile(row,local,m?.base,ctx,first);
+  }
+  async function reconcile(row,local,base,ctx,first){const {guard,rpc}=ctx;guard();if(!same(local,M.normalize(readLocal())))throw Error('Your local journal changed. Sync again after saving.');
+   if(row.journal===null&&row.deleted&&!first){remember(row,false);emit('The account journal was deleted. This device’s copy is kept and disconnected.');return status();}
+   if(same(local,row.journal)){remember(row);conflict=null;emit('Journal is up to date.');return status();}
+   if(row.journal!==null&&(first||base===undefined||base===null||(!same(local,base)&&!same(row.journal,base))))return clash(row,local);
+   if(row.journal!==null&&!same(row.journal,base)){guard();await replaceLocal(row.journal,local);guard();remember(row);conflict=null;emit('Account journal saved on this device.');return status();}
+   const result=await rpc('write',{p_id:crypto.randomUUID(),p_expected:row.revision,p_value:local});if(result.conflict)return clash(result,local);guard();if(!same(local,M.normalize(readLocal())))throw Error('Newer local edits were kept. Sync again to share them.');remember(result);conflict=null;emit('Journal synced to your account.');return status();
+  }
+  return{status,invalidate(){epoch++;conflict=null;message='Not connected';options.changed?.(status());},
+   connect:()=>run(async ctx=>{const result=await synchronize(ctx,true);return result;}),
+   sync:()=>run(ctx=>{if(!meta()?.connected)throw Error('Connect this device’s journal first.');return synchronize(ctx);}),
+   resolve:choice=>run(async({guard,rpc})=>{if(!conflict||!['local','remote'].includes(choice))throw Error('Choose a journal version first.');const {row,local}=conflict;if(!same(local,M.normalize(readLocal())))throw Error('Your local journal changed. Sync again before choosing.');const current=await rpc('pull');if(!same(local,M.normalize(readLocal())))throw Error('Your local journal changed while reviewing. Sync again before choosing.');if(current.revision!==row.revision)return clash(current,local);if(!current.enabled)throw Error('Account sharing was disabled. Connect again before resolving.');if(choice==='remote'){guard();await replaceLocal(current.journal||M.create(),local);guard();remember(current);conflict=null;emit('Account version saved on this device.');}else{const result=await rpc('write',{p_id:crypto.randomUUID(),p_expected:current.revision,p_value:local});if(result.conflict)return clash(result,local);remember(result);conflict=null;emit('This device’s version saved to your account.');}return status();}),
+   disconnect:()=>run(async({rpc})=>{const row=await rpc('pull'),result=await rpc('consent',{p_id:crypto.randomUUID(),p_expected:row.revision,p_enabled:false});if(result.conflict)throw Error('Account journal changed. Try disconnecting again.');remember(result,false);conflict=null;emit('Sharing disabled for this account. Local and account copies are kept.');}),
+   deleteRemote:()=>run(async({rpc})=>{const row=await rpc('pull'),result=await rpc('delete',{p_id:crypto.randomUUID(),p_expected:row.revision});if(result.conflict)throw Error('Account journal changed. Review it before deleting.');remember(result,false);conflict=null;emit('Account journal deleted. This device’s copy is kept.');})
+  };
+ }
+ root.OrbiterLifeSync={create};if(typeof module==='object')module.exports={create};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script id="orbiter-life-hub">
+/* Orbiter's additive life shell. Study/native timer and reward authority stay intact. */
+(() => {
+  'use strict';
+  const M=window.OrbiterLifeModel;
+  const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const localDate=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const glyphs={today:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',study:'<path d="M3 5q5-2 9 1 4-3 9-1v14q-5-2-9 1-4-3-9-1Z"/><path d="M12 6v14"/>',health:'<path d="M12 21S2 15 2 8a5 5 0 0 1 10-1A5 5 0 0 1 22 8c0 7-10 13-10 13Z"/><path d="M5 12h4l2-4 3 8 2-4h3"/>',life:'<path d="M12 21V10M12 15C3 16 2 8 3 4c7 0 10 4 9 11Zm0-4c0-5 4-8 9-8 1 7-3 11-9 11"/>',spark:'<path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',moon:'<path d="M21 14A9 9 0 0 1 10 3a9 9 0 1 0 11 11Z"/>',plus:'<path d="M12 5v14M5 12h14"/>',check:'<path d="m5 12 4 4L19 6"/>',focus:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3"/>'};
+  const icon=name=>`<svg class="hub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${glyphs[name]||glyphs.spark}</svg>`;
+  let initialized=false,section='today',day=localDate(),owner='guest',ownerEpoch=0,state=M?.create(),rawLast=null,enabled=false,storeError='',studyPage='desk',draft=false,sanctuaryTheme='tide';
+  const formDrafts=new Map();
+  const isPhone=()=>!!window.webkit?.messageHandlers?.scheduleFiles;
+  const key=()=>`orbiter.life.v1:${owner}`,consentKey=()=>key()+':enabled';
+  let nativeJournal=null,nativeCaps=null,nativeBusy=false;
+  const nativeAdapter=()=>nativeJournal||(nativeJournal=window.OrbiterNativeLifeJournal?.create({bridge:window.OrbiterNativeLifeStore,model:M,owner:()=>owner}));
+  const capabilities=()=>isPhone()?{read:!!nativeCaps?.read&&!!nativeJournal?.status().enabled,write:!!nativeCaps?.write&&!!nativeJournal?.status().enabled,available:!!nativeCaps?.available,cloud:false,healthKit:!!nativeCaps?.healthKit,reason:nativeCaps?.reason||'Protected iPhone journal is not available in this build.'}:{read:true,write:true,available:true,cloud:false,healthKit:false,reason:'Device-local journal. Separate opt-in account sharing is available.'};
+  function nativeGuard(who,epoch){if(who!==owner||epoch!==ownerEpoch)throw Error('The account changed. The previous journal response was not applied.');}
+  function adoptNative(){const adapter=nativeAdapter(),status=adapter?.status();enabled=!!status?.enabled;const snapshot=adapter?.snapshot();if(snapshot)state=M.normalize(snapshot);else if(!enabled)state=M.create();storeError=status?.error||'';rawLast=null;}
+  async function nativeRead(reconcile=false){const who=owner,epoch=ownerEpoch,adapter=nativeAdapter();if(!adapter||!window.OrbiterNativeLifeStore){enabled=false;state=M.create();return;}nativeBusy=true;
+    try{nativeCaps=await window.OrbiterNativeLifeStore.capabilities();nativeGuard(who,epoch);await (reconcile?adapter.reconcile():adapter.open());nativeGuard(who,epoch);adoptNative();}
+    catch(error){if(who===owner&&epoch===ownerEpoch){adoptNative();storeError=error.message;throw error;}}finally{nativeBusy=false;}
+  }
+  function readStore(){
+    if(isPhone())return nativeRead();
+    try{enabled=localStorage.getItem(consentKey())==='yes';rawLast=localStorage.getItem(key());state=rawLast?M.importJSON(rawLast):M.create();storeError='';}
+    catch(e){storeError='Your saved journal could not be read. Its original data has been kept. Export a recovery copy before changing storage.';state=M.create();}
+  }
+  async function nativeWrite(next){if(nativeBusy)throw Error('Wait for the protected journal operation to finish.');const who=owner,epoch=ownerEpoch,adapter=nativeAdapter();if(!adapter||!enabled)throw Error('Enable the protected journal first.');nativeBusy=true;setNativeBusy();
+    try{await adapter.save(M.rememberJourney(next,day,context()));nativeGuard(who,epoch);adoptNative();}
+    catch(error){if(who===owner&&epoch===ownerEpoch){adoptNative();storeError=error.message;}throw error;}finally{nativeBusy=false;setNativeBusy();}
+  }
+  function writeStore(next){
+    if(isPhone())return nativeWrite(next);
+    if(!capabilities().write)throw Error(capabilities().reason);
+    if(!enabled)throw Error('Enable the local journal first.');
+    if(storeError)throw Error(storeError);
+    const serialized=M.exportJSON(M.rememberJourney(next,day,context()));
+    if(localStorage.getItem(key())!==rawLast)throw Error('This journal changed in another tab. Reload the page before saving; your current draft has been kept.');
+    localStorage.setItem(key(),serialized);rawLast=serialized;state=M.importJSON(serialized);draft=false;
+  }
+  async function nativeClear(){if(nativeBusy)throw Error('Wait for the protected journal operation to finish.');const who=owner,epoch=ownerEpoch,adapter=nativeAdapter();if(!adapter)throw Error(capabilities().reason);nativeBusy=true;setNativeBusy();try{await adapter.clear();nativeGuard(who,epoch);adoptNative();}catch(error){if(who===owner&&epoch===ownerEpoch)adoptNative();throw error;}finally{nativeBusy=false;setNativeBusy();}}
+  function clearStore(){if(isPhone())return nativeClear();localStorage.removeItem(key());localStorage.removeItem(consentKey());localStorage.removeItem(`orbiter.life.sync.v1:${owner}`);localStorage.removeItem(`orbiter.life.health-sharing.v1:${owner}`);journalSync?.invalidate();state=M.create();rawLast=null;enabled=false;storeError='';}
+  function setNativeBusy(){if(!initialized)return;document.querySelectorAll('#life-hub button[type=submit],#life-hub [data-delete-meal],#life-hub [data-repeat-meal],#life-hub [data-toggle-habit],#life-hub [data-delete-habit],#hub-delete-confirm,#hub-import-confirm').forEach(b=>b.disabled=nativeBusy);}
+  window.OrbiterLifeStore={capabilities,read:()=>{if(!capabilities().read)throw Error(capabilities().reason);if(storeError)throw Error(storeError);return M.normalize(state);},write:writeStore,clear:clearStore,owner:()=>owner};
+  const journalSync=window.OrbiterLifeSync?.create({model:M,owner:()=>owner,readLocal:()=>{if(draft)throw Error('Save or discard your entry before syncing.');if(!enabled||!capabilities().write||storeError)throw Error('Enable a readable local journal first.');return state;},replaceLocal:async(next,expected)=>{if(draft||M.exportJSON(state)!==M.exportJSON(expected))throw Error('Your local entry changed. Nothing was replaced.');await writeStore(next);},storage:isPhone()?{getItem:()=>null,setItem:()=>{throw Error('Native account journal sharing is unavailable.');}}:localStorage,request:(operation,args,who)=>{if(isPhone())throw Error('Native account journal sharing is not available yet.');if(!window.OrbiterCloud?.lifeRequest)throw Error('Account journal connection is unavailable in this build.');if(operation==='write'&&args.p_value?.health&&localStorage.getItem(`orbiter.life.health-sharing.v1:${who}`)!=='yes')throw Error('Choose whether to share imported Apple Health observations before syncing this journal.');return window.OrbiterCloud.lifeRequest(operation,args,who);},changed:()=>{if(initialized&&!draft)render();}});
+  function connectionPanel(){const s=journalSync?.status()||{},can=!isPhone()&&owner!=='guest'&&enabled&&capabilities().write&&!storeError;return `<article class="hub-card hub-connections"><span class="hub-kicker">CONNECTIONS</span><h2>Your day, brought together.</h2><div><span>${icon('health')} Apple Health</span><small id="hub-health-state">iPhone connection</small></div><p>Read sleep, steps and nutrition on your iPhone. Your iPhone build must include the native Health connection.</p><button data-hub-action="health-connect" ${isPhone()?'':'disabled'}>Connect Apple Health</button><div><span>${icon('life')} MacroFactor</span><small>Through Apple Health</small></div><p>In MacroFactor, open More → Integrations → Apple Health and enable nutrition export. Then connect Apple Health here.</p><div><span>${icon('study')} Your Orbiter account</span><small>${s.connected?'Sharing enabled':'Not connected'}</small></div><p id="hub-sync-message" role="status">${esc(s.message||'Choose whether to share your journal with this account.')}</p><p class="hub-muted">Sharing includes food, sleep, steps, habits and reflections. Sign-in alone never uploads these entries. Sync manually on each device; conflicting versions need your choice.${s.lastSync?' Last synced '+esc(new Date(s.lastSync).toLocaleString())+'.':''}</p><div class="hub-inline-actions"><button data-hub-action="sync-health-consent" ${!can||s.busy?'disabled':''}>${!isPhone()&&localStorage.getItem(`orbiter.life.health-sharing.v1:${owner}`)==='yes'?'Stop sharing imported health':'Choose imported health sharing'}</button><button data-hub-action="${s.connected?'sync-now':'sync-connect'}" ${!can||s.busy?'disabled':''}>${s.connected?'Sync journal now':'Connect account journal'}</button>${s.connected?`<button data-hub-action="sync-disconnect" ${s.busy?'disabled':''}>Disable account sharing</button>`:''}${owner!=='guest'?`<button data-hub-action="sync-delete" ${s.busy?'disabled':''}>Delete account journal</button>`:''}</div>${isPhone()?'<p class="hub-muted">Account sharing is unavailable on this iPhone build. Your protected device journal stays separate.</p>':owner==='guest'?'<button data-hub-action="account">Sign in to Orbiter</button>':''}${s.conflict?'<p>Download a journal backup before replacing either version.</p><div class="hub-inline-actions"><button data-hub-action="export">Export this device’s copy</button><button data-hub-action="sync-local">Keep this device’s version</button><button data-hub-action="sync-remote">Use account version</button></div>':''}</article>`;}
+  async function connectionAction(action){try{if(action==='account'){window.OrbiterAccount?.open();return;}if(action==='health-connect'){if(!window.OrbiterNativeHealth)throw Error('The Xcode iPhone build with Apple Health is required.');const who=owner,epoch=ownerEpoch;const guard=()=>{if(who!==owner||epoch!==ownerEpoch||draft)throw Error('The journal changed. Try the Health connection again.');};const c=await window.OrbiterNativeHealth.capabilities();guard();if(!c.available)throw Error(c.reason||'Native Health access is not available yet.');if(nativeBusy||!capabilities().write||!enabled)throw Error('Enable the protected iPhone journal before importing Health observations.');await window.OrbiterNativeHealth.requestAccess({consent:true});guard();const delta=await window.OrbiterNativeHealth.read({days:7});guard();if(delta.provider!=='appleHealth'||delta.owner!=='device'||delta.schemaVersion!==1||delta.status!=='ok')throw Error('Unsupported native Health response.');const next=M.normalize(state);next.health=window.OrbiterHealthData.applyDelta(next.health||window.OrbiterHealthData.create(),delta);await writeStore(next);guard();render();notice('Health observations saved locally. They are not uploaded until you separately allow imported health sharing and sync.');return;}if(action==='sync-health-consent'){if(isPhone())throw Error('Native account health sharing is unavailable.');const sharingKey=`orbiter.life.health-sharing.v1:${owner}`;if(localStorage.getItem(sharingKey)==='yes'){if(confirm('Stop sharing imported Health observations in future syncs? Copies already saved in your account are kept; use Delete account journal to remove that copy.'))localStorage.removeItem(sharingKey);}else if(confirm('Allow imported Apple Health observations to be included when you manually sync this account journal? This includes source information and health records.'))localStorage.setItem(sharingKey,'yes');render();return;}if(!journalSync)throw Error('Journal sync is unavailable.');if(draft)throw Error('Save or discard your entry before connecting.');const who=owner,epoch=ownerEpoch;
+    if(action==='sync-connect'){if(!confirm('Share this journal’s food, sleep, steps, habits and reflections with your Orbiter account? It will be stored separately from study data.'))return;if(who!==owner||epoch!==ownerEpoch)return;await journalSync.connect();}
+    if(action==='sync-now')await journalSync.sync();
+    if(action==='sync-disconnect'){if(!confirm('Disable journal sharing for this account? Copies already saved on devices and your account are kept.'))return;if(who!==owner||epoch!==ownerEpoch)return;await journalSync.disconnect();}
+    if(action==='sync-delete'){if(!confirm('Delete the account journal and disable sharing? This device’s copy is kept.'))return;if(who!==owner||epoch!==ownerEpoch)return;await journalSync.deleteRemote();}
+    if(action==='sync-local'||action==='sync-remote'){if(!confirm(action==='sync-local'?'Replace the account journal with this device’s version?':'Replace this device’s journal with the account version? Export a copy first if needed.'))return;if(who!==owner||epoch!==ownerEpoch)return;await journalSync.resolve(action==='sync-local'?'local':'remote');}
+    if(who===owner&&epoch===ownerEpoch){render();notice(journalSync.status().message);}
+   }catch(error){notice(error.message,true);}}
+  function workspace(){return window.OrbiterUI?.snapshot()||{};}
+  function context(date=day){
+    const data=workspace(),s=data.study||{},dt=new Date(date+'T12:00:00'),weekday=(dt.getDay()+6)%7,mon=new Date(dt);mon.setDate(dt.getDate()-weekday);
+    const events=(data.weeks?.[localDate(mon)]||data.template||[]).filter(e=>e.day===weekday);
+    const tasks=(s.tasks||[]).filter(t=>!t.done&&t.due===date);
+    return{focusMinutes:Math.min(1440,Math.max(0,(s.sessions||[]).filter(t=>t.date===date).reduce((a,t)=>a+(Number(t.minutes)||0),0))),plannedCount:Math.min(10000,events.length+tasks.length),events,tasks};
+  }
+  function retained(summary){const kept=state.journey?.[summary.date]||[];summary.quests=summary.quests.map(q=>({...q,complete:q.complete||kept.includes(q.id)}));const earned=summary.quests.filter(q=>q.complete).length;summary.constellation={earned,total:4,complete:earned===4};return summary;}
+  function summary(){return retained(M.summary(state,day,context()));}
+  function recent(){const contexts={};for(let i=0;i<7;i++){const d=new Date(day+'T12:00:00');d.setDate(d.getDate()-i);contexts[localDate(d)]=context(localDate(d));}return M.recent(state,day,contexts).map(retained);}
+  function notice(text,error=false){const host=$('hub-notice');if(host){host.textContent=text;host.dataset.error=String(error);}}
+  async function action(fn,message,savedForm){const who=owner,epoch=ownerEpoch,captured=savedForm?JSON.stringify(formDrafts.get(savedForm)):null;try{const next=fn();if(next)await writeStore(next);nativeGuard(who,epoch);if(savedForm&&JSON.stringify(formDrafts.get(savedForm))===captured)formDrafts.delete(savedForm);draft=formDrafts.size>0;render();notice(message);}catch(e){notice(e.message||String(e),true);}}
+  const format=(value,unit='')=>value===null||value===undefined?'—':`${Math.round(value*10)/10}${unit}`;
+  const btn=(label,act,primary=false)=>`<button type="button" data-hub-action="${act}" class="${primary?'hub-primary':''}">${label}</button>`;
+  function heading(kicker,title,description){return `<div class="hub-page-heading"><div><span class="hub-kicker">${kicker}</span><h1 tabindex="-1">${title}</h1><p>${description}</p></div><label class="hub-date">Journal date<input id="hub-date" type="date" value="${day}" required aria-label="Journal date"></label></div>`;}
+  function constellation(s,large=false){return `<div class="hub-constellation ${large?'large':''}" aria-label="${s.constellation.earned} of 4 daily intentions complete"><svg viewBox="0 0 320 180" aria-hidden="true"><defs><radialGradient id="hub-halo-${large?'big':'small'}"><stop stop-color="#b4e6d5" stop-opacity=".3"/><stop offset="1" stop-color="#b4e6d5" stop-opacity="0"/></radialGradient></defs><ellipse cx="160" cy="90" rx="150" ry="85" fill="url(#hub-halo-${large?'big':'small'})"/><path d="M52 112 126 42 204 126 270 60" fill="none" stroke="#b4e6d540" stroke-width="1.4"/>${s.quests.map((q,i)=>{const [x,y]=[[52,112],[126,42],[204,126],[270,60]][i];return `<g class="${q.complete?'lit':''}"><circle cx="${x}" cy="${y}" r="16" fill="${q.complete?'#b4e6d515':'#20334e'}" stroke="${q.complete?'#b4e6d5':'#72859e'}"/><path d="m${x} ${y-6} 2 4 4 2-4 2-2 4-2-4-4-2 4-2Z" fill="${q.complete?'#cff7e7':'#7f92a9'}"/></g>`;}).join('')}</svg><span>${s.constellation.earned}<small> / 4 lights</small></span></div>`;}
+  function journey(s){const days=recent(),lights=days.reduce((a,d)=>a+d.constellation.earned,0),progress=M.journey(state);return `<article class="hub-card hub-journey"><div class="hub-card-heading"><div><span class="hub-kicker">YOUR JOURNEY</span><h2>${esc(progress.label)}</h2></div>${icon('spark')}</div>${constellation(s)}<p>Plan. Focus. Care. Reflect. Four small ways to shape a day.</p><div class="hub-permanent-progress"><strong>${progress.lights} lights kept</strong><span>${progress.nextAt===null?"Your garden of stars is growing.":`${progress.nextAt-progress.lights} to your next milestone`}</span></div><div class="hub-quest-list">${s.quests.map(q=>`<div class="${q.complete?'complete':''}">${icon(q.complete?'check':'spark')}<span>${q.label}</span><small>${q.complete?'Lit':'Open'}</small></div>`).join('')}</div><div class="hub-journey-foot"><span>${lights} lights over the last seven days</span><span>${enabled&&capabilities().write?"Earned lights stay with you":capabilities().write?"Enable the journal to retain lights":"Journey history unavailable in this iPhone preview"}</span></div></article>`;}
+  function storageIntro(){if(isPhone()){const status=nativeJournal?.status();if(!nativeCaps?.available)return `<article class="hub-card hub-storage-intro"><span class="hub-kicker">PROTECTED IPHONE JOURNAL</span><h2>A private home for your day.</h2><p>${esc(capabilities().reason)} Health entries are not accepted until native storage is available.</p></article>`;if(!enabled)return `<article class="hub-card hub-storage-intro"><span class="hub-kicker">YOUR DEVICE · YOUR CHOICE</span><h2>Enable your protected journal.</h2><p>This journal uses protected native storage. It is independent of account sign-in and is not uploaded.</p>${btn('Enable protected journal','enable',true)}</article>`;return `<article class="hub-card"><span class="hub-kicker">PROTECTED ON THIS IPHONE</span><p>This device journal is separate from your account and study backups.${status?.phase==='uncertain'?' A previous operation could not be confirmed. Read the saved journal before trying again.':''}${storeError?' '+esc(storeError):''}</p><div class="hub-inline-actions">${btn('Read saved journal','native-reconcile')}${btn('Disconnect protected journal','native-revoke')}</div></article>`;}if(capabilities().write&&!enabled&&!storeError)return `<article class="hub-card hub-storage-intro"><span class="hub-kicker">A JOURNAL YOU CONTROL</span><h2>Keep a little more of your day together.</h2><p>Enable a separate journal on this device for food totals, sleep, steps, habits and reflections. It is not uploaded to your account or included in study exports. You can export or delete it here.</p>${btn('Enable local journal','enable',true)}</article>`;if(!capabilities().write)return `<article class="hub-card hub-storage-intro"><span class="hub-kicker">IPHONE PREVIEW</span><h2>Your private journal needs its own home.</h2><p>${esc(capabilities().reason)} HealthKit, MacroFactor and account health sync are not connected. No health entries are accepted or stored on this iPhone build.</p></article>`;if(storeError)return `<article class="hub-card"><h2>Journal recovery</h2><p>${esc(storeError)}</p><div class="hub-inline-actions">${btn('Export recovery copy','recovery')}${btn('Delete unreadable journal','delete-journal')}</div></article>`;return '';}
+  function weekChart(){const days=recent();return `<div class="hub-week-chart" role="img" aria-label="Daily intention lights over the last seven days: ${days.map(d=>d.date+' '+d.constellation.earned).join(', ')}">${days.map(d=>`<div><span>${d.constellation.earned}</span><i style="--fill:${d.constellation.earned/4}"></i><small>${new Date(d.date+'T12:00:00').toLocaleDateString(undefined,{weekday:'short'})}</small></div>`).join('')}</div>`;}
+  function agenda(){const c=context(),items=[...c.events.map(e=>({title:e.title||'Planned time',meta:`${e.start}–${e.end}`,type:'event'})),...c.tasks.slice(0,5).map(t=>({title:t.title,meta:t.course||'Assignment',id:t.id,type:'task'}))];return `<article class="hub-card hub-agenda"><div class="hub-card-heading"><div><span class="hub-kicker">YOUR TIME</span><h2>A day with room in it.</h2></div>${btn('Open planner '+icon('arrow'),'planner')}</div>${items.length?`<ul>${items.slice(0,8).map(i=>`<li><span class="hub-agenda-mark">${icon(i.type==='task'?'study':'focus')}</span><div><strong>${esc(i.title)}</strong><small>${esc(i.meta)}</small></div>${i.id?`<button data-open-task="${esc(i.id)}" aria-label="Open ${esc(i.title)}">${icon('arrow')}</button>`:''}</li>`).join('')}</ul>`:'<div class="hub-empty"><span>'+icon('today')+'</span><h3>Your time is yours to shape.</h3><p>Bring a class, personal plan or assignment into view.</p>'+btn('Plan something','event',true)+'</div>'}<div class="hub-inline-actions">${btn('New event','event')}${btn('Capture a task','capture')}</div></article>`;}
+  function today(){const s=summary(),name=workspace().study?.preferences?.name?.trim();return heading('ONE DAY. YOUR WHOLE ORBIT.',name?`A little room for you, ${esc(name)}.`:'Make room for your whole day.','Your time, energy and intentions, in one place.')+`<div class="hub-today-grid"><article class="hub-card hub-focus-invitation"><div><span class="hub-kicker">SETTLE INTO YOUR SPACE</span><h2>One intention.<br>A quieter world.</h2><p>Give your next session a home in the focus sanctuary.</p>${btn('Enter sanctuary '+icon('arrow'),'sanctuary',true)}<div class="hub-focus-mini"><strong data-hub-time>25:00</strong><span data-hub-timer-status>Ready when you are</span></div></div><div class="hub-orbit-art" aria-hidden="true"><i></i><i></i><i></i><span>${icon('moon')}</span></div></article>${journey(s)}${agenda()}<article class="hub-card"><div class="hub-card-heading"><div><span class="hub-kicker">THE DAILY PICTURE</span><h2>Notice your rhythm.</h2></div>${btn('Health '+icon('arrow'),'health')}</div><div class="hub-metrics"><div><small>Focus recorded</small><strong>${format(s.focusMinutes,'m')}</strong></div><div><small>Sleep · manual</small><strong>${format(s.metrics.sleepHours,'h')}</strong></div><div><small>Steps · manual</small><strong>${format(s.metrics.steps)}</strong></div><div><small>Food energy · manual</small><strong>${s.nutritionKnown.calories?format(s.nutrition.calories,' kcal'):'—'}</strong></div></div><p class="hub-muted">Blank means no entry. Health values never determine rewards.</p>${weekChart()}</article></div>`+storageIntro();}
+  function numField(name,label,max,unit,integer=false,value=''){return `<label>${label}<span class="hub-input-unit"><input name="${name}" type="number" min="0" max="${max}" step="${integer?'1':'0.1'}" inputmode="decimal" value="${value===null?'':esc(value)}" aria-label="${label}"><span>${unit}</span></span></label>`;}
+  function importedHealth(){if(!state.health)return '';const h=window.OrbiterHealthData.summary(state.health,day,state.health.range?.timeZone||Intl.DateTimeFormat().resolvedOptions().timeZone);return `<article class="hub-card hub-imported-health"><span class="hub-kicker">IMPORTED APPLE HEALTH</span><h2>Your connected observations.</h2><p>Shown separately from manual entries to avoid counting the same food twice. Source: Apple Health${h.lastFetchedAt?' · Last read '+esc(new Date(h.lastFetchedAt).toLocaleString()):''}.</p>${h.providers.length?`<label>Nutrition source<select id="hub-health-source"><option value="">${h.selectionRequired?'Choose one source':'Automatic when only one source'}</option>${h.providers.map(p=>`<option value="${esc(p.sourceId)}" ${state.health.selectedNutritionSourceId===p.sourceId?'selected':''}>${esc(p.sourceName)}</option>`).join('')}</select></label>`:'<p>No readable nutrition observations for this date.</p>'}<div class="hub-macro-row">${[['calories','kcal'],['protein','g protein'],['carbs','g carbohydrates'],['fat','g fat']].map(([k,l])=>`<div><strong>${format(h.nutrition[k])}</strong><small>${l}</small></div>`).join('')}</div><p>Sleep ${format(h.sleepHours,' h')} · Daily steps ${format(h.steps)}</p>${h.stepsAggregate?`<p class="hub-muted">Health step statistics cover ${esc(h.stepsAggregate.range?.start||'')} to ${esc(h.stepsAggregate.range?.end||'')}: ${h.stepsAggregate.status==='available'?format(h.stepsAggregate.value):'No readable statistics'}. A multi-day total is not assigned to a single day.</p>`:''}<p class="hub-muted">Missing readings stay unknown. An empty read does not prove that access was denied or that the value was zero.</p></article>`;}
+  function health(){const s=summary(),can=enabled&&capabilities().write&&!storeError;return heading('HEALTH · YOUR DAILY RECORD','A little more in balance.','A clear record of what you choose to track. No judgement, no scores for eating or body measurements.')+storageIntro()+importedHealth()+`<div class="hub-health-grid"><article class="hub-card hub-nutrition"><div class="hub-card-heading"><div><span class="hub-kicker">NUTRITION</span><h2>Your daily totals</h2></div><span class="hub-source">Manual entries</span></div><div class="hub-nutrition-total"><strong>${s.nutritionKnown.calories?format(s.nutrition.calories):'—'}</strong><span>kcal recorded</span></div><div class="hub-macro-row">${[['protein','Protein'],['carbs','Carbs'],['fat','Fat']].map(([k,l],i)=>`<div><i style="--macro-color:${['#b4e6d5','#c8b5eb','#edbfa0'][i]}"></i><small>${l}</small><strong>${s.nutritionKnown[k]?format(s.nutrition[k],'g'):'—'}</strong></div>`).join('')}</div><p class="hub-muted">${s.mealCount} food ${s.mealCount===1?'entry':'entries'}. Totals include only supplied numbers; missing macros stay unknown.</p>${can?`<details class="hub-form-disclosure" open><summary>Add food or a meal</summary><form id="hub-meal-form"><label>Food or meal<input id="hub-meal-name" name="name" required maxlength="160" placeholder="e.g. Lunch" autocomplete="off"></label><div class="hub-fields">${numField('calories','Calories',20000,'kcal')}${numField('protein','Protein',2000,'g')}${numField('carbs','Carbohydrates',5000,'g')}${numField('fat','Fat',2000,'g')}</div><p class="hub-muted">Use your package label or tracker. Blank values remain unknown.</p><button class="hub-primary" type="submit">${icon('plus')} Add entry</button></form></details><ul class="hub-meal-list">${state.meals.filter(m=>m.date===day).map(m=>`<li><div><strong>${esc(m.name)}</strong><small>${m.calories===null?'Calories not entered':format(m.calories,' kcal')} · manual</small></div><button data-repeat-meal="${esc(m.id)}" aria-label="Log ${esc(m.name)} again">Again</button><button data-delete-meal="${esc(m.id)}" aria-label="Delete ${esc(m.name)}">Remove</button></li>`).join('')}</ul>`:''}</article><div class="hub-health-aside"><article class="hub-card"><div class="hub-card-heading"><div><span class="hub-kicker">REST & MOVEMENT</span><h2>Keep the context.</h2></div>${icon('moon')}</div>${can?`<form id="hub-metrics-form"><div class="hub-fields">${numField('sleepHours','Sleep duration',24,'hours',false,s.metrics.sleepHours)}${numField('steps','Steps',200000,'steps',true,s.metrics.steps)}</div><button type="submit">Save daily record</button></form>`:`<p class="hub-muted">Sleep ${format(s.metrics.sleepHours,'h')} · Steps ${format(s.metrics.steps)}</p>`}<p class="hub-muted">Entered manually. These are observations, not recommendations.</p></article>${connectionPanel()}</div></div>`;}
+  function habits(s){return `<article class="hub-card"><div class="hub-card-heading"><div><span class="hub-kicker">DAILY CARE</span><h2>Small rituals, your way.</h2></div><span class="hub-source">${s.habits.done}/${s.habits.total} today</span></div><p class="hub-muted">Choose routines that fit your day. Missing a day takes nothing away.</p><ul class="hub-habits">${state.habits.map(h=>`<li><button data-toggle-habit="${esc(h.id)}" aria-pressed="${h.completions.includes(day)}" class="hub-habit-toggle">${icon(h.completions.includes(day)?'check':'plus')}<span>${esc(h.name)}</span></button><button data-delete-habit="${esc(h.id)}" aria-label="Delete habit ${esc(h.name)}">Remove</button></li>`).join('')}</ul><form id="hub-habit-form" class="hub-add-habit"><label class="hub-visually-hidden" for="hub-habit-name">New habit</label><input id="hub-habit-name" name="name" required maxlength="100" placeholder="Name a small ritual"><button type="submit" aria-label="Add habit">${icon('plus')}</button></form></article>`;}
+  function life(){const s=summary(),can=enabled&&capabilities().write&&!storeError;return heading('LIFE · A RHYTHM THAT BELONGS TO YOU','Grow a life, not a streak.','Make space for routines, perspective and progress that welcomes you back.')+storageIntro()+`<div class="hub-life-grid">${journey(s)}<div class="hub-life-aside">${can?habits(s):`<article class="hub-card"><h2>Room for your rituals.</h2><p class="hub-muted">Your separate local journal holds habits and daily reflections.</p></article>`}<article class="hub-card"><span class="hub-kicker">A MOMENT TO REFLECT</span><h2>What mattered today?</h2>${can?`<form id="hub-reflection-form"><label class="hub-visually-hidden" for="hub-reflection">Daily reflection</label><textarea id="hub-reflection" name="reflection" rows="4" maxlength="4000" placeholder="One useful thing, one small win, or something to carry into tomorrow…">${esc(s.reflection)}</textarea><button type="submit">Save reflection</button></form>`:'<p class="hub-muted">A sentence is enough. Reflections remain separate from study notes.</p>'}</article></div><article class="hub-card hub-week-review"><div><span class="hub-kicker">YOUR WEEK IN ORBIT</span><h2>Progress has more than one shape.</h2><p class="hub-muted">Daily lights are earned through planning, focus, a habit and reflection. They never change companion XP, crates or owned items.</p></div>${weekChart()}</article></div>${can?`<article class="hub-card hub-data-controls"><div><h2>Your journal stays yours.</h2><p>Separate ${isPhone()?'protected device':owner==='guest'?'device-local guest':'device-local account'} journal. Export contains health information; choose where to keep it.</p></div><div class="hub-inline-actions">${btn('Export journal','export')}<label class="hub-file-button">Import journal<input id="hub-import" type="file" accept="application/json,.json"></label>${btn('Delete this journal','delete-journal')}</div></article>`:''}`;}
+  function updateChrome(){if($('page-crumb'))$('page-crumb').textContent=section==='study'?({desk:'Study overview',tasks:'Assignments',atlas:'Course Atlas',rhythm:'My rhythm'}[studyPage]||'Study'):section[0].toUpperCase()+section.slice(1);}
+  function render(){if(!initialized)return;updateChrome();const host=$('life-hub'),focused=document.activeElement?.id;host.innerHTML=section==='today'?today():section==='health'?health():section==='life'?life():'';host.hidden=section==='study';for(const form of host.querySelectorAll('form')){const submit=form.querySelector('[type=submit]');if(submit){const actions=document.createElement('div');actions.className='hub-form-actions';submit.before(actions);actions.append(submit);const discard=document.createElement('button');discard.type='button';discard.dataset.discardForm=form.id;discard.textContent='Discard changes';actions.append(discard);}}document.body.dataset.hub=section;document.querySelectorAll('[data-hub-section]').forEach(b=>b.setAttribute('aria-current',b.dataset.hubSection===section?'page':'false'));const badge=$('hub-storage-status');if(badge)badge.textContent=capabilities().write?(enabled?'Journal · this device':'Journal · optional'):'iPhone preview';for(const [id,values] of formDrafts){const form=$(id);if(form)for(const [name,value]of Object.entries(values)){const field=form.elements.namedItem(name);if(field)field.value=value;}}if(focused&&$(focused))$(focused).focus({preventScroll:true});updateTimer();}
+  function navigate(next,focus=true){if(!['today','study','health','life'].includes(next))return;if(draft&&next!==section){notice('Save or discard your current entry before switching sections.',true);return;}section=next;render();window.scrollTo({top:0,behavior:'instant'});if(focus&&next!=='study')$('life-hub')?.querySelector('h1')?.focus({preventScroll:true});if(next==='study'){window.OrbiterUI?.refreshCat();window.dispatchEvent(new Event('resize'));}else window.OrbiterLake?.cancel('life-navigation');}
+  function openStudy(page='desk'){if(draft){notice('Save or discard your current entry before opening Study.',true);return;}navigate('study',false);window.OrbiterUI?.navigate(page);}
+  function download(text,name){const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  function sanctuary(){if(!$('hub-sanctuary').open){$('hub-sanctuary').showModal();$('sanctuary-toggle').focus();updateTimer();}}
+  function timerState(){const native=window.OrbiterNativeState?.timer,t=workspace().study?.timer||{};return{time:$('timer-display')?.textContent||'25:00',active:native?native.active:!!t.endAt,title:native?.title||t.title||'Open focus',button:$('focus-start')?.textContent||'Start focus'};}
+  function updateTimer(){if(!initialized||document.hidden)return;const t=timerState();document.querySelectorAll('[data-hub-time]').forEach(e=>e.textContent=t.time);document.querySelectorAll('[data-hub-timer-status]').forEach(e=>e.textContent=t.active?'One intention, in progress':'Ready when you are');$('sanctuary-intention').textContent=t.title;$('sanctuary-toggle').textContent=t.button.replace('↗','').trim();$('sanctuary-state').textContent=t.active?'Your time is protected. Let the rest wait.':'Settle in. Start whenever you are ready.';$('sanctuary-finish').disabled=!!$('focus-finish')?.disabled;$('sanctuary-toggle').disabled=!!$('focus-start')?.disabled;$('hub-sanctuary').dataset.running=String(t.active);}
+  function wire(){
+    document.addEventListener('click',async e=>{const discard=e.target.closest('[data-discard-form]');if(discard){formDrafts.delete(discard.dataset.discardForm);draft=formDrafts.size>0;render();notice('Unsaved changes in this form were discarded.');return;}const sectionButton=e.target.closest('[data-hub-section]');if(sectionButton){navigate(sectionButton.dataset.hubSection);return;}if(e.target.closest('button[data-page]')){section='study';render();}const actionButton=e.target.closest('[data-hub-action]');if(actionButton){const a=actionButton.dataset.hubAction;if(a==='native-reconcile'){try{if(nativeBusy)throw Error('Wait for the journal operation.');await nativeRead(true);render();notice('Protected journal read. Unsaved form entries were kept.');}catch(error){render();notice(error.message,true);}return;}if(a==='native-revoke'){if(!confirm('Disconnect the protected journal and discard unsaved entries? The saved device copy is kept.'))return;try{nativeJournal?.invalidate();formDrafts.clear();draft=false;state=M.create();enabled=false;await nativeAdapter().revoke();nativeCaps=await window.OrbiterNativeLifeStore.capabilities();render();notice('Protected journal disconnected. Saved data remains on this iPhone.');}catch(error){render();notice(error.message,true);}return;}if(a.startsWith('sync-')||['account','health-connect'].includes(a)){connectionAction(a);return;}if(['health','life','today'].includes(a)){navigate(a);return;}if(a==='planner'){openStudy();return;}if(a==='event'){window.OrbiterUI.createEventOnDate(day).catch(e=>notice(e.message,true));return;}if(a==='capture'){$('quick-capture').click();return;}if(a==='sanctuary'){sanctuary();return;}if(a==='enable'){const who=owner,epoch=ownerEpoch;try{if(isPhone()){if(nativeBusy)throw Error('Wait for the journal to finish.');nativeBusy=true;try{await nativeAdapter().enable();nativeGuard(who,epoch);nativeCaps=await window.OrbiterNativeLifeStore.capabilities();nativeGuard(who,epoch);adoptNative();}finally{nativeBusy=false;}}else{if(!capabilities().write)throw Error(capabilities().reason);localStorage.setItem(consentKey(),'yes');enabled=true;await writeStore(state);}render();notice('Local journal enabled. Nothing is uploaded.');}catch(error){notice(error.message,true);}return;}if(a==='export'){download(M.exportJSON(state),`Orbiter-journal-${day}.json`);return;}if(a==='recovery'){if(isPhone()){notice('Use protected journal reconciliation; unreadable native data is never copied into browser storage.',true);return;}try{download(localStorage.getItem(key())||'','Orbiter-journal-recovery.json');}catch(e){notice('The browser blocked access to journal storage. No saved data was changed.',true);}return;}if(a==='delete-journal'){deleteTicket={owner,epoch:ownerEpoch};$('hub-delete-dialog').showModal();return;}}
+      const task=e.target.closest('[data-open-task]');if(task){window.OrbiterUI.openTaskById(task.dataset.openTask);return;}
+      const toggle=e.target.closest('[data-toggle-habit]');if(toggle){action(()=>M.toggleHabit(state,toggle.dataset.toggleHabit,day),'Daily ritual updated.');return;}
+      const rm=e.target.closest('[data-delete-meal]');if(rm){action(()=>M.deleteMeal(state,rm.dataset.deleteMeal),'Food entry removed.');return;}
+      const repeat=e.target.closest('[data-repeat-meal]');if(repeat){const meal=state.meals.find(m=>m.id===repeat.dataset.repeatMeal);action(()=>M.addMeal(state,{...meal,id:undefined,date:day}),'Food entry logged again.');return;}
+      const habit=e.target.closest('[data-delete-habit]');if(habit){action(()=>M.deleteHabit(state,habit.dataset.deleteHabit),'Habit removed.');}
+    });
+    document.addEventListener('input',e=>{const form=e.target.closest('#life-hub form');if(form){formDrafts.set(form.id,Object.fromEntries(new FormData(form)));draft=true;}});
+    document.addEventListener('change',async e=>{if(e.target.id==='hub-date'){if(draft){e.target.value=day;notice('Save or discard your current entry before changing dates.',true);return;}if(M.validDate(e.target.value)){day=e.target.value;render();}return;}if(e.target.id==='hub-import'){const file=e.target.files?.[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error('Choose a journal backup under 5 MB.');const importOwner=owner,importEpoch=ownerEpoch;const imported=M.importJSON(await file.text());if(importOwner!==owner||importEpoch!==ownerEpoch){notice('Import canceled because the account changed.');return;}pendingImport={state:imported,owner,epoch:ownerEpoch};$('hub-import-description').textContent=`Replace this journal with ${imported.meals.length} food entries and ${imported.habits.length} habits? Export your current journal first if you want to keep it.`;$('hub-import-dialog').showModal();}catch(error){notice(error.message,true);}e.target.value='';}});
+    document.addEventListener('submit',e=>{const f=e.target;if(!f.closest('#life-hub'))return;e.preventDefault();const values=new FormData(f),number=name=>values.get(name)===''?null:Number(values.get(name));if(f.id==='hub-meal-form'){if(!['calories','protein','carbs','fat'].some(k=>values.get(k)!=='')){notice('Enter at least one nutrition number. Unknown values can stay blank.',true);return;}action(()=>M.addMeal(state,{date:day,name:values.get('name'),calories:number('calories'),protein:number('protein'),carbs:number('carbs'),fat:number('fat')}),'Food entry saved on this device.',f.id);}if(f.id==='hub-metrics-form')action(()=>M.setMetrics(state,day,{sleepHours:number('sleepHours'),steps:number('steps')}),'Daily record saved on this device.',f.id);if(f.id==='hub-habit-form')action(()=>M.addHabit(state,{name:values.get('name')}),'A new ritual is ready.',f.id);if(f.id==='hub-reflection-form')action(()=>M.setReflection(state,day,values.get('reflection')),'Reflection saved. A little perspective, kept.',f.id);});
+    $('sanctuary-close').onclick=()=>$('hub-sanctuary').close();$('sanctuary-toggle').onclick=()=>{$('focus-start').click();setTimeout(updateTimer,60);};$('sanctuary-finish').onclick=()=>{$('focus-finish').click();setTimeout(updateTimer,60);};
+    $('sanctuary-themes').onclick=e=>{const button=e.target.closest('[data-sanctuary-theme]');if(!button)return;sanctuaryTheme=button.dataset.sanctuaryTheme;$('hub-sanctuary').dataset.theme=sanctuaryTheme;document.querySelectorAll('[data-sanctuary-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));};
+    $('hub-delete-confirm').onclick=async()=>{const who=owner,epoch=ownerEpoch;try{if(!deleteTicket||deleteTicket.owner!==owner||deleteTicket.epoch!==ownerEpoch)throw Error('Account changed. Open journal deletion again.');await window.OrbiterLifeStore.clear();nativeGuard(who,epoch);formDrafts.clear();draft=false;$('hub-delete-dialog').close();render();notice('This local journal was deleted. Study data and other accounts were kept.');}catch(e){notice(e.message,true);}};
+    $('hub-import-confirm').onclick=async()=>{if(!pendingImport)return;const who=owner,epoch=ownerEpoch;try{if(pendingImport.owner!==owner||pendingImport.epoch!==ownerEpoch)throw Error('Account changed. Choose your backup again.');await writeStore(pendingImport.state);nativeGuard(who,epoch);formDrafts.clear();draft=false;pendingImport=null;$('hub-import-dialog').close();render();notice('Journal imported. Study data was not changed.');}catch(e){$('hub-import-error').textContent=e.message;}};
+    document.querySelectorAll('[data-hub-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+    window.addEventListener('storage',e=>{if(isPhone())return;if(e.key!==key()&&e.key!==consentKey())return;if(draft){notice('This journal changed in another tab. Your draft is kept; reload before saving.',true);return;}readStore();render();notice('Local journal refreshed from another tab.');});
+    window.addEventListener('orbiter-cloud-status',async e=>{const next=e.detail.account?.id||'guest';if(next===owner)return;ownerEpoch++;owner=next;nativeJournal?.invalidate();nativeCaps=null;journalSync?.invalidate();formDrafts.clear();draft=false;pendingImport=null;document.querySelectorAll('.hub-owned-dialog[open]').forEach(d=>d.close());if(isPhone()){state=M.create();enabled=false;storeError='';}else await readStore();render();notice('Switched to this account’s separate device-local journal. Nothing was uploaded.');});
+    window.addEventListener('orbiter-workspace-rendered',async e=>{studyPage=e.detail.page;updateChrome();if(!nativeBusy&&enabled&&capabilities().write&&!storeError){try{const next=M.rememberJourney(state,localDate(),context(localDate()));if(M.exportJSON(next)!==M.exportJSON(state)){const keptDraft=draft;await writeStore(next);draft=keptDraft;}}catch(error){notice(error.message,true);}}if(!draft&&section!=='study')render();});
+    window.addEventListener('orbiter-native-state',()=>{updateTimer();});document.addEventListener('visibilitychange',()=>{if($('hub-sanctuary'))$('hub-sanctuary').dataset.hidden=String(document.hidden);if(!document.hidden)updateTimer();});
+  }
+  let pendingImport=null,deleteTicket=null;
+  function init(){if(initialized||!M||!window.OrbiterUI||!$('workspace'))return;initialized=true;if(!isPhone())readStore();
+    const nav=`<nav class="hub-navigation" aria-label="Your whole orbit">${['today','study','health','life'].map(s=>`<button data-hub-section="${s}" aria-current="false" aria-label="${s[0].toUpperCase()+s.slice(1)}" title="${s[0].toUpperCase()+s.slice(1)}">${icon(s)}<span>${s[0].toUpperCase()+s.slice(1)}</span><i></i></button>`).join('')}</nav>`;
+    document.querySelector('.side-nav').insertAdjacentHTML('beforebegin',nav+'<p class="hub-study-label">STUDY SPACE</p>');
+    const mobile=document.createElement('nav');mobile.className='hub-mobile-navigation';mobile.setAttribute('aria-label','Your whole orbit');mobile.innerHTML=['today','study','health','life'].map(s=>`<button data-hub-section="${s}">${icon(s)}<span>${s[0].toUpperCase()+s.slice(1)}</span></button>`).join('');document.body.append(mobile);
+    const studyMobile=document.querySelector('.mobile-nav');if(studyMobile)$('workspace').querySelector('.greeting').before(studyMobile);const host=document.createElement('section');host.id='life-hub';host.setAttribute('aria-label','Your whole orbit');$('workspace').querySelector('.greeting').before(host);
+    const status=document.createElement('div');status.id='hub-notice';status.setAttribute('role','status');status.setAttribute('aria-live','polite');$('workspace').querySelector('.masthead').after(status);
+    const storage=document.createElement('span');storage.id='hub-storage-status';storage.className='hub-storage-status';document.querySelector('.sidebar-bottom').prepend(storage);
+    const entry=document.createElement('button');entry.id='hub-sanctuary-open';entry.className='hub-sanctuary-entry';entry.type='button';entry.innerHTML=icon('moon')+'<span>Focus sanctuary</span>';entry.onclick=sanctuary;$('focus-history').before(entry);
+    const dialogs=document.createElement('div');dialogs.innerHTML=`<dialog id="hub-sanctuary" aria-labelledby="sanctuary-intention" data-theme="tide"><div class="sanctuary-background" aria-hidden="true"><i></i><i></i><i></i><span class="sanctuary-moon"></span><div class="sanctuary-water"></div></div><header><span>${icon('moon')} ORBITER · SANCTUARY</span><button id="sanctuary-close" aria-label="Leave sanctuary">Back to Orbiter ${icon('arrow')}</button></header><div class="sanctuary-content"><span class="hub-kicker">ONE INTENTION. YOUR OWN PACE.</span><h2 id="sanctuary-intention">Open focus</h2><strong class="sanctuary-time" data-hub-time role="timer" aria-label="Focus time remaining">25:00</strong><p id="sanctuary-state">Ready when you are.</p><div class="sanctuary-actions"><button id="sanctuary-toggle" class="hub-primary">Start focus</button><button id="sanctuary-finish">Finish session</button></div></div><footer><div id="sanctuary-themes" aria-label="Sanctuary atmosphere">${[['tide','Tidal night'],['moon','Moon garden'],['dawn','First light']].map(([k,l])=>`<button data-sanctuary-theme="${k}" aria-pressed="${k==='tide'}">${l}</button>`).join('')}</div><p>Time is kept by your existing focus timer. Escape returns without ending your session.</p></footer></dialog><dialog id="hub-delete-dialog" class="hub-owned-dialog" aria-labelledby="hub-delete-title"><h2 id="hub-delete-title">Delete this device’s journal?</h2><p>Removes this journal’s food entries, metrics, habits and reflections. Study data, companion rewards and other accounts are kept.</p><div class="hub-inline-actions"><button data-hub-close>Keep journal</button><button id="hub-delete-confirm">Delete local journal</button></div></dialog><dialog id="hub-import-dialog" class="hub-owned-dialog" aria-labelledby="hub-import-title"><h2 id="hub-import-title">Replace your local journal?</h2><p id="hub-import-description"></p><p id="hub-import-error" role="alert"></p><div class="hub-inline-actions"><button data-hub-close>Cancel</button><button id="hub-import-confirm">Replace journal</button></div></dialog>`;
+    const parent=$('native-planner')||document.body;while(dialogs.firstChild)parent.append(dialogs.firstChild);
+    document.addEventListener('change',async e=>{if(e.target.id==='hub-health-source'){try{const next=M.normalize(state);next.health.selectedNutritionSourceId=e.target.value||null;await writeStore(next);render();}catch(error){notice(error.message,true);}}});
+    wire();render();if(isPhone())readStore().then(()=>render()).catch(error=>{render();notice(error.message,true);});if(window.__TAURI__)new MutationObserver(()=>{if(document.body.dataset.nativeMode==='planner')openStudy(studyPage);}).observe(document.body,{attributes:true,attributeFilter:['data-native-mode']});setInterval(updateTimer,500);window.OrbiterHub={navigate,openStudy,dirty:()=>draft,requestStudy:()=>{if(draft){notice('Save or discard your current entry before opening Study.',true);return false;}if(section!=='study')navigate('study',false);return true;},openSanctuary:sanctuary,section:()=>section,selectedDate:()=>day,refresh:async()=>{await readStore();render();},snapshot:()=>M.normalize(state),journalSync};
+    const epoch=ownerEpoch;window.OrbiterCloud?.status().then(result=>{if(epoch===ownerEpoch&&result?.account?.id)window.dispatchEvent(new CustomEvent('orbiter-cloud-status',{detail:{account:result.account}}));}).catch(()=>{});window.dispatchEvent(new Event('orbiter-hub-ready'));
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();window.addEventListener('orbiter-workspace-rendered',()=>queueMicrotask(init));const ready=setInterval(()=>{init();if(initialized)clearInterval(ready);},100);
+})();
+
+</script>
+</head>
+=======
   </head>
+>>>>>>> dc7db3f6bb4c7a6e249725b8d44a0697ded53f3a
   <body>
     <div class="orbital-backdrop" aria-hidden="true">
 <svg id="liquid-landscape" class="celestial-landscape" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
@@ -20506,6 +20993,7 @@ var StudyCore;
           }
         }
         async function selectPage(page) {
+          if (window.OrbiterHub?.requestStudy && !window.OrbiterHub.requestStudy()) return;
           if (page === 'focus') { if (window.__TAURI__) return; page = 'desk'; }
           if (state.drag) await finishDrag(true);
           if (state.page === page && !state.course) return;
@@ -22583,12 +23071,26 @@ var StudyCore;
         bindObservatoryMotion();
         bindMotionSystem();
         window.OrbiterUI = {
+          navigate: selectPage,
+          createEventOnDate: async key => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || localISO(parseDate(key)) !== key)
+              throw Error('Choose a valid calendar date.');
+            if (state.drag || courseDrafts.size || reflectionDrafts.size || document.querySelector('dialog[open]'))
+              throw Error('Save or close your current editor before planning another event.');
+            const week=mondayOf(parseDate(key));
+            await selectPage('desk');
+            await openWeek(week);
+            if (state.week !== week) throw Error('That week could not be opened. Your current schedule is kept.');
+            state.selectedDay=(parseDate(key).getDay()+6)%7;
+            render();
+            openEditor(null,state.selectedDay,540);
+          },
           refreshCat: updateCats,
           openTaskById: id => {const task=studyData().tasks.find(t=>t.id===id);if(task)openTask(task);},
           openAppearance: openSettings,
           reload: async () => {state.data=validateData(await desktop.reload());courseDrafts.clear();reflectionDrafts.clear();render();},
           snapshot: () => state.data,
-          dirty: () => courseDrafts.size > 0 || reflectionDrafts.size > 0 || !!state.drag || [...document.querySelectorAll('dialog[open]:not(#account-dialog) form')].some(form => form.querySelector('input,textarea,select')),
+          dirty: () => !!window.OrbiterHub?.dirty() || courseDrafts.size > 0 || reflectionDrafts.size > 0 || !!state.drag || [...document.querySelectorAll('dialog[open]:not(#account-dialog) form')].some(form => form.querySelector('input,textarea,select')),
           saveDrafts: async () => {
             if (state.drag) await finishDrag(true);
             if (courseDrafts.size || reflectionDrafts.size) {

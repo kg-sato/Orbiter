@@ -70,6 +70,16 @@ pond_block='<style id="orbiter-pond-styles">\n'+pond_css+'\n</style>'
 if 'id="orbiter-pond-styles"' in source:
     source=re.sub(r'<style id="orbiter-pond-styles">.*?</style>',lambda _:pond_block,source,flags=re.S)
 else:source=source.replace('</head>',pond_block+'\n</head>',1)
+# Additive life-hub modules stay embedded for offline/native use. No iPhone
+# account or health-storage capabilities are enabled by embedding the interface.
+life_resources=[('web/life-hub.css','style','orbiter-life-styles'),('web/health-data.js','script','orbiter-health-data'),('web/life-model.js','script','orbiter-life-model'),('web/native-life-journal.js','script','orbiter-native-life-journal'),('web/life-sync.js','script','orbiter-life-sync'),('web/life-hub.js','script','orbiter-life-hub')]
+# Reinsert in dependency order even when adding a module to an older generated page.
+for resource,tag,label in life_resources:
+    source=re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>', '', source, flags=re.S)
+life_blocks=[]
+for resource,tag,label in life_resources:
+    life_blocks.append('<'+tag+' id="'+label+'">\n'+(root/resource).read_text(encoding='utf-8')+'\n</'+tag+'>')
+source=source.replace('</head>', '\n'.join(life_blocks)+'\n</head>', 1)
 app.write_text(source, encoding='utf-8')
 for name in ['sync_app.py', 'sync_preview.py']:
     subprocess.run([sys.executable, str(root / 'scripts' / name)], cwd=root, check=True)
