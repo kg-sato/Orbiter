@@ -61,6 +61,8 @@ const {chromium} = require('playwright-core');
     policyViolations.push(...await page.evaluate(() => window.__policyViolations));
     await page.goto(pathToFileURL(path.resolve('Scheduler/Application.html')).href + '?noWebGL=1');
     await page.waitForFunction(() => window.OrbiterUI && window.OrbiterCats);
+    // The additive hub opens Today; the planner artwork belongs to Study.
+    await page.evaluate(() => window.OrbiterHub?.navigate('study'));
     assert.equal(await page.evaluate(() => window.OrbiterCats.stats().contexts), 0);
     assert.equal(await page.locator('.orbit-art img').isVisible(), true);
     policyViolations.push(...await page.evaluate(() => window.__policyViolations));

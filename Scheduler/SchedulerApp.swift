@@ -30,10 +30,26 @@ struct ScheduleDocument: FileDocument {
 
 struct ScheduleScreen: View {
     @StateObject private var bridge = ScheduleBridge()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ScheduleWebView(bridge: bridge)
             .background(Color(red: 0.082, green: 0.078, blue: 0.114))
+            .onChange(of: scenePhase) { phase in
+                if phase == .active { bridge.dispatch("nativeReminderRefresh", detail: [:]) }
+            }
+            .alert("Connect Apple Health?", isPresented: $bridge.healthConsentRequested) {
+                Button("Continue") { bridge.confirmHealthAccess() }
+                Button("Cancel", role: .cancel) { bridge.cancelHealthAccess() }
+            } message: {
+                Text("Orbiter will ask to read nutrition, sleep and steps from Apple Health. It will not write to Health or upload these readings. You choose access in Apple's next screen.")
+            }
+            .alert("Enable private journal?", isPresented: $bridge.lifeStoreConsentRequested) {
+                Button("Enable journal") { bridge.confirmLifeStoreAccess() }
+                Button("Cancel", role: .cancel) { bridge.cancelLifeStoreAccess() }
+            } message: {
+                Text("Keep a separate journal on this iPhone for food, sleep, steps, habits and reflections. It is not uploaded or included in study exports. Access lasts for this app session. You can stop access or delete the journal separately.")
+            }
             .overlay {
                 if let error = bridge.loadingError {
                     VStack(spacing: 16) {
@@ -81,48 +97,168 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
     @Published var exportType: UTType = .json
     @Published var exportFilename = "Orbiter-backup"
     @Published var loadingError: String?
+    @Published var healthConsentRequested = false
+    @Published var lifeStoreConsentRequested = false
     weak var webView: WKWebView?
+    // Native storage foundation exists, but no release/consent approval is implied.
+    // Keep this gate closed until Apple SDK + physical protection/backup checks.
+    private let lifeStoreAvailable = false
+    private var lifeStoreConsent = false
+    private var lifeStoreGeneration = 0
+    private var lifeStoreAccessRequest: String?
+    private let lifeStoreQueue = DispatchQueue(label: "com.kgsato.orbiter.life-store")
+    private let healthIntegrationAvailable = false
+    private var healthConsent = false
+    private var healthGeneration = 0
+    private var healthAccessRequest: String?
     private var reminderGeneration = 0
+    private var reminderStatusGeneration = 0
+    private var reminderEndAt: Double?
     private let focusReminderID = "scheduler.focus.complete"
     private var activeReminderID = UserDefaults.standard.string(forKey: "Scheduler.activeFocusReminder")
+    private var pendingReminderID = UserDefaults.standard.string(forKey: "Scheduler.pendingFocusReminder")
 
     override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }
 
-    // Each request has a unique ID, so a stale asynchronous add can cancel itself
-    // without removing the newer session's reminder. Persist the active ID across launches.
-    private func syncFocusReminder(endAt: Double?) {
+    // All reminder state is changed on the main queue. Unique IDs let a stale
+    // asynchronous add cancel itself without removing a newer session's reminder.
+    private func syncFocusReminder(endAt: Double?, force: Bool = false) {
+        // Unrelated workspace saves must not cancel a valid accepted/in-flight
+        // reminder. Foreground and permission reconciliation explicitly bypass this.
+        if !force, let endAt, endAt == reminderEndAt,
+           activeReminderID != nil || pendingReminderID != nil { return }
         reminderGeneration += 1
+        reminderStatusGeneration += 1 // Discard status snapshots from before this change.
         let generation = reminderGeneration
         let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: [focusReminderID] + (activeReminderID.map { [$0] } ?? []))
+        let previousIDs = [focusReminderID] + [activeReminderID, pendingReminderID].compactMap { $0 }
+        center.removePendingNotificationRequests(withIdentifiers: previousIDs)
         activeReminderID = nil
+        pendingReminderID = nil
+        reminderEndAt = nil
         UserDefaults.standard.removeObject(forKey: "Scheduler.activeFocusReminder")
-        guard let endAt, endAt.isFinite else { return }
-        let requestID = focusReminderID + "." + UUID().uuidString
-        activeReminderID = requestID
-        UserDefaults.standard.set(requestID, forKey: "Scheduler.activeFocusReminder")
+        UserDefaults.standard.removeObject(forKey: "Scheduler.pendingFocusReminder")
+        guard let endAt, endAt.isFinite else {
+            refreshReminderStatus()
+            return
+        }
         center.getNotificationSettings { [weak self] settings in
             DispatchQueue.main.async {
                 guard let self, self.reminderGeneration == generation else { return }
-                guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
+                guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional || settings.authorizationStatus == .ephemeral else {
+                    self.refreshReminderStatus()
+                    return
+                }
                 let delay = endAt / 1000 - Date().timeIntervalSince1970
-                guard delay > 1, delay <= 90 * 60 + 5 else { return }
+                // Match the planner's 1...240 minute custom duration. A nearly
+                // completed session still gets a reminder; expired sessions do not.
+                guard delay > 0, delay <= 240 * 60 + 5 else {
+                    self.refreshReminderStatus()
+                    return
+                }
+                let requestID = self.focusReminderID + "." + UUID().uuidString
+                self.reminderEndAt = endAt
+                self.pendingReminderID = requestID
+                // Retain a cancellation handle if the process exits before add completes.
+                UserDefaults.standard.set(requestID, forKey: "Scheduler.pendingFocusReminder")
                 let content = UNMutableNotificationContent()
                 content.title = "Focus session complete"
                 content.body = "Your study session is finished. Take a moment to recharge."
                 content.sound = .default
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, delay), repeats: false)
                 center.add(UNNotificationRequest(identifier: requestID, content: content, trigger: trigger)) { [weak self] error in
                     DispatchQueue.main.async {
                         guard let self, self.reminderGeneration == generation else {
                             center.removePendingNotificationRequests(withIdentifiers: [requestID])
+                            if UserDefaults.standard.string(forKey: "Scheduler.pendingFocusReminder") == requestID {
+                                UserDefaults.standard.removeObject(forKey: "Scheduler.pendingFocusReminder")
+                            }
+                            self?.refreshReminderStatus()
                             return
                         }
-                        if error != nil { self.status("Could not schedule the focus reminder.", error: true) }
+                        if error != nil {
+                            self.pendingReminderID = nil
+                            UserDefaults.standard.removeObject(forKey: "Scheduler.pendingFocusReminder")
+                            center.removePendingNotificationRequests(withIdentifiers: [requestID])
+                            self.status("Could not schedule the focus reminder. Your focus timer is still running.", error: true)
+                            self.refreshReminderStatus()
+                            return
+                        }
+                        // Persist acceptance before dropping the cancellation handle,
+                        // so a process exit cannot leave the request without an ID.
+                        self.activeReminderID = requestID
+                        UserDefaults.standard.set(requestID, forKey: "Scheduler.activeFocusReminder")
+                        self.pendingReminderID = nil
+                        UserDefaults.standard.removeObject(forKey: "Scheduler.pendingFocusReminder")
+                        self.refreshReminderStatus()
                     }
+                }
+            }
+        }
+    }
+
+    private func requestReminderPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, error in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if error != nil {
+                    self.dispatch("nativeReminderPermission", detail: ["error": "Could not check notification permission. Please try again."])
+                } else {
+                    self.dispatch("nativeReminderPermission", detail: ["granted": granted])
+                }
+                self.refreshReminderStatus()
+            }
+        }
+    }
+
+    // Read current system settings and actual pending requests without prompting
+    // or changing opt-in. Pending is a snapshot, never a delivery guarantee.
+    private func refreshReminderStatus() {
+        reminderStatusGeneration += 1
+        let generation = reminderStatusGeneration
+        let schedulingGeneration = reminderGeneration
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                guard let self, self.reminderStatusGeneration == generation,
+                      self.reminderGeneration == schedulingGeneration else { return }
+                center.getPendingNotificationRequests { [weak self] requests in
+                    DispatchQueue.main.async {
+                        guard let self, self.reminderStatusGeneration == generation,
+                              self.reminderGeneration == schedulingGeneration else { return }
+                        let authorization: String
+                        switch settings.authorizationStatus {
+                        case .authorized: authorization = "allowed"
+                        case .provisional: authorization = "quiet"
+                        case .ephemeral: authorization = "temporary"
+                        case .denied: authorization = "blocked"
+                        case .notDetermined: authorization = "notRequested"
+                        @unknown default: authorization = "unknown"
+                        }
+                        let pending = requests.contains {
+                            $0.identifier == self.focusReminderID || $0.identifier.hasPrefix(self.focusReminderID + ".")
+                        }
+                        self.dispatch("nativeReminderStatus", detail: [
+                            "authorization": authorization,
+                            "alerts": settings.alertSetting == .enabled,
+                            "sounds": settings.soundSetting == .enabled,
+                            "pending": pending
+                        ])
+                    }
+                }
+            }
+        }
+    }
+
+    private func openReminderSettings() {
+        guard let url = URL(string: UIApplication.openNotificationSettingsURLString) else { return }
+        UIApplication.shared.open(url, options: [:]) { [weak self] opened in
+            if !opened {
+                DispatchQueue.main.async {
+                    self?.status("Could not open Settings. Open iPhone Settings, then Notifications and Orbiter.", error: true)
                 }
             }
         }
@@ -130,9 +266,204 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .sound])
+        // The loaded foreground planner announces focus completion itself.
+        // Keep a system fallback during load failures, and read UIKit state on main.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {
+                completionHandler([.banner, .sound])
+                return
+            }
+            let identifier = notification.request.identifier
+            let isFocus = identifier == self.focusReminderID || identifier.hasPrefix(self.focusReminderID + ".")
+            if isFocus, self.loadingError == nil, let webView = self.webView, !webView.isLoading {
+                completionHandler([])
+            } else {
+                completionHandler([.banner, .sound])
+            }
+        }
     }
 
+
+    private func healthReply(_ requestId: String, value: [String: Any]) {
+        let status = value["status"] as? String ?? "error"
+        if ["ok", "requestCompleted", "disconnected"].contains(status) {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": true, "value": value])
+        } else {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": false,
+                "error": ["code": status, "message": "The read-only Health operation could not be completed. Study data was not changed."]])
+        }
+    }
+
+    func cancelHealthAccess() {
+        healthConsentRequested = false
+        if let requestId = healthAccessRequest {
+            healthAccessRequest = nil
+            healthReply(requestId, value: ["status": "cancelled"])
+        }
+    }
+
+    func confirmHealthAccess() {
+        healthConsentRequested = false
+        guard healthIntegrationAvailable, lifeStoreAvailable, lifeStoreConsent,
+              let requestId = healthAccessRequest else { cancelHealthAccess(); return }
+        let generation = healthGeneration
+        HealthKitReader.shared.requestAuthorization { [weak self] value in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard self.healthGeneration == generation, self.healthAccessRequest == requestId else { return }
+                self.healthAccessRequest = nil
+                self.healthConsent = value["status"] as? String == "requestCompleted"
+                self.healthReply(requestId, value: value)
+            }
+        }
+    }
+
+    private func handleHealth(_ body: [String: Any]) {
+        guard let requestId = body["requestId"] as? String,
+              requestId.range(of: "^[A-Za-z0-9._-]{1,80}$", options: .regularExpression) != nil else { return }
+        guard let operation = body["operation"] as? String,
+              ["capabilities", "requestAccess", "read", "disconnect"].contains(operation) else {
+            healthReply(requestId, value: ["status": "invalid"]); return
+        }
+        let available = healthIntegrationAvailable && lifeStoreAvailable
+        if operation == "capabilities" {
+            dispatch("nativeHealthResult", detail: ["requestId": requestId, "ok": true, "value": [
+                "contractVersion": 1, "owner": "device", "provider": "appleHealth",
+                "available": available, "readOnly": true, "cloud": false,
+                "reason": "Apple Health requires validated native storage, owned signing, Xcode and physical iPhone checks."
+            ]])
+            return
+        }
+        if operation == "disconnect" {
+            healthGeneration += 1; healthConsent = false; cancelHealthAccess()
+            if available { HealthKitReader.shared.cancel() }
+            healthReply(requestId, value: ["status": "disconnected"])
+            return
+        }
+        guard available else { healthReply(requestId, value: ["status": "unavailable"]); return }
+        if operation == "requestAccess" {
+            guard body["consent"] as? Bool == true else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+            guard lifeStoreConsent else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+            guard healthAccessRequest == nil, lifeStoreAccessRequest == nil else { healthReply(requestId, value: ["status": "busy"]); return }
+            healthAccessRequest = requestId; healthConsentRequested = true
+            return
+        }
+        guard healthConsent else { healthReply(requestId, value: ["status": "optInRequired"]); return }
+        guard let days = body["days"] as? Int, (1...31).contains(days) else {
+            healthReply(requestId, value: ["status": "invalid"]); return
+        }
+        let generation = healthGeneration
+        HealthKitReader.shared.read(days: days) { [weak self] value in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard self.healthGeneration == generation else {
+                    self.healthReply(requestId, value: ["status": "cancelled"]); return
+                }
+                self.healthReply(requestId, value: value)
+            }
+        }
+    }
+
+    func cancelLifeStoreAccess() {
+        lifeStoreConsentRequested = false
+        if let requestId = lifeStoreAccessRequest {
+            lifeStoreAccessRequest = nil
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                "error": ["code": "cancelled", "message": "Journal consent was cancelled."]])
+        }
+    }
+
+    func confirmLifeStoreAccess() {
+        guard lifeStoreAvailable, let requestId = lifeStoreAccessRequest else { cancelLifeStoreAccess(); return }
+        lifeStoreConsentRequested = false; lifeStoreAccessRequest = nil; lifeStoreConsent = true
+        dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true,
+            "value": ["status": "consented", "owner": "device"]])
+    }
+
+    private func handleLifeStore(_ body: [String: Any]) {
+        guard let requestId = body["requestId"] as? String,
+              requestId.range(of: "^[A-Za-z0-9._-]{1,80}$", options: .regularExpression) != nil else { return }
+        func reject(_ code: String, _ message: String) {
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                     "error": ["code": code, "message": message]])
+        }
+        guard let operation = body["operation"] as? String,
+              ["capabilities", "requestAccess", "revoke", "read", "write", "clear"].contains(operation) else {
+            reject("invalid", "Unsupported life storage operation."); return
+        }
+        if operation == "capabilities" {
+            dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true, "value": [
+                "contractVersion": 1, "owner": "device", "read": lifeStoreAvailable,
+                "available": lifeStoreAvailable, "consented": lifeStoreConsent,
+                "write": lifeStoreAvailable, "cloud": false, "healthKit": false,
+                "reason": "Protected iPhone health storage is not enabled. Native validation and consent are still required."
+            ]])
+            return
+        }
+        if operation == "revoke" {
+            lifeStoreGeneration += 1; lifeStoreConsent = false; cancelLifeStoreAccess()
+            healthGeneration += 1; healthConsent = false; cancelHealthAccess()
+            if healthIntegrationAvailable { HealthKitReader.shared.cancel() }
+            // An already accepted disk operation may complete; revocation is not deletion or rollback.
+            lifeStoreQueue.async { [weak self] in
+                guard let self else { return }
+                DispatchQueue.main.async {
+                self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true,
+                    "value": ["status": "revoked", "owner": "device"]])
+            } }
+            return
+        }
+        // Reject before inspecting health payloads, disk access or consent changes.
+        guard lifeStoreAvailable else {
+            reject("unavailable", "Protected iPhone health storage is not enabled."); return
+        }
+        if operation == "requestAccess" {
+            guard body["consent"] as? Bool == true else { reject("optInRequired", "Confirm journal access first."); return }
+            guard lifeStoreAccessRequest == nil, healthAccessRequest == nil else { reject("busy", "Finish the current consent request."); return }
+            lifeStoreAccessRequest = requestId; lifeStoreConsentRequested = true
+            return
+        }
+        guard let owner = body["owner"] as? String, owner == "device" else {
+            reject("invalidOwner", "Native device ownership is required."); return
+        }
+        guard lifeStoreConsent else { reject("optInRequired", "Native consent is required."); return }
+        // No web-supplied owner/account/consent value can enable the store.
+        let expectedRevision = body["expectedRevision"] as? Int
+        let json = body["json"] as? String
+        guard operation == "read" || (expectedRevision != nil && expectedRevision! >= 0) else {
+            reject("invalid", "A valid expected revision is required."); return
+        }
+        guard operation != "write" || json != nil else {
+            reject("invalid", "Journal JSON is required."); return
+        }
+        let generation = lifeStoreGeneration
+        let acceptedConsent = lifeStoreConsent
+        lifeStoreQueue.async { [weak self] in
+            guard let self else { return }
+            let result: LifeStoreResult
+            if operation == "read" { result = ProtectedLifeStore.shared.read(owner: owner, consent: acceptedConsent) }
+            else if operation == "write" {
+                result = ProtectedLifeStore.shared.write(owner: owner, expectedRevision: expectedRevision!, json: json!, consent: acceptedConsent)
+            } else {
+                result = ProtectedLifeStore.shared.delete(owner: owner, expectedRevision: expectedRevision!, consent: acceptedConsent)
+            }
+            DispatchQueue.main.async {
+                guard self.lifeStoreGeneration == generation, self.lifeStoreConsent else {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                        "error": ["code": "cancelled", "message": "Journal access ended. Reconcile before retrying a change."]])
+                    return
+                }
+                let value = result.dictionary
+                if value["status"] as? String == "ok" {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": true, "value": value])
+                } else {
+                    self.dispatch("nativeLifeStoreResult", detail: ["requestId": requestId, "ok": false,
+                        "error": ["code": value["status"] as? String ?? "error",
+                                  "message": "The protected journal operation could not be completed. Your study data was not changed."]])
+                }
+            }
+        }
+    }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         // Accept Files requests only from the bundled main document, not embedded or remote pages.
@@ -140,16 +471,20 @@ final class ScheduleBridge: NSObject, ObservableObject, WKScriptMessageHandler, 
               let bundledURL = Bundle.main.url(forResource: "Application", withExtension: "html"),
               message.frameInfo.request.url?.standardizedFileURL == bundledURL.standardizedFileURL,
               let body = message.body as? [String: Any], let action = body["action"] as? String else { return }
-        if action == "haptic" {
+        if action == "health" {
+            handleHealth(body)
+        } else if action == "lifeStore" {
+            handleLifeStore(body)
+        } else if action == "haptic" {
             UISelectionFeedbackGenerator().selectionChanged()
         } else if action == "focusReminder" {
-            syncFocusReminder(endAt: body["endAt"] as? Double)
+            syncFocusReminder(endAt: body["endAt"] as? Double, force: body["force"] as? Bool ?? false)
         } else if action == "requestReminders" {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, _ in
-                DispatchQueue.main.async {
-                    self?.dispatch("nativeReminderPermission", detail: ["granted": granted])
-                }
-            }
+            requestReminderPermission()
+        } else if action == "reminderStatus" {
+            refreshReminderStatus()
+        } else if action == "openReminderSettings" {
+            openReminderSettings()
         } else if action == "import" {
             importing = true
         } else if action == "export", let text = body["text"] as? String {

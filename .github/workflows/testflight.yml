@@ -37,6 +37,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO build
       - name: Check simulator runner safety
         run: python3 scripts/test_iphone_simulator.py
+      - name: Check notification lifecycle logic
+        run: python3 scripts/test_iphone_notifications.py
       - name: Exercise the app in a disposable iPhone simulator
         timeout-minutes: 20
         run: |

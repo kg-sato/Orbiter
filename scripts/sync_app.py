@@ -44,5 +44,13 @@ policy = ("default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inl
           "img-src data: blob:; font-src data:; connect-src data: blob:; "
           "base-uri 'none'; form-action 'none'")
 source = source.replace('<head>', '<head>\n<meta http-equiv="Content-Security-Policy" content="' + policy + '">', 1)
+# Expose the asynchronous native storage contract without enabling journal access.
+# The protected-store release gate and native consent are owned by the wrapper.
+adapter = (root / 'web/native-life-store.js').read_text(encoding='utf-8')
+if 'id="orbiter-native-life-journal"' not in source:
+    adapter += '\n' + (root / 'web/native-life-journal.js').read_text(encoding='utf-8')
+# Transport must exist before the embedded hub creates its native controller.
+csp = '<meta http-equiv="Content-Security-Policy" content="' + policy + '">'
+source = source.replace(csp, csp + '\n<script id="orbiter-native-life-store">\n' + adapter + '\n</script>', 1)
 (root / 'Scheduler' / 'Application.html').write_text(source, encoding='utf-8')
 print(f'Generated offline iPhone bundle {version}; accounts excluded, network denied.')

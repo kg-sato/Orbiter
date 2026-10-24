@@ -31,6 +31,8 @@ const {chromium} = require('playwright-core');
       await page.locator('#mobile-menu').waitFor({state: 'visible'});
       await page.keyboard.press('Escape');
       if (width <= 600) {
+        await page.waitForFunction(() => window.OrbiterHub);
+        await page.evaluate(() => window.OrbiterHub.openStudy());
         for (const name of ['tasks', 'atlas', 'rhythm', 'desk']) {
           const nav = page.locator(`.mobile-nav button[data-page="${name}"]`);
           await nav.click();
