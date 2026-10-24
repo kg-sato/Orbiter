@@ -38,6 +38,7 @@ struct ScheduleScreen: View {
             .onChange(of: scenePhase) { phase in
                 if phase == .active { bridge.dispatch("nativeReminderRefresh", detail: [:]) }
             }
+<<<<<<< HEAD
             .alert("Connect Apple Health?", isPresented: $bridge.healthConsentRequested) {
                 Button("Continue") { bridge.confirmHealthAccess() }
                 Button("Cancel", role: .cancel) { bridge.cancelHealthAccess() }
@@ -50,6 +51,8 @@ struct ScheduleScreen: View {
             } message: {
                 Text("Keep a separate journal on this iPhone for food, sleep, steps, habits and reflections. It is not uploaded or included in study exports. Access lasts for this app session. You can stop access or delete the journal separately.")
             }
+=======
+>>>>>>> dc7db3f6bb4c7a6e249725b8d44a0697ded53f3a
             .overlay {
                 if let error = bridge.loadingError {
                     VStack(spacing: 16) {
