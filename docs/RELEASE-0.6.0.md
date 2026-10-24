@@ -1,39 +1,24 @@
-# Orbiter 0.6.0 · A little universe, earned
+# Orbiter 0.6.0
 
-An original collectible kitten, larger discoveries, and cosmic worlds that respond to you.
+## Your whole day
 
-## Meet the new kitten
+- Move between Today, Study, Health and Life without losing the study planner.
+- Keep an optional, separate local journal for food, sleep, steps, habits and reflections. Manual records stay distinct from imported observations and native study rewards.
+- Enter a focus sanctuary that uses the existing timer; on Windows, native timer and reward authority remain unchanged.
+- Keep drafts through failed saves, import validation and navigation guards, with explicit recovery and deletion controls.
 
-The companion now uses an original Blender-built 3D asset with sculpted cheeks, a friendly smile, a lightweight articulated rig and blink shape keys. Your course cats retain their coat, ears, scarf and charm identities through every growth stage.
+## iPhone source preparation
 
-![Original kitten](../design/cosmic-studies/kitten-three-quarter.png)
+Notification status/reconciliation, pending-reminder recovery and foreground completion handling are integrated in the iPhone source. Protected journal consent, asynchronous persistence and read-only Apple Health foundations are prepared, with release gates still disabled. These sources need current Apple SDK and physical-device validation; this Windows installer does not deliver an iPhone app.
 
-## Discoveries worth showing off
+Apple Health, MacroFactor import and account journal sync are not live connections in this build. Existing supported study-account sync is separate. No cloud migration is deployed by this release preparation.
 
-- Earned appearances coordinate coat tint, markings and scarf colors.
-- Accessories have stronger silhouettes; trails form orbital ribbons and stars.
-- Habitats surround your cat with scenery, a distant planet and a soft shader nebula. Equipped habitats also color the wider workspace and buddy island.
-- Try owned or locked items before equipping. Cancel or Escape restores your current look; locked previews cannot be equipped.
-- Discoveries summarizes your equipped collection. Existing ownership, crate timing and odds are unchanged.
+## Local delivery
 
-![An equipped collection](../design/cosmic-studies/kitten-equipped.png)
+This is a local Windows installer preparation. It has not been published or installed by this task. Existing updater signing is separate from Windows Authenticode signing. A local update manifest does not activate the hosted update feed.
 
-## Three cosmic worlds
+Before manually installing, choose **Quit Orbiter** from the tray; closing the window with × keeps the process running. The native application identifier and existing study storage identity are preserved. Installed upgrade behavior remains a separate check.
 
-Tidal Night, Lunar Mist and Opal Dawn gain layered nebula colors, a ringed planet, stars and bounded cursor parallax. Appearance settings separate decorative atmosphere from motion intensity, with Auto, Low and High graphics quality.
+## Verification scope
 
-![Tidal Night](../design/cosmic-studies/tidal-night.png)
-
-## Everyday study improvements included
-
-Includes the unpromoted 0.5 refinement: coordinated intention and timer controls, appearance previews with Apply/Cancel/Reset, selective wave transitions, growing habitats and non-blocking session recaps. Confirmed account recaps now use authoritative account growth totals.
-
-## Installation and data
-
-The Windows per-user installer bundles the application and model. No Blender, Python, Node, development server or browser window is required to run Orbiter. The database identifier and existing study/reward data are retained.
-
-Save your edits and choose **Quit Orbiter** from its tray menu before installing. Closing the window alone leaves Orbiter running. This personal build has an updater signature using the existing update key, but is **not Authenticode signed**.
-
-## Validation status
-
-See [the local verification report](VERIFICATION-0.6.0.md) for measured results and remaining release gates. Live cross-device account sync, installer upgrade on the user's active profile and physical multi-monitor/scaling checks must be completed before release promotion. Source changes and release artifacts are local; this work does not publish a GitHub release or deploy cloud migrations.
+Source validation includes journal/Health model tests, asynchronous persistence and consent contracts, controlled Swift storage/notification logic, generated iPhone offline/import/export and reminder browser regressions, and life-hub CRUD/draft/import/timer-authority checks across 15 responsive layouts. These do not establish physical-device protection, actual HealthKit access, live cross-device sync, installed upgrade behavior or native performance measurements. Installer version, checksum and updater signature results are recorded separately after the build.

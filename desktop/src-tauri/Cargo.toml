@@ -1,6 +1,6 @@
 [package]
 name = "orbit-companion"
-version = "0.5.3"
+version = "0.6.0"
 description = "An autonomous study companion for Scheduler"
 edition = "2021"
 
