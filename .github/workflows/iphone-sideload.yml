@@ -1,0 +1,42 @@
+name: Build iPhone IPA for personal sideloading
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  iphone-device:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Prepare and validate iPhone sources
+        run: |
+          python3 scripts/sync_app.py
+          python3 scripts/check_iphone.py --sdk
+      - name: Build unsigned physical-device app and package IPA
+        run: |
+          set -euo pipefail
+          xcodebuild -project Scheduler.xcodeproj -scheme Scheduler \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/Orbiter-device" \
+            CODE_SIGNING_ALLOWED=NO build
+          mkdir -p build/iphone-sideload/Payload
+          ditto "$RUNNER_TEMP/Orbiter-device/Build/Products/Release-iphoneos/Scheduler.app" \
+            build/iphone-sideload/Payload/Scheduler.app
+          cd build/iphone-sideload
+          /usr/bin/zip -qry Orbiter-unsigned.ipa Payload
+      - name: Save unsigned IPA for local signing
+        uses: actions/upload-artifact@v7
+        with:
+          name: Orbiter-unsigned-iphone
+          path: build/iphone-sideload/Orbiter-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
