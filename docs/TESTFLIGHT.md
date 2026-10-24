@@ -18,6 +18,7 @@ From the Scheduler checkout in PowerShell, using Python 3.11 or later:
 python scripts/sync_app.py
 python scripts/check_iphone.py
 node scripts/test_iphone.cjs
+node scripts/test_iphone_controls.cjs
 ```
 
 If shared source changes, run the existing `npm.cmd run build:core` first; it embeds shared modules into canonical HTML and invokes iPhone generation. Do not edit generated `Scheduler/Application.html` directly. `sync_app.py` deterministically applies the iPhone offline policy, includes required account-entry styling and privacy copy, and removes unsupported account scripts.
@@ -26,7 +27,7 @@ The browser check uses disposable file-origin storage and a simulated Files brid
 
 ## Compile without signing or upload
 
-The existing `.github/workflows/testflight.yml` supports `upload: false`. It prepares the iPhone bundle, validates versions/privacy/resources, requires an iOS SDK of 26 or later, and performs an unsigned simulator build. Python 3.12 is selected explicitly. A supported Xcode on a Mac or GitHub's macOS runner is required. Running hosted jobs may use billable Actions minutes; this preparation did not dispatch a job.
+The existing `.github/workflows/testflight.yml` supports `upload: false`. It prepares the iPhone bundle, validates versions/privacy/resources, requires an iOS SDK of 26 or later, and performs an unsigned simulator build. Python 3.12 is selected explicitly. A supported Xcode on a Mac or GitHub's macOS runner is required. Running hosted jobs may use billable Actions minutes. The first build-only run passed on 2026-10-22; see the evidence below.
 
 On a Mac with Python 3.11+, from the repository root:
 
@@ -42,6 +43,8 @@ Apple requires the iOS 26 SDK or later for uploads since April 28, 2026. Use an 
 
 ## Native acceptance before distribution
 
+Follow the user-confirmed order in [iPhone acceptance](IPHONE-ACCEPTANCE.md): notifications, physical device, Files picker, then VoiceOver. New notification changes have local contract-test coverage; the successful simulator run below predates those changes and does not validate their native delivery.
+
 Test on simulator and a physical iPhone; record exact device, iOS version and build:
 
 - First launch and relaunch retain schedule, notes, preferences and focus history; upgrade preserves an existing test workspace.
@@ -51,7 +54,34 @@ Test on simulator and a physical iPhone; record exact device, iOS version and bu
 - VoiceOver, larger text, Reduce Motion and graphics failure retain usable controls and readable static artwork. Measure memory/thermal behavior with pond effects enabled and paused.
 - The offline notice and privacy disclosure are accessible; no dead Account button or remote resource requests appear.
 
-No native compilation, signing, physical-device acceptance or TestFlight processing was completed by the Windows preparation.
+The original Windows preparation did not compile native code. The subsequent [build-only run 39834359689](https://github.com/kg-sato/Orbiter/actions/runs/39834359689) compiled commit `af65872bbf550f0096fc8848e79383e6710bc2c0` successfully with Xcode 26.6 / iOS SDK 26.5 on 2026-10-22. Signing/upload was skipped. That run did not launch the app or validate device behavior.
+
+### Automated simulator acceptance
+
+The focused `codex/ios-runtime-verification` worktree adds an opt-in `DEBUG && targetEnvironment(simulator)` harness and `scripts/run_iphone_simulator.py`. Normal launches, Release builds and physical-device builds do not run the harness. It uses fictional data on a newly created disposable simulator; never invoke it against a personal workspace.
+
+The updated build workflow runs the native app after compilation and saves `iphone-simulator-evidence` for 14 days, on success or failure. No signing inputs are used by the simulator step. The focused branch was committed/pushed with user authorization. Native smoke results and workflow-level results are recorded separately below.
+
+Checks cover real WKWebView initialization, offline/privacy disclosure, horizontal overflow, invalid-import preservation, valid native-to-web import, web-to-native JSON export reception, focus start/pause/resume, persisted workspace across process relaunch and a single completion after the process stops before the fictional timer expires. DOM controls are activated programmatically. The export hook observes the actual message handler after its bundled-document guard, then suppresses the system sheet; Files provider interaction remains untested.
+
+From a Mac, after the unsigned Debug build above:
+
+```bash
+python3 scripts/test_iphone_simulator.py
+python3 scripts/run_iphone_simulator.py \
+  --app build/iphone-validation/Build/Products/Debug-iphonesimulator/Scheduler.app \
+  --output build/iphone-simulator
+```
+
+The runner selects a compatible available iPhone/runtime template, creates a new device, and shuts down/deletes only that created UUID. It records the selected device, runtime, version, commit (in CI), phase checks and screenshots. Missing reports, failed checks, mismatched versions or expiry before termination fail the job. Windows runner unit tests verify orchestration and cleanup only; they do not execute WebKit or Swift. Actual touch/keyboard, landscape, system Files pickers, permission handling, notifications, VoiceOver, rendering quality and physical-device acceptance still need native verification.
+
+This approach uses Apple's [Simulator command-line guidance](https://developer.apple.com/videos/play/wwdc2020/10647/).
+
+On 2026-10-22, [run 39869098312](https://github.com/kg-sato/Orbiter/actions/runs/39869098312) completed successfully at commit `9c0743499edc5e0cad71a9be07e2e83d35787ade`, using Xcode 26.6 / iOS SDK 26.5 and an iPhone 17 simulator. Compilation, all 15 runner tests and all 22 native WKWebView checks passed. Both phase reports contain `success: true` with no errors; the final report records `status: passed` and confirms the app stopped before expiry. Both native PNGs were downloaded, checksum-verified and visually inspected. Signing/TestFlight upload was skipped.
+
+The recovery check force-closes only the PID returned for this app after verifying the current host UID and exact executable inside the newly created simulator. It confirms process exit, waits for the fictional three-minute timer to expire, then relaunches and requires one completion. This is crash/relaunch coverage, not a graceful-exit or physical-device test. The driver uses this guarded process stop because hosted `simctl terminate` hung; it requires app-produced WKWebView PNGs because full-simulator framebuffer capture also stalled. Earlier failed setup attempts are retained in GitHub history and must not be mistaken for passing runs.
+
+The next phone-controls step restored a missing Quick Capture SVG and enlarged Search/More to 44px targets. `scripts/test_iphone_controls.cjs` passed at 320×568, 390×844, 430×932 and 844×390, including center hit tests, dialogs and mobile navigation. Screenshots were inspected, and the existing offline browser regression passed. This Chromium coverage does not establish native touch/VoiceOver acceptance.
 
 ## Distribution setup still needed
 
