@@ -1,7 +1,7 @@
 export const displayName = value => String(value ?? "").replace(/\b[a-z]/g,c=>c.toUpperCase());
 // Shared presentation only. Rust remains the authority for credits and item grants.
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const calm = () => matchMedia('(prefers-reduced-motion:reduce)').matches || ['reduced-motion','calm','quiet'].some(c=>document.body.classList.contains(c));
+const calm = () => matchMedia('(prefers-reduced-motion:reduce)').matches || Number(document.body.dataset.motionIntensity ?? 70) === 0 || ['reduced-motion','calm','quiet'].some(c=>document.body.classList.contains(c));
 const swatches = ['#ecc0ad','#e7dfcb','#99bad0','#dfc391','#acc7b5','#c5b4df','#dda6bd','#cbdfe0','#9b94c0','#91d8c1','#d8c7ed','#aaa7dc'];
 export const lookColor = id => ({mint:'#b4e6d5',lilac:'#c8b5eb',opal:'#e6ddca',rose:'#e0b6c9',aurora:'#8ee4c8',eclipse:'#e9ba90',indigo:'#939ddd',singularity:'#aca0db',cultivation:'#ccd7a0'}[id]||swatches[Math.max(0,(Number(id?.slice(-2))||1)-1)%12]);
 export function growth(ms = 0) {
@@ -10,6 +10,7 @@ export function growth(ms = 0) {
   return {stage,label:['Baby','Kitten','Young cat','Adult'][stage],focusedMs:ms,progress:stage===3?1:(hours-thresholds[stage])/(thresholds[stage+1]-thresholds[stage]),nextAtMs:stage===3?null:thresholds[stage+1]*3600000};
 }
 export function crateArt() {
+  if(window.OrbiterChests)return `<span class="orb-crate-art orb-crate-model" aria-hidden="true"><img src="${window.OrbiterChests.portrait()}" alt=""></span>`;
   return '<span class="orb-crate-art" aria-hidden="true"><i class="orb-crate-body"></i><i class="orb-crate-lid"></i><i class="orb-crate-star">✦</i></span>';
 }
 export function preview(item = {}) {
@@ -75,7 +76,7 @@ function renderRecap() {
   recapCard.querySelector('[data-recap-task]')?.addEventListener('click',()=>window.OrbiterUI?.openTaskById(current.latestRecap.taskId));
   recapCard.querySelector('[data-recap-crate]')?.addEventListener('click',()=>open(false));
 }
-let current = null, card = null, dialog = null, busy = false, slot = 'appearance';
+let current = null, card = null, dialog = null, busy = false, slot = 'appearance', revealSerial = 0;
 function render() {
   if(!card)return;
   if(!current&&dialog?.open){window.OrbiterCats?.cancelPreview();dialog.close();}
@@ -102,32 +103,38 @@ function bindCollection(host) {
 }
 function message(text) {dialog.querySelector('.orb-reward-status').textContent=String(text);}
 async function open(collectionOnly) {
-  if(!current){return;}
+  if(!current || busy){return;}
+  const serial=++revealSerial;
   dialog.showModal();message('');
   if(collectionOnly){renderCollection();return;}
   dialog.dataset.view='reveal';
   const host=dialog.querySelector('.orb-reward-content');host.innerHTML=crateArt();
   if(!current.rewards.chests){host.innerHTML=`${crateArt()}<h3>A little more momentum.</h3><p>${Math.ceil((1800000-current.rewards.crateProgressMs)/60000)} focused minutes to your next crate.</p>`;return;}
-  if(busy)return;busy=true;
+  busy=true;
+  let chestPresentation;
   try {
     host.classList.add('orb-opening');
-    const result=await action('chest');
+    host.setAttribute('aria-busy','true');message('Opening your discovery…');
+    chestPresentation=window.OrbiterChests?.play(host,{quiet:calm(),onPhase:phase=>{if(dialog.open&&serial===revealSerial)message(phase==='complete'?'Saving your discovery…':phase==='open'?'A new discovery…':phase==='unlock'?'A little moonlight…':'Opening your discovery…');}});
+    const presentation=chestPresentation?.finished||Promise.resolve();
+    const [result]=await Promise.all([action('chest'),presentation]);
     const reward=result?.reward;
 
-    if(!dialog.open)return;
+    if(!dialog.open || serial!==revealSerial)return;
     host.classList.remove('orb-opening');
+    host.setAttribute('aria-busy','false');message('Discovery saved to your collection.');
     host.innerHTML=reward?`${preview(reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(displayName(reward.name))}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';
     window.OrbiterLake?.play({kind:'crate',target:host});
     host.querySelector('[data-reveal-equip]')?.addEventListener('click',async()=>{try{await action('settings',{[reward.slot]:reward.id});message('Equipped');}catch(e){message(e);}});
     window.OrbiterCats?.celebrate();
-  }catch(e){message(e);}finally{busy=false;host.classList.remove('orb-opening');}
+  }catch(e){if(dialog.open&&serial===revealSerial){host.innerHTML=`${crateArt()}<h3>Discovery paused</h3><p>Check your connection, then open Discoveries again.</p>`;message(e);}}finally{chestPresentation?.cancel('released');busy=false;host.classList.remove('orb-opening');host.setAttribute('aria-busy','false');}
 }
 function init() {
   const hero=document.getElementById('now-card');if(!hero)return;
   card=document.createElement('section');card.className='orb-reward-dashboard';card.hidden=hero.hidden;card.setAttribute('aria-label','Companion progress');hero.append(card);
   dialog=document.createElement('dialog');dialog.className='orb-reward-dialog';dialog.innerHTML='<header><div><small>YOUR LITTLE UNIVERSE</small><h2>Discoveries</h2></div><button aria-label="Close discoveries">×</button></header><div class="orb-reward-content"></div><p class="orb-reward-status" role="status"></p><details><summary>How discoveries work</summary><p>Every 30 focused minutes earns a crate. Common 70% · Rare 25% · Mythic 5%. Only unowned items; unavailable tiers redistribute. Complete collections earn constellation stars.</p></details>';
   (document.getElementById('native-planner')||document.body).append(dialog);dialog.querySelector('header button').onclick=()=>dialog.close();
-  dialog.addEventListener('close',()=>window.OrbiterCats?.cancelPreview());
+  dialog.addEventListener('close',()=>{revealSerial++;window.OrbiterChests?.cancel('closed');window.OrbiterCats?.cancelPreview();});
   recapCard=document.createElement('section');recapCard.className='orb-session-recap';recapCard.setAttribute('aria-label','Latest focus session');recapCard.hidden=true;hero.after(recapCard);
   render();
 }
