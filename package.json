@@ -1,7 +1,7 @@
 {
   "name": "orbiter-study",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "scripts": {
     "build:core": "python scripts/build_core.py",
     "dev:lan": "python scripts/serve_local.py --bind 127.0.0.1",

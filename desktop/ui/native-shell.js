@@ -19,7 +19,7 @@
   if(previous?.timer.active&&!v.timer.active&&!newRecap)buddy.cancelFeedback();
   if(newRecap){window.OrbiterCats.celebrate();if(mode==='buddy'&&presentation==='compact'&&!v.timer.active){if(previous?.timer.active){buddy.feedback('victory');const session=v.latestRecap.sessionId;buddy.recapTimer=setTimeout(()=>{if(!document.hidden&&mode==='buddy'&&presentation==='compact'&&!state.timer.active&&state.latestRecap?.sessionId===session)buddy.openRecap();},buddy.dataset.calm==='true'||Number(document.body.dataset.motionIntensity)===0?120:1900);}else buddy.openRecap();}}}}
  function setView(next){
-  buddy.cancelFeedback();
+  buddy.cancelFeedback();presentationSerial++;window.OrbiterChests?.cancel('mode-change');
   window.dispatchEvent(new CustomEvent('orbiter-mode-change'));mode=next;document.body.dataset.nativeMode=next;presentation='compact';buddy.setPresentation();
   if(next==='buddy'){
    for(const dialog of document.querySelectorAll('#native-planner dialog[open]')){window.OrbiterSuspendedDialogs.add(dialog);suspended.push(dialog);dialog.close();}
@@ -34,7 +34,7 @@
   mountCat();setTimeout(()=>invoke('ui_ready',{diagnostics:diagnostics()}).catch(()=>{}),400);
  }
  const switchMode=mode=>invoke('switch_mode',{mode}).catch(notice);
- async function present(kind){buddy.cancelFeedback();const ticket=++presentationSerial;window.OrbiterLake?.cancel('buddy-presentation');if(kind!=='reward')window.OrbiterCats.cancelPreview();presentation=kind;buddy.setPresentation();await invoke('buddy_presentation',{kind}).catch(notice);if(ticket!==presentationSerial)return;mountCat();requestAnimationFrame(()=>{if(mode==='buddy'&&ticket===presentationSerial)window.OrbiterLake?.play({kind:kind==='compact'?'tab':'popup',target:kind==='compact'?buddy:buddy.$(kind==='options'?'options':'reward-panel'),duration:kind==='compact'?350:600});});}
+ async function present(kind){buddy.cancelFeedback();window.OrbiterChests?.cancel('presentation-change');const ticket=++presentationSerial;window.OrbiterLake?.cancel('buddy-presentation');if(kind!=='reward')window.OrbiterCats.cancelPreview();presentation=kind;buddy.setPresentation();await invoke('buddy_presentation',{kind}).catch(notice);if(ticket!==presentationSerial)return;mountCat();requestAnimationFrame(()=>{if(mode==='buddy'&&ticket===presentationSerial)window.OrbiterLake?.play({kind:kind==='compact'?'tab':'popup',target:kind==='compact'?buddy:buddy.$(kind==='options'?'options':'reward-panel'),duration:kind==='compact'?350:600});});}
  class OrbiterBuddy extends HTMLElement {
   constructor(){super();this.attachShadow({mode:'open'});this.shadowRoot.innerHTML=`
   <link rel="stylesheet" href="./buddy.css" /><link rel="stylesheet" href="./web/rewards.css" /><link rel="stylesheet" href="./web/glass.css" /><link rel="stylesheet" href="./web/cosmic.css" />
@@ -111,9 +111,33 @@
   setPresentation(){this.dataset.presentation=presentation;this.$('options').hidden=presentation!=='options';this.$('reward-panel').hidden=presentation!=='reward';}
   bindInventory(host){host.querySelectorAll('[data-slot-filter]').forEach(b=>b.onclick=()=>{slot=b.dataset.slotFilter;this.renderInventory();});host.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>{const item=state.catalog.find(c=>c.id===b.dataset.equip);this.$('reward-panel').dataset.view='preview';host.innerHTML=R.equipmentPreview(state,item);window.OrbiterCats.previewEquipment(host.querySelector('.orb-preview-model'),{[item.slot]:item.id});host.querySelector('[data-preview-cancel]').onclick=()=>{window.OrbiterCats.cancelPreview();this.$('reward-panel').dataset.view='collection';this.renderInventory();};host.querySelector('[data-preview-equip]').onclick=()=>act('settings',{[item.slot]:item.id}).then(()=>{window.OrbiterCats.cancelPreview();this.$('reward-panel').dataset.view='collection';this.renderInventory();}).catch(()=>{});});}
   renderInventory(){const host=this.$('inventory');host.innerHTML=R.collection(state,slot);this.bindInventory(host);if(presentation==='reward'&&this.$('reward-panel').dataset.view==='collection'){const content=this.$('reward-content');content.innerHTML=R.collection(state,slot);this.bindInventory(content);}}
-  async openReward(collectionOnly=false){this.recapView=false;this.$('reward-content').classList.remove('recap-view');if(busy)return;const panel=this.$('reward-panel'),host=this.$('reward-content');panel.dataset.view=collectionOnly?'collection':'reveal';await present('reward');if(collectionOnly){this.renderInventory();return;}
-   host.innerHTML=R.crateArt();if(!state.rewards.chests){host.innerHTML=R.crateArt()+`<h3>A little more momentum.</h3><p>${Math.ceil((1800000-state.rewards.crateProgressMs)/60000)} focus minutes to your next crate.</p>`;return;}
-   busy=true;host.classList.add('orb-opening');try{const v=await act('chest'),reward=v.reward;if(presentation!=='reward')return;host.classList.remove('orb-opening');host.innerHTML=R.preview(reward)+`<small class="orb-rarity">${reward.rarity}</small><h3></h3>`+(reward.id?'<button id="equip-reveal" class="primary">Equip discovery</button>':'<p>A new light in your constellation.</p>');host.querySelector('h3').textContent=R.displayName(reward.name);host.querySelector('#equip-reveal')?.addEventListener('click',()=>act('settings',{[reward.slot]:reward.id}).then(()=>notice('Equipped')).catch(()=>{}));window.OrbiterLake?.play({kind:'crate',target:host});window.OrbiterCats.celebrate();}catch(e){notice(e);}finally{busy=false;host.classList.remove('orb-opening');}
+  async openReward(collectionOnly=false){
+   if(busy)return;
+   // Lock before resizing so rapid clicks cannot consume multiple earned crates.
+   let chestPresentation;busy=true;this.recapView=false;const panel=this.$('reward-panel'),host=this.$('reward-content');
+   host.classList.remove('recap-view','orb-revealed','orb-opening');panel.dataset.view=collectionOnly?'collection':'reveal';
+   try{
+    const showing=present('reward'),ticket=presentationSerial;await showing;if(mode!=='buddy'||presentation!=='reward'||ticket!==presentationSerial)return;this.$('reward-heading').textContent=collectionOnly?'Discoveries':'Your discovery';
+    if(collectionOnly){this.renderInventory();return;}
+    host.innerHTML=R.crateArt();
+    if(!state.rewards.chests){host.innerHTML=R.crateArt()+`<h3>A little more momentum.</h3><p>${Math.ceil((1800000-state.rewards.crateProgressMs)/60000)} focus minutes to your next crate.</p>`;return;}
+    host.innerHTML='<div class="crate-stage">'+R.crateArt()+'<span class="crate-halo" aria-hidden="true"></span></div><p class="crate-caption" role="status">Opening your discovery…</p>';
+    const quiet=this.dataset.calm==='true'||Number(document.body.dataset.motionIntensity)===0;
+    host.classList.toggle('orb-opening',!quiet);host.setAttribute('aria-busy','true');
+    // The native action runs once. Presentation waits independently for the lid,
+    // even when a local RPC resolves before the browser's first paint.
+    chestPresentation=window.OrbiterChests?.play(host.querySelector('.crate-stage'),{quiet,onPhase:phase=>{const caption=host.querySelector('.crate-caption');if(caption)caption.textContent=phase==='complete'?'Saving your discovery…':phase==='open'?'A new discovery…':phase==='unlock'?'A little moonlight…':'Opening your discovery…';}});
+    const opening=chestPresentation?.finished||Promise.resolve();
+    const [v]=await Promise.all([act('chest'),opening]);
+    if(mode!=='buddy'||presentation!=='reward'||ticket!==presentationSerial)return;
+    const reward=v.reward;if(!reward)throw Error('Your discovery was saved. Reopen Discoveries to view it.');
+    host.classList.remove('orb-opening');host.classList.toggle('orb-revealed',!quiet);
+    host.innerHTML=R.preview(reward)+`<small class="orb-rarity">${reward.rarity}</small><h3></h3>`+(reward.id?'<button id="equip-reveal" class="primary">Equip discovery</button>':'<p>A new light in your constellation.</p>');
+    host.querySelector('h3').textContent=R.displayName(reward.name);
+    host.querySelector('#equip-reveal')?.addEventListener('click',()=>act('settings',{[reward.slot]:reward.id}).then(()=>notice('Equipped')).catch(()=>{}));
+    window.OrbiterCats.celebrate();
+   }catch(e){notice(e);if(presentation==='reward'&&panel.dataset.view==='reveal')host.innerHTML='<h3>Discovery paused</h3><p>Your collection is saved. Open Discoveries to check your items.</p>';}
+   finally{chestPresentation?.cancel('released');busy=false;host.classList.remove('orb-opening');host.removeAttribute('aria-busy');}
   }
   update(v){const $=this.$,p=v.workspace.study.preferences,g=selectedGrowth();document.body.dataset.motionIntensity=String(p.motionIntensity??70);document.body.dataset.effectQuality=p.effectQuality||'auto';this.dataset.calm=String(!!(v.settings.calm||v.settings.quiet||p.motion||matchMedia('(prefers-reduced-motion:reduce)').matches));this.dataset.focusing=String(v.timer.active);this.dataset.growth=String(g.stage);this.style.setProperty('--accent',({mint:'#b4e6d5',lilac:'#c8b5eb',apricot:'#edbfa0'})[p.accent]||'#b4e6d5');this.style.setProperty('--orbiter-accent',this.style.getPropertyValue('--accent'));this.dataset.solid=String(!!p.solid||p.material==='quiet');this.style.setProperty('--surface',p.material==='quiet'?'#253344':'#2a4152');if(!equipmentPreviewing)this.dataset.habitat=v.settings.habitat||'';this.dataset.preset=p.scenePreset||'tidal-night';this.style.setProperty('--atmosphere',String((p.atmosphereStrength??50)/100));
    $('intention').textContent=v.timer.title||'Open focus';$('intention').title=$('intention').textContent;const label=v.timer.active?'Pause':v.timer.remainingMs<v.timer.duration*60000&&v.timer.remainingMs>0?'Resume':'Start';if(this.toggleLabel!==label){this.toggleLabel=label;$('toggle').innerHTML=icon(v.timer.active?'pause':'play')+'<span>'+label+'</span>';$('toggle').setAttribute('aria-label',label+' focus');}$('finish').disabled=!v.timer.active&&(v.timer.remainingMs===0||v.timer.remainingMs>=v.timer.duration*60000);$('status').textContent=v.timer.reason||g.label+' · growing with you';$('status').title=$('status').textContent;

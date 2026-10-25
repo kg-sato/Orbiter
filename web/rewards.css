@@ -25,3 +25,11 @@
 @keyframes reward-local-tide{from{transform:translate(-45%,35%) rotate(-18deg);opacity:.9}to{transform:translate(45%,-35%) rotate(12deg);opacity:0}}
 .reduced-motion .orb-reward-content::before,.calm .orb-reward-content::before,.quiet .orb-reward-content::before,:host([data-calm=true]) #reward-content::before{animation:none!important;display:none}
 @media(prefers-reduced-motion:reduce){.orb-reward-content::before,#reward-content::before{animation:none!important;display:none}}
+
+/* Shared modeled chest presentation. */
+.orb-reward-content:has(.orb-chest-stage){min-height:260px;display:flex;align-items:center;justify-content:center}
+.orb-reward-content>.orb-chest-stage{height:260px!important;max-width:360px}
+.orb-opening:has(.orb-chest-stage)::before{display:none!important}
+.orb-opening .orb-chest-stage,.orb-opening .orb-chest-stage *{animation:none!important;transform:none}
+
+.orb-crate-model{display:inline-block;position:relative;transform:none!important}.orb-crate-model img{display:block;width:100%;height:100%;object-fit:contain}.orb-crate-model::before,.orb-crate-model::after{display:none!important}
