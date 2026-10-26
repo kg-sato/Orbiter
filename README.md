@@ -2,7 +2,7 @@
 
 A study planner with a small companion to keep you company while you work. Plan your week, manage assignments and tests, keep course notes, and turn focused study into growth for your kitten and its pond habitat.
 
-**Current source version: 0.6.0.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
+**Current source version: 0.6.1.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
 
 ## What you can do
 
@@ -13,8 +13,12 @@ A study planner with a small companion to keep you company while you work. Plan 
 - **My Rhythm:** arrange study time and review your week.
 - **Focus:** start, pause, resume and finish sessions; review credited time and companion growth afterward.
 - **Discoveries:** earn cosmetics through native Windows focus, preview equipment and build your companion's collection.
+- **Companion field guide:** open it from the Study focus panel to choose a main/course kitten, inspect three portrait angles, preview all four growth stages and see native growth/equipment details. Previews do not change earned progress.
+- **Seven-day rituals:** in Life, review and update each habit over the seven days ending on the selected journal date. History uses existing journal records and preserves drafts and earned progress.
 
 The interface uses a blue pond with koi, lily pads and moving mist. Tidal Night, Lunar Mist and Opal Dawn provide different lighting. Appearance controls include accent, material, atmosphere, motion intensity and graphics quality, with reduced-motion and static fallbacks.
+
+A separate [lightweight companion trial](design/companion-lite/README.md) compares Blender-rendered sprite playback with the current live scene. It includes measured results and a local preview; the application's default renderer remains unchanged.
 
 ## Choose your version
 
@@ -65,6 +69,16 @@ npm.cmd run desktop:prepare
 
 The first command embeds shared modules and regenerates the offline iPhone and fictional preview copies. The second prepares the Windows frontend. Native development, build prerequisites and focused checks are described in [desktop/README.md](desktop/README.md#development).
 
+To reuse an existing matching dependency installation in a worktree, set `ORBITER_NODE_MODULES` to its absolute `node_modules` path before those commands. For this computer in PowerShell:
+
+```powershell
+$env:ORBITER_NODE_MODULES = 'C:\Users\kgsat\Documents\Scheduler\node_modules'
+npm.cmd run build:core
+npm.cmd run desktop:prepare
+```
+
+This reads the existing packages without copying or installing them. Keep their versions aligned with this checkout's lockfile. Unset the variable to use this checkout's own dependencies. Browser regression scripts can use `NODE_PATH` pointing to the same folder.
+
 | Path | Purpose |
 | --- | --- |
 | `Application.html` | Canonical planner UI and integration |
@@ -78,6 +92,8 @@ The first command embeds shared modules and regenerates the offline iPhone and f
 | `build/` | Ignored generated frontends, captures and local installers |
 
 ## Project guidance and verification
+
+The [current cycle](docs/agents/CURRENT-CYCLE.md) defines evidence-based optimization and cleanup while preserving existing product and workflow preferences.
 
 - [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).
 - [Compact buddy design and test scope](design/compact-buddy/README.md).

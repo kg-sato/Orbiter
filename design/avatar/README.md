@@ -31,6 +31,8 @@ The 0.6.1 reference refinement removes cheek lobes and painted-on ear capsules, 
 
 At runtime, pieces proven to have exactly one bone influence are attached directly to that bone, retaining morph targets. This avoids unnecessary GPU skinning shaders while preserving the exported rig and identical articulated movement. Any future mesh with blended weights remains skinned normally.
 
+Rigid classification is cached by shared geometry with attribute/version invalidation. `node scripts/test_avatar_cache.cjs` checks the shipped skin data and repeated-clone work. On 2026-10-25, the existing local Roblox Blender export validator successfully imported the asset with eight bones; Pillow comparison found all 31 controlled before/after portraits pixel-identical after caching. See [local tool validation](../../docs/LOCAL-ART-TOOLS.md). Disposable cosmic regression captures now go to `build/cosmic-studies/`, preserving historical artwork.
+
 ## Research applied
 
 - [Blender Studio stylized character workflow](https://studio.blender.org/training/stylized-character-workflow/): design exploration, sculpting, retopology and expression tests.

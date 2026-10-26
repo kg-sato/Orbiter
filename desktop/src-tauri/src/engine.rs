@@ -881,25 +881,25 @@ impl Backend {
         }
     }
     pub async fn run(self: Arc<Self>) {
+        let mut completion_failed = false;
         loop {
             let delay = {
                 let s = self.store.lock().unwrap();
-                if s.timer.active {
-                    Duration::from_millis(s.remaining().min(30000))
-                } else {
-                    Duration::from_secs(60)
-                }
+                s.checkpoint_delay(completion_failed)
             };
             tokio::select! {_=tokio::time::sleep(delay)=>{},_=self.wake.notified()=>{}}
             let (active, remaining) = {
                 let s = self.store.lock().unwrap();
                 (s.timer.active, s.remaining())
             };
+            completion_failed = false;
             if active {
                 // Checkpoint at most every 30 seconds; a crash never credits unobserved time.
                 if remaining == 0 {
                     if self.action("finish", json!({})).is_ok() {
                         self.notify("Focus complete", "Your time is saved. Take a breath.");
+                    } else {
+                        completion_failed = true;
                     }
                 } else {
                     let mut s = self.store.lock().unwrap();
@@ -966,6 +966,19 @@ impl Backend {
     }
 }
 impl Store {
+    fn checkpoint_delay(&self, completion_failed: bool) -> Duration {
+        if !self.timer.active {
+            return Duration::from_secs(60);
+        }
+        let remaining = self.remaining();
+        // Failed completion rolls back the active, expired timer. Bound retries
+        // rather than repeatedly writing to a full or unavailable database.
+        if completion_failed && remaining == 0 {
+            Duration::from_secs(1)
+        } else {
+            Duration::from_millis(remaining.min(30000))
+        }
+    }
     pub fn remaining(&self) -> u64 {
         self.timer
             .remaining_ms
@@ -1180,6 +1193,7 @@ mod tests {
     #[test]
     fn failed_recap_write_rolls_back_credit_and_completion() {
         let b = backend();
+        b.action("configure", json!({"duration":1})).unwrap();
         b.action("start", json!({})).unwrap();
         {
             let mut s = b.store.lock().unwrap();
@@ -1189,6 +1203,13 @@ mod tests {
         assert!(b.action("finish", json!({})).is_err());
         assert_eq!(b.snapshot()["rewards"]["xp"], 0);
         assert!(b.snapshot()["latestRecap"].is_null());
+        {
+            let s = b.store.lock().unwrap();
+            assert!(s.timer.active);
+            assert_eq!(s.remaining(), 0);
+            assert_eq!(s.checkpoint_delay(false), Duration::ZERO);
+            assert_eq!(s.checkpoint_delay(true), Duration::from_secs(1));
+        }
         b.store
             .lock()
             .unwrap()
@@ -1197,6 +1218,10 @@ mod tests {
             .unwrap();
         b.action("finish", json!({})).unwrap();
         assert_eq!(b.snapshot()["rewards"]["xp"], 1);
+        assert_eq!(
+            b.store.lock().unwrap().checkpoint_delay(true),
+            Duration::from_secs(60)
+        );
     }
     #[test]
     fn cloud_recap_waits_for_confirmed_account_totals() {

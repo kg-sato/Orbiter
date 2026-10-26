@@ -13,6 +13,8 @@ Orbiter is a study planner with a Windows Tauri buddy, browser account sync, and
 
 ## Read on demand
 
+- Apply the [current cycle](docs/agents/CURRENT-CYCLE.md) when assessing product improvements, optimization or cleanup; retain the boundaries and existing preferences in this file.
+
 - Before implementation, debugging, design or packaging: [project workflow](docs/agents/WORKFLOW.md).
 - At a fresh chat, handoff or release: [current checkpoint](docs/agents/CHECKPOINT.md). Recheck changing facts against the repository. Start with this compact handoff instead of importing the old conversation or reading every release/design document.
 - For setup and source locations: [README](README.md).

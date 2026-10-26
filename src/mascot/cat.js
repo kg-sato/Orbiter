@@ -162,6 +162,31 @@ function quality(){const q=document.body.dataset.effectQuality||'auto';return q;
 let pondWorld=null,portraitMode=false,requestedCode=0;
 let renderer=null,scene=null,camera=null,keyLight=null,cat=null,target=null,currentCode=null,equipment={},growthMs=0,starCount=0,frame=0,last=0,phase=0,visible=true,focus=false,paused=false,celebrateUntil=0,pet=false,tx=0,ty=0,x=0,y=0,pawUntil=0,pawSide=0,viewWidth=0,viewHeight=0,frames=0,stretchUntil=0,lastPat=0;
 const portraits=new Map();let mainCode;
+// A shared canvas can be live in only one host. Park its actual rendered kitten
+// in the previous visible host rather than exposing a different fallback cat.
+const parkedSnapshots=new Map(),snapshotLimit=8;
+function clearSnapshot(host){const image=parkedSnapshots.get(host);if(image){image.remove();image.removeAttribute('src');parkedSnapshots.delete(host);}host?.classList.remove('cat-snapshot-ready');}
+function parkSnapshot(host){
+ if(!host||!host.isConnected||portraitMode||!renderer||!cat||renderer.domElement.parentNode!==host||document.hidden)return;
+ const bounds=host.getBoundingClientRect();if(bounds.width<=0||bounds.height<=0||renderer.getContext().isContextLost())return;
+ let canvas;
+ try{
+  // preserveDrawingBuffer is false: redraw synchronously, then copy immediately.
+  // Re-render after draw's adaptive resize too, which can clear the new buffer.
+  resize();draw(performance.now());renderer.setRenderTarget(null);renderer.setViewport(0,0,renderer.domElement.width,renderer.domElement.height);renderer.render(scene,camera);
+  const scale=Math.min(1,240/Math.max(bounds.width,bounds.height));
+  canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bounds.width*scale));canvas.height=Math.max(1,Math.round(bounds.height*scale));
+  const context=canvas.getContext('2d');if(!context)return;
+  context.drawImage(renderer.domElement,0,0,canvas.width,canvas.height);
+  const image=new Image();image.dataset.catSnapshot='true';image.alt='';image.setAttribute('aria-hidden','true');image.draggable=false;image.width=canvas.width;image.height=canvas.height;
+  image.style.cssText='display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none';image.src=canvas.toDataURL('image/png');
+  clearSnapshot(host);
+  for(const [old,snapshot] of parkedSnapshots)if(!old.isConnected||snapshot.parentNode!==old)clearSnapshot(old);
+  host.append(image);host.classList.add('cat-snapshot-ready');parkedSnapshots.set(host,image);
+  while(parkedSnapshots.size>snapshotLimit)clearSnapshot(parkedSnapshots.keys().next().value);
+ }catch(error){/* Capture failure leaves the established static fallback intact. */}
+ finally{if(canvas)canvas.width=canvas.height=0;}
+}
 let previewState=null,previewTarget=null;
 try{const old=Number(localStorage.getItem('orbiter.last-cat'));mainCode=(old+1+Math.floor(Math.random()*255))%256;localStorage.setItem('orbiter.last-cat',String(mainCode));}catch{mainCode=Math.floor(Math.random()*256);}
 function calm(){return quality()==='low'||Number(document.body.dataset.motionIntensity??70)===0||matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('reduced-motion')||document.body.classList.contains('calm')||document.body.classList.contains('quiet');}
@@ -227,8 +252,9 @@ export function mount(host,code=mainCode,options={}){
  if(chestLease){chestLease.restore={host,code,options};return;}
  requestedCode=code;
  if(previewState&&host!==previewTarget){previewState={host,code,options};return;}
- if(target!==host){target?.classList.remove('cat-3d-ready');target=host;}
+ if(target!==host){if(host&&target)parkSnapshot(target);target?.classList.remove('cat-3d-ready');target=host;}
  if(!host){cancelAnimationFrame(frame);frame=0;return;}
+ clearSnapshot(host);
  focus=!!options.focus;paused=!!options.paused;equipment=options.equipment||{};growthMs=options.growthMs||0;starCount=options.stars||0;
  const key=JSON.stringify([equipment.appearance,equipment.halo,equipment.trail,equipment.habitat,document.body.dataset.preset,growth(growthMs).stage,Math.min(starCount,12)]);if(cat?.equipmentKey!==key){currentCode=null;}
  if(assetStatus().loaded){host.querySelectorAll('[data-avatar-loading]').forEach(n=>n.remove());delete host.dataset.catFallback;}
