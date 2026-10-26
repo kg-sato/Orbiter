@@ -1,0 +1,142 @@
+{
+  "source": "src/mascot/assets/kitten.glb",
+  "source_sha256": "8c3767883f022a3fdd4ae3069bb27e55c722d9df2c2f52f5cc9d38987c1bb168",
+  "blender": "5.3.0 Beta",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "samples": 8,
+  "identity": "Neutral original coat; ear variant 0; authored neutral proportions",
+  "hidden_variants": [
+    "EarL1",
+    "EarL2",
+    "EarL3",
+    "EarR1",
+    "EarR2",
+    "EarR3",
+    "InnerL1",
+    "InnerL2",
+    "InnerL3",
+    "InnerR1",
+    "InnerR2",
+    "InnerR3",
+    "TuftL",
+    "TuftR"
+  ],
+  "conditions": "Orthographic near-front camera, three soft area lights, transparent film; breathing and original Blink morph",
+  "limitations": [
+    "One fixed identity, angle, lighting and neutral pose only",
+    "Runtime growth, procedural coat paint, scarf, charm and earned cosmetics are not represented",
+    "Not a pixel-identical substitute for the Three.js renderer",
+    "Preview trial only; no default application renderer change"
+  ],
+  "asset": "kitten-idle.webp",
+  "format": "lossless WebP horizontal sprite strip (not animated WebP)",
+  "frames": 16,
+  "fps": 8,
+  "duration_seconds": 2.0,
+  "frame_width": 192,
+  "frame_height": 192,
+  "atlas_width": 3072,
+  "atlas_height": 192,
+  "decoded_rgba_bytes": 2359296,
+  "file_bytes": 215726,
+  "asset_sha256": "35f7a15087057b8a68cf56100774d67f7bd347faeb98ce93d17bd5a9bd68d346",
+  "frame_alpha_bounds": [
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ],
+    [
+      38,
+      22,
+      158,
+      178
+    ]
+  ]
+}

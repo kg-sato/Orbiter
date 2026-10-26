@@ -1,8 +1,66 @@
 # Orbiter coordination checkpoint
 
-Updated **2026-10-24** from this chat and the local repository. This is a handoff, not a release approval. Recheck status and versions before acting.
+Updated **2026-10-26** from this chat and the local repository. This is a handoff, not a release approval. Recheck status and versions before acting.
 
 ## Observed state
+
+### One-time follow-up commit/push authorization — 2026-10-26
+
+- User explicitly requested “commit and push for me this one time.” The 11-file continuation inventory matched the verified working sources, with an empty index and base `2e95109`, on `codex/companion-life-improvements`. This authorizes one follow-up commit and normal push to the existing PR #26 branch; it is not standing authorization for later commits, merges, releases or deployments. The sections below record the pre-commit implementation and verification state.
+
+### Hidden/offscreen rendering continuation — 2026-10-26
+
+- User requested continued improvement after PR #26. Reproduced wasted rendering behind the Field Guide (10 extra kitten frames in a 350ms idle sample). Cat/pond drawing now pauses when its host is hidden, disconnected, outside the viewport or obscured by the active modal; scrolling, closing dialogs and returning to Study resume it. Visible equipment previews keep animating, including when exposed after closing a stacked modal. Workspace/native refreshes cannot bypass the modal guard. Timers, storage, identity and graphics preferences are unchanged.
+- PASS `test_cat_visibility.cjs` against actual generated HTML, including zero added cat/pond frames in suppressed states, offscreen/section/modal resume, repeated workspace refreshes, stacked modals, reduced motion and one renderer. Snapshot restoration, Field Guide and all 18 native buddy regressions pass. Chest early/middle/late screenshot sampling now uses Playwright's controlled clock; the production controller, geometry/context, grant and lifecycle assertions pass without wall-clock screenshot races. Generation/idempotence, iPhone source/version, avatar-cache and timer DOM regressions pass.
+- Source/native/iPhone/preview copies regenerated at 0.6.1. All continuation work remains uncommitted/unpushed on top of `2e95109`; PR #26 is unchanged. GitHub reports no CI checks for that PR head. Installed, physical-device, battery and whole-app CPU/RAM behavior remain unverified.
+
+### Commit/PR completed; separate continuation — 2026-10-26
+
+- Fulfilled the explicit immediate commit/push/PR request: commit `2e9510968b49cc91a6a1d6191aeacf0b8eb57735` on `codex/companion-life-improvements`, [PR #26](https://github.com/kg-sato/Orbiter/pull/26). Verified remote branch hash. One consolidated commit over main `fee79ec`, preserving main's 0.6.1/chest work. PR is open, not merged; no install or publish. Missed automation remains paused.
+- Continued separately after opening the PR: the chest's direct canvas lease also exposed the missing-kitten issue. Added the same bounded actual-kitten snapshot immediately before the chest borrows the renderer. New assertions failed before the fix and pass for planner and buddy chest frames, with one context, original canvas restoration, grant/cancel/error/motion safeguards and fallback behavior. Core/native generation, stable generation and iPhone source/version checks pass. This follow-up and its generated copies are intentionally **uncommitted/unpushed**, outside the PR commit, pending another commit instruction.
+
+### PR integration on current main — 2026-10-26
+
+- Preparing the authorized single consolidated commit on `codex/companion-life-improvements` against refreshed main `fee79ec`. Main includes animated chest opening and 0.6.1; preserved those sources/manifests, combined buddy styles and regenerated canonical/iPhone/preview/native outputs. No release-version bump was introduced by this work.
+- Combined source verification passes: new preview/guide/habit browser suites, generation/iPhone/version checks, diagnostics/recovery/cache checks and 26 engine tests. Chest browser suite passed alone after a late-frame timing timeout while run concurrently; no chest source or assertion was weakened. Installed, physical-device and live-sync checks remain separate.
+
+### Immediate commit and PR instruction — 2026-10-26
+
+- User explicitly requested committing the current reviewed work and creating a PR now, then continuing improvements. The 48-file reviewed inventory matched working sources at intake; index was empty, base `d7a8456`. This supersedes the expired scheduled window for this one immediate commit/push/PR only. Keep the missed automation paused. Continued work should remain separately reviewable and uncommitted.
+
+### Commit check and preview repair — 2026-10-26, 11:35 Toronto
+
+- User asked whether the commit happened and requested continued improvement if not. Git still showed base `d7a8456` and all chat work uncommitted; no reason for the missed scheduled result is established. Paused expired automation `orbiter-single-optimization-commit` to prevent a late commit during new edits. No immediate commit or replacement schedule is authorized by this follow-up.
+- Reproduced the generic-placeholder preview: shared canvas moved without a matching parked image. `src/mascot/cat.js` now captures the actual current kitten before handoff, scales to at most 240px, retains at most eight parked hosts, and restores the same live canvas/identity on Cancel. Disconnected/repainted hosts release obsolete snapshots; scoped web/buddy styles hide fallback art only while an actual snapshot exists.
+- PASS new `test_cat_preview_restore.cjs` (failed before fix), equipment suite, Field Guide suite, build/generation, iPhone source/bundle checks and actual-asset cache test. Controlled before/parked/restored captures inspected: mean RGB difference 0.22 for downscaled parked image, 0 for restored live image. One WebGL context and no workspace mutation; no new continuous render loop. All 18 native buddy state/size and mode/feedback regressions also passed. Installed app/device behavior remains unverified.
+
+### Approved lightweight companion comparison — 2026-10-26
+
+- User approved one pre-rendered animation + still-pond trial before a broad conversion. Added [isolated trial and measured results](../../design/companion-lite/README.md), using original GLB → Blender CPU renders → Pillow lossless WebP strip (16 × 192px, 216 KB, 2.25 MiB decoded). One plain kitten only; runtime cosmetics/growth variations are explicitly excluded. Default app renderer and original assets unchanged.
+- Six alternating fresh-Edge scene runs passed. Median sprite/live JS heaps 1.77/12.56 MiB and main-thread task times 95.9/208.9 ms per ~6s. Both responsive; observed RTX4060 Ti/D3D11. Not whole-app/device/GPU-percent evidence; aggregate CPU comparison suppressed because of process churn. Model/atlas hashes and silhouettes checked. Local trial preview at port8014 was started; reuse if alive.
+- Include the reviewed study assets/scripts/docs in the existing single 01:55 consolidated commit after final hash inventory refresh. This is a trial rather than a production graphics-mode conversion; no install/package/publish.
+
+### Companion then Life features — 2026-10-26
+
+- User ended optimization and selected companion first, then Life. Added read-only Companion Field Guide (main/course kittens, three portrait angles, four temporary growth previews, native progress/equipment) and seven-day editable habit history using existing journal records. Native authority, identities, storage keys and protected iPhone gates preserved. [Feature use, checks and limits](../FEATURES-2026-10-26.md).
+- New feature browser regressions pass at 320/390/1366px; phone captures inspected. Full Life hub regression (15 layouts, CRUD/draft/owner/timer/closed-gate checks), production generation, model/bridge checks pass. Sources and required generated copies integrated, still 0.6.0; installed/device/live sync remain unverified.
+- The existing single 01:55 Toronto commit is being prepared to consolidate reviewed feature work with earlier optimization work. Refresh the dated scope and final hash inventory before that run; no immediate commit, package, install or publish.
+
+### Continued optimization and scheduled commit — 2026-10-26
+
+- Paired browser saves now wait for initialization and clear stale recovery drafts only when no newer rejected save owns them. Native diagnostics retain the latest 100 entries capped at 250 characters. Dependency-free regressions pass. Native frontend regenerated; 18 buddy size/state browser regressions pass. Disposable completion frame inspected.
+- Core build scripts now accept explicit `ORBITER_NODE_MODULES` to reuse an existing dependency installation; ordinary `npm.cmd run build:core` and `desktop:prepare` pass with the main checkout's matching packages, without copying/installing dependencies. This replaces the temporary build adapter as the documented workflow.
+- User explicitly authorized **one consolidated local commit at 01:55 Toronto time today (2026-10-26)**. The active one-time thread automation is `orbiter-single-optimization-commit`; follow [the scoped handoff](COMMIT-SCOPE.md). No commit yet during preparation. Existing boundaries apply outside this specific commit authorization; no push/install/publish.
+
+### Local tool application — 2026-10-25
+
+- User authorized reuse of local Roblox tools for Orbiter. Existing Blender export validator ran read-only; Pillow verified 31 pixel-identical before/after portraits. Shared kitten geometry classification is now cached: repeated clones avoid skin-weight rescans. Actual-asset regression, cosmic browser regression and generation/iPhone checks pass. [Tool evidence and limits](../LOCAL-ART-TOOLS.md).
+- Full production compilation succeeded using matching, already-installed main-checkout dependencies via a temporary ignored adapter; repeated compilation is byte-stable. This resolves the previous pass's full-compile gap. Canonical/iPhone/preview/native outputs regenerated. No dependencies installed, source asset edits, installer, install or publish. Existing edits/staging preserved; runtime resource measurements remain unverified.
+
+### Optimization pass — 2026-10-25
+
+- Clean detached checkout at `d7a8456` on intake; manifests remain 0.6.0. Integrated unchanged-timer DOM write suppression, bounded native expiry failure retries, stable life-module generation and preview asset path repairs. No feature or historical asset deletion was justified. All edits remain uncommitted; staging preserved.
+- Added linked `CURRENT-CYCLE.md` while preserving prior guidance. See [audit evidence and remaining coverage](../OPTIMIZATION-AUDIT.md) for checks, limitations and the targeted regeneration method. Browser hub regression and 26 engine tests pass; full compiler pipeline, installed behavior, resource measurements, physical iPhone and live sync remain unverified. No package/install/publish action.
 
 ### Local Windows 0.6.0 delivery — 2026-10-24
 

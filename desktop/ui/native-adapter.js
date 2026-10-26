@@ -1,8 +1,9 @@
 /* Native planner adapter: bundled assets only. It preserves the browser adapter contract. */
 (() => {
- window.OrbiterNativeErrors=[];
- window.addEventListener('error',e=>window.OrbiterNativeErrors.push(String(e.message).slice(0,250)));
- document.addEventListener('securitypolicyviolation',e=>window.OrbiterNativeErrors.push('CSP '+e.violatedDirective+' '+e.blockedURI));
+ const errors=window.OrbiterNativeErrors=[];
+ const recordError=message=>{errors.push(String(message).slice(0,250));if(errors.length>100)errors.splice(0,errors.length-100);};
+ window.addEventListener('error',e=>recordError(e.message));
+ document.addEventListener('securitypolicyviolation',e=>recordError('CSP '+e.violatedDirective+' '+e.blockedURI));
  const invoke=window.__TAURI__.core.invoke, listen=window.__TAURI__.event.listen;
  let current=null,latest=null,subscriber=null,pending=false,again=false;
  const publish=v=>{if(!latest||v.revision>=latest.revision){latest=v;window.OrbiterNativeState=v;window.dispatchEvent(new CustomEvent('orbiter-native-state',{detail:v}));}};

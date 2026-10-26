@@ -1,0 +1,31 @@
+/* Opaque reading surfaces keep the guide legible in every pond/material mode. */
+.companion-guide-open{display:block;width:100%;margin:12px 0;padding:11px 14px;border:1px solid #b4e6d56b;border-radius:14px;background:#233e50;color:#eef8f4;font:inherit;font-size:12px;cursor:pointer}
+#companion-guide{box-sizing:border-box;width:min(560px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:90vh;max-height:90dvh;margin:auto;padding:24px;border:1px solid #8eadae;border-radius:24px;background:#203548;color:var(--hub-ink,#edf3fa);box-shadow:0 25px 90px #0008;overflow:auto;overscroll-behavior:contain;font-size:14px;line-height:1.55;text-align:left}
+#companion-guide::backdrop{background:#081724ba}
+#companion-guide *{box-sizing:border-box;min-width:0}
+#companion-guide header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+#companion-guide .companion-guide-eyebrow{margin:0;color:#b4e6d5;font-size:10px;letter-spacing:1.6px}
+#companion-guide h2{margin:4px 0 8px;font-size:25px;line-height:1.25;font-weight:650;color:#f2faf8}
+#companion-guide h3{margin:0 0 5px;color:#eef8f4;font-size:15px}
+#companion-guide p{color:#d0e0e9;overflow-wrap:anywhere}
+#companion-guide button,#companion-guide select{position:static;width:auto;min-height:44px;margin:0;padding:10px 12px;border:1px solid #8caaaeb3;border-radius:12px;background:#2c485b;color:#f3faf9;font:inherit;font-size:13px;line-height:1.4;box-shadow:none;cursor:pointer;transform:none;animation:none}
+#companion-guide button:hover:not(:disabled){background:#385b6b}
+#companion-guide button:disabled{opacity:.6;cursor:default}
+#companion-guide-close{flex-shrink:0}
+#companion-guide select{display:block;width:100%;max-width:100%;background:#172d3e;text-overflow:ellipsis}
+#companion-guide option{background:#172d3e;color:#f3faf9}
+#companion-guide button:focus-visible,#companion-guide select:focus-visible,.companion-guide-open:focus-visible{outline:3px solid #e1d1ff;outline-offset:3px}
+#companion-guide .companion-guide-label{display:block;margin:12px 0 6px;color:#e9f5f2;font-size:13px;font-weight:600}
+#companion-guide .companion-guide-figure{display:flex;flex-direction:column;align-items:center;justify-content:center;margin:16px 0 12px;padding:12px;border:1px solid #7fa0ad66;border-radius:18px;background:radial-gradient(ellipse at 50% 45%,#405b6b,#192d40 75%);text-align:center;min-height:290px}
+#companion-guide img{display:block;width:240px;max-width:100%;height:auto;aspect-ratio:1;object-fit:contain;flex:none}
+#companion-guide [hidden]{display:none!important}
+#companion-guide figcaption{min-height:36px;color:#d8ede3;font-size:12px}
+#companion-guide .companion-guide-angles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#companion-guide .companion-guide-angles button{padding:10px 5px}
+#companion-guide button[aria-pressed=true]{border-color:#c6eadc;background:#3b5e61;color:#fff}
+#companion-guide .companion-guide-growth-panel{margin:18px 0;padding:16px;border:1px solid #7fa0ad66;border-radius:16px;background:#172d3e}
+#companion-guide .companion-guide-growth-panel p{margin:0 0 10px}
+#companion-guide-current{margin-top:10px!important;width:100%!important}
+#companion-guide .companion-guide-footnote{font-size:12px;color:#b8cfdc;border-top:1px solid #6e92a266;padding-top:12px;margin-bottom:0}
+@media(max-width:380px){#companion-guide{padding:16px}#companion-guide h2{font-size:21px}#companion-guide header{gap:8px}#companion-guide .companion-guide-growth-panel{padding:12px}#companion-guide .companion-guide-figure{padding:8px}}
+@media(forced-colors:active){#companion-guide,#companion-guide button,#companion-guide select,.companion-guide-open{background:Canvas;color:CanvasText;border:1px solid CanvasText}#companion-guide p,#companion-guide h2,#companion-guide h3,#companion-guide figcaption{color:CanvasText}#companion-guide button[aria-pressed=true]{outline:2px solid Highlight}}

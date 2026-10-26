@@ -4,9 +4,11 @@ import re
 import hashlib
 import subprocess
 import sys
+import os
 
 root = Path(__file__).resolve().parent.parent
-subprocess.run(['node', str(root / 'node_modules/typescript/bin/tsc'), '-p', str(root / 'tsconfig.json')], cwd=root, check=True)
+modules = Path(os.environ.get('ORBITER_NODE_MODULES') or root / 'node_modules').resolve()
+subprocess.run(['node', str(modules / 'typescript/bin/tsc'), '-p', str(root / 'tsconfig.json')], cwd=root, check=True)
 subprocess.run(['node', str(root / 'scripts/build_cat.cjs')], cwd=root, check=True)
 subprocess.run(['node', str(root / 'scripts/build_cloud.cjs')], cwd=root, check=True)
 app = root / 'Application.html'
@@ -73,9 +75,10 @@ else:source=source.replace('</head>',pond_block+'\n</head>',1)
 # Additive life-hub modules stay embedded for offline/native use. No iPhone
 # account or health-storage capabilities are enabled by embedding the interface.
 life_resources=[('web/life-hub.css','style','orbiter-life-styles'),('web/health-data.js','script','orbiter-health-data'),('web/life-model.js','script','orbiter-life-model'),('web/native-life-journal.js','script','orbiter-native-life-journal'),('web/life-sync.js','script','orbiter-life-sync'),('web/life-hub.js','script','orbiter-life-hub')]
+life_resources += [('web/companion-guide.css','style','orbiter-companion-guide-styles'),('web/companion-guide.js','script','orbiter-companion-guide')]
 # Reinsert in dependency order even when adding a module to an older generated page.
 for resource,tag,label in life_resources:
-    source=re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>', '', source, flags=re.S)
+    source=re.sub(r'<'+tag+' id="'+label+'">.*?</'+tag+'>[ \t]*\n?', '', source, flags=re.S)
 life_blocks=[]
 for resource,tag,label in life_resources:
     life_blocks.append('<'+tag+' id="'+label+'">\n'+(root/resource).read_text(encoding='utf-8')+'\n</'+tag+'>')

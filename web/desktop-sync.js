@@ -3,7 +3,8 @@
   if (location.origin !== "http://127.0.0.1:18743") return;
   let csrf = "",
     current = null,
-    events = null;
+    events = null,
+    draftGeneration = 0;
   const request = async (path, payload) => {
     const r = await fetch(
       `/api/${path}`,
@@ -42,7 +43,10 @@
     ready,
     actionResult: async (action,args={}) => { const value=await request("action",{action,args}); if(value.editRevision===current.editRevision)current=value; publish(value); return value; },
     save: async (workspace, importing = false) => {
+      await ready;
       const revision = current.editRevision;
+      const previousDraft = sessionStorage.getItem("orbit.unsaved-draft");
+      const generation = draftGeneration;
       try {
         const value = await request("workspace", {
           workspace,
@@ -51,6 +55,10 @@
         });
         current = value;
         publish(value);
+        // A later rejected save owns its recovery draft, even if its bytes match.
+        if (generation === draftGeneration &&
+            sessionStorage.getItem("orbit.unsaved-draft") === previousDraft)
+          sessionStorage.removeItem("orbit.unsaved-draft");
         return value.workspace;
       } catch (error) {
         // This origin is private to the paired desktop website. Never discard a rejected draft.
@@ -58,6 +66,7 @@
           "orbit.unsaved-draft",
           JSON.stringify(workspace),
         );
+        draftGeneration++;
         throw error;
       }
     },

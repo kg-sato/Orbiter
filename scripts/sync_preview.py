@@ -7,7 +7,9 @@ source = (root / 'Application.html').read_text(encoding='utf-8')
 source = re.sub(r'<link\s+rel="(?:manifest|apple-touch-icon)"[^>]*>\s*', '', source)
 preview = source.replace('<html lang="en">', '<html lang="en" data-preview="true">', 1)
 preview = preview.replace('<title>Scheduler</title>', '<title>Scheduler · Study edition preview</title>', 1)
-preview = preview.replace('./web/account-sync.js', '../../web/account-sync.js')
+# The preview lives two levels below the canonical page. Keep every external
+# web resource rooted at the shared production assets, including cloud and CSS.
+preview = re.sub(r'((?:src|href)=["\'])\./web/', r'\1../../web/', preview)
 
 target = root / 'design' / 'scheduler-ui-preview' / 'index.html'
 target.parent.mkdir(parents=True, exist_ok=True)

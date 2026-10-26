@@ -1,4 +1,5 @@
 /* Original observatory scenes. Depth belongs to the artwork, not the reading plane. */
+.cat-snapshot-ready:has(>[data-cat-snapshot])>svg,.cat-snapshot-ready:has(>[data-cat-snapshot])>img:not([data-cat-snapshot]){visibility:hidden}
 body { --cosmic-color:#99cbd5;--cosmic-secondary:#8982cd; }
 html,body { overflow-x:clip; }
 body[data-preset=lunar-mist] { --cosmic-color:#c0c4eb;--cosmic-secondary:#7c94c6; }

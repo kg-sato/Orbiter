@@ -57,6 +57,8 @@ Read scripts before executing them and honor the active validation scope. Browse
 
 ## Documentation ownership
 
+For optimization and cleanup, apply [the current cycle](CURRENT-CYCLE.md). Verify behavior and references before removal, measure claimed improvements, and preserve historical evidence and older preferences. Record current findings separately from historical release claims.
+
 - Root `AGENTS.md`: stable constraints and task routing.
 - This file: recurring project workflow and demonstrated pitfalls.
 - `CHECKPOINT.md`: changing state, unresolved decisions and next steps; date updates.

@@ -6,6 +6,20 @@ import modelUrl from './assets/kitten.glb';
 
 export const MODEL_VERSION='orbiter-kitten-051';
 let template=null,error=null;
+// Skeleton clones share immutable geometry. Classify weights once per geometry,
+// but retain attribute/version guards for a future edited or replaced buffer.
+const rigidJoints=new WeakMap();
+function rigidJoint(geometry){
+ const index=geometry.attributes.skinIndex,weight=geometry.attributes.skinWeight;
+ if(!index||!weight)return null;
+ const cached=rigidJoints.get(geometry);
+ if(cached&&cached.index===index&&cached.weight===weight&&cached.indexVersion===index.version&&cached.weightVersion===weight.version&&cached.count===index.count)return cached.joint;
+ let joint=null,single=true;
+ for(let i=0;i<index.count&&single;i++){if(weight.getX(i)<.999||weight.getY(i)>.001||weight.getZ(i)>.001||weight.getW(i)>.001){single=false;break;}const j=index.getX(i);if(joint===null)joint=j;else if(joint!==j)single=false;}
+ if(!single)joint=null;
+ rigidJoints.set(geometry,{index,weight,indexVersion:index.version,weightVersion:weight.version,count:index.count,joint});
+ return joint;
+}
 // Decode the bundled asset in memory; native CSP needs no extra network/data permissions.
 export const ready=new Promise((resolve,reject)=>{const bytes=Uint8Array.from(atob(modelUrl.split(',')[1]),c=>c.charCodeAt(0));new GLTFLoader().parse(bytes.buffer,'',resolve,reject);}).then(gltf=>{template=gltf.scene;return true;}).catch(e=>{error=e.message;console.warn('Kitten asset unavailable; using original fallback.',error);return false;});
 export const assetStatus=()=>({loaded:!!template,error,version:MODEL_VERSION});
@@ -16,9 +30,8 @@ export function createAvatar(traits,colors,look,appearanceId){
  // directly to that bone: identical articulation without a GPU skinning shader
  // per facial/ear surface. Future blended-weight meshes retain normal skinning.
  model.updateMatrixWorld(true);const rigid=[];model.traverse(o=>{if(o.isSkinnedMesh)rigid.push(o);});
- for(const old of rigid){const index=old.geometry.attributes.skinIndex,weight=old.geometry.attributes.skinWeight;let joint=null,single=true;
-  for(let i=0;i<index.count&&single;i++){if(weight.getX(i)<.999||weight.getY(i)>.001||weight.getZ(i)>.001||weight.getW(i)>.001){single=false;break;}const j=index.getX(i);if(joint===null)joint=j;else if(joint!==j)single=false;}
-  if(!single)continue;
+ for(const old of rigid){const joint=rigidJoint(old.geometry);
+  if(joint===null||!old.skeleton.bones[joint])continue;
   const mesh=new THREE.Mesh(old.geometry,old.material);mesh.name=old.name;mesh.visible=old.visible;mesh.userData.orbiterAsset=true;if(old.morphTargetDictionary){mesh.morphTargetDictionary={...old.morphTargetDictionary};mesh.morphTargetInfluences=[...old.morphTargetInfluences];}mesh.applyMatrix4(old.matrixWorld);model.add(mesh);old.skeleton.bones[joint].attach(mesh);old.removeFromParent();
  }
  model.updateMatrixWorld(true);
