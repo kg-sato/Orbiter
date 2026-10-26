@@ -4,6 +4,21 @@ Updated **2026-10-26** from this chat and the local repository. This is a handof
 
 ## Observed state
 
+### One-time follow-up commit/push authorization — 2026-10-26
+
+- User explicitly requested “commit and push for me this one time.” The 11-file continuation inventory matched the verified working sources, with an empty index and base `2e95109`, on `codex/companion-life-improvements`. This authorizes one follow-up commit and normal push to the existing PR #26 branch; it is not standing authorization for later commits, merges, releases or deployments. The sections below record the pre-commit implementation and verification state.
+
+### Hidden/offscreen rendering continuation — 2026-10-26
+
+- User requested continued improvement after PR #26. Reproduced wasted rendering behind the Field Guide (10 extra kitten frames in a 350ms idle sample). Cat/pond drawing now pauses when its host is hidden, disconnected, outside the viewport or obscured by the active modal; scrolling, closing dialogs and returning to Study resume it. Visible equipment previews keep animating, including when exposed after closing a stacked modal. Workspace/native refreshes cannot bypass the modal guard. Timers, storage, identity and graphics preferences are unchanged.
+- PASS `test_cat_visibility.cjs` against actual generated HTML, including zero added cat/pond frames in suppressed states, offscreen/section/modal resume, repeated workspace refreshes, stacked modals, reduced motion and one renderer. Snapshot restoration, Field Guide and all 18 native buddy regressions pass. Chest early/middle/late screenshot sampling now uses Playwright's controlled clock; the production controller, geometry/context, grant and lifecycle assertions pass without wall-clock screenshot races. Generation/idempotence, iPhone source/version, avatar-cache and timer DOM regressions pass.
+- Source/native/iPhone/preview copies regenerated at 0.6.1. All continuation work remains uncommitted/unpushed on top of `2e95109`; PR #26 is unchanged. GitHub reports no CI checks for that PR head. Installed, physical-device, battery and whole-app CPU/RAM behavior remain unverified.
+
+### Commit/PR completed; separate continuation — 2026-10-26
+
+- Fulfilled the explicit immediate commit/push/PR request: commit `2e9510968b49cc91a6a1d6191aeacf0b8eb57735` on `codex/companion-life-improvements`, [PR #26](https://github.com/kg-sato/Orbiter/pull/26). Verified remote branch hash. One consolidated commit over main `fee79ec`, preserving main's 0.6.1/chest work. PR is open, not merged; no install or publish. Missed automation remains paused.
+- Continued separately after opening the PR: the chest's direct canvas lease also exposed the missing-kitten issue. Added the same bounded actual-kitten snapshot immediately before the chest borrows the renderer. New assertions failed before the fix and pass for planner and buddy chest frames, with one context, original canvas restoration, grant/cancel/error/motion safeguards and fallback behavior. Core/native generation, stable generation and iPhone source/version checks pass. This follow-up and its generated copies are intentionally **uncommitted/unpushed**, outside the PR commit, pending another commit instruction.
+
 ### PR integration on current main — 2026-10-26
 
 - Preparing the authorized single consolidated commit on `codex/companion-life-improvements` against refreshed main `fee79ec`. Main includes animated chest opening and 0.6.1; preserved those sources/manifests, combined buddy styles and regenerated canonical/iPhone/preview/native outputs. No release-version bump was introduced by this work.

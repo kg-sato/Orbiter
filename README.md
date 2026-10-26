@@ -18,6 +18,8 @@ A study planner with a small companion to keep you company while you work. Plan 
 
 The interface uses a blue pond with koi, lily pads and moving mist. Tidal Night, Lunar Mist and Opal Dawn provide different lighting. Appearance controls include accent, material, atmosphere, motion intensity and graphics quality, with reduced-motion and static fallbacks.
 
+Kitten and pond rendering rests when its view is hidden, outside the viewport or behind a modal. Visible equipment previews keep moving, and rendering resumes when you return. Study timers continue independently.
+
 A separate [lightweight companion trial](design/companion-lite/README.md) compares Blender-rendered sprite playback with the current live scene. It includes measured results and a local preview; the application's default renderer remains unchanged.
 
 ## Choose your version

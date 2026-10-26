@@ -23,6 +23,12 @@ Source base: `d7a8456`, clean detached checkout at intake; source manifests 0.6.
 
 ## File waste and remaining coverage
 
+### Hidden/offscreen rendering — 2026-10-26
+
+The actual Field Guide reproduction showed the hidden background kitten continuing to draw (18→28 frames over 350ms). The shared renderer now suppresses kitten and pond drawing behind a modal, in hidden Study and outside the viewport. Passive scrolling, modal open/close and navigation/remount signals resume it; visible modal equipment previews remain animated. The native timer and saved settings are untouched.
+
+PASS new actual-browser visibility regression, repeated workspace refresh guard, stacked-modal reveal, reduced motion, existing snapshot/Field Guide checks and 18 buddy combinations. The existing chest screenshot test was susceptible to late frames disappearing during slow screenshots; controlled browser clock sampling preserves the production animation assertions and now passes. These changes reduce unnecessary render work; GPU allocation, whole-process memory and battery savings have not been measured. This follow-up remains uncommitted beyond PR #26.
+
 ### Preview handoff repair — 2026-10-26
 
 The user reported generic fallback art appearing when inspecting items or selecting kitten views, then authorized further improvement after checking commit status. A failing-before/passing-after browser regression confirms the shared renderer now leaves a matching image of the actual kitten in its old host and returns the same canvas on Cancel. Snapshots are bounded to 240px and eight hosts, use a temporary released 2D buffer, and require no extra WebGL context or continuous loop. Scoped web and shadow-root CSS tolerates course-card replacement. Controlled captures show zero restored-image difference and a small downscaling difference for the parked image. Build/generation, equipment and Field Guide regressions passed. No installed/device performance claim is made.

@@ -1,5 +1,9 @@
 # One-time consolidated Orbiter commit — 2026-10-26
 
+**New bounded authorization:** the user explicitly requested committing and pushing the verified continuation “this one time.” Include hidden/offscreen/modal rendering suppression, the chest snapshot handoff, controlled-clock chest regression and corresponding generated copies/docs on the existing PR #26 branch. This second instruction authorizes one follow-up commit/push, without further automatic commits or merge/release actions.
+
+**Completed:** the later immediate commit/PR instruction was fulfilled by `2e95109` on `codex/companion-life-improvements`, [PR #26](https://github.com/kg-sato/Orbiter/pull/26), based on main `fee79ec` and preserving version 0.6.1. The old automation remains paused. Subsequent chest-handoff improvements are separate uncommitted work; this historical scope does not authorize another commit.
+
 **Superseding user instruction:** the user subsequently explicitly requested “Commit and make pr right now and then continue.” This authorizes committing the reviewed work now, pushing a feature branch and creating its pull request. Keep the expired automation paused. Further improvements remain separate uncommitted work unless another commit is requested; no merge, install or publication is authorized.
 
 **Current status:** at 11:35 Toronto on 2026-10-26, Git remained at `d7a8456` with no new commit. The expired one-time automation is now **PAUSED**. The user requested continued improvement if no commit had occurred. Preserve the following as the historical intended scope; do not interpret it as a fresh deadline or authority to make a late commit. New preview-repair work is uncommitted and documented in the checkpoint. Ask for a new commit instruction or schedule before committing.
