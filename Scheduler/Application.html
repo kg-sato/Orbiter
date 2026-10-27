@@ -11361,6 +11361,30 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style id="orbiter-life-styles">
 /* A shared reading plane for time, health and daily life. */
 :root{--hub-ink:#edf3fa;--hub-muted:#b9cbdc;--hub-line:#b9d6e52b;--hub-mint:#b4e6d5;--hub-lilac:#c8b5eb;--hub-card:linear-gradient(140deg,#203955ed,#182b46e8)}
@@ -12388,11 +12412,6 @@ body[data-motion-intensity="0"] .sanctuary-water,body.reduced-motion .sanctuary-
                 <button id="focus-complete-task">Complete assignment</button
                 ><button id="focus-clear-intention">Take a break</button>
               </div>
-              <span
-                class="sr-only"
-                id="focus-announcement"
-                role="status"
-              ></span>
             </section>
             <section class="rail-section" id="task-rail">
               <div class="section-heading">
@@ -20953,6 +20972,22 @@ var StudyCore;
               : "Completed focus sessions count here. Your goal, your pace.";
         }
         let timerSaveFailed = false;
+        let browserTimerSaving = false;
+        // Serialize browser timer edits, including controls delegated by sanctuary.
+        // Keep the accepted timer in memory until persistence succeeds; failed edits can retry.
+        async function changeFocusTimer(change) {
+          if (desktop) return changeStudy(change);
+          if (browserTimerSaving) return false;
+          browserTimerSaving = true;
+          renderTimer();
+          try {
+            return await changeStudy(change);
+          } finally {
+            browserTimerSaving = false;
+            renderNow();
+            renderTimer();
+          }
+        }
         // Derive running time from a deadline instead of counting interval ticks, which browsers throttle in the background.
         function timerRemaining(t = studyData().timer) {
           return t.endAt
@@ -21052,6 +21087,21 @@ var StudyCore;
             );
             b.disabled = !!t.endAt || (t.remaining>0&&t.remaining<t.duration*60);
           });
+          $("focus-start").disabled = browserTimerSaving;
+          $("now-action").disabled = browserTimerSaving;
+          $("focus-reset").disabled = browserTimerSaving;
+          $("focus-clear-intention").disabled = browserTimerSaving;
+          if (timerSaveFailed && t.endAt && r === 0) {
+            $("timer-state").textContent = "SAVE FAILED";
+            $("focus-start").textContent = "Retry save";
+          }
+          if (browserTimerSaving) {
+            $("timer-state").textContent = "SAVING";
+            $("focus-start").textContent = "Saving…";
+            for (const id of ["focus-finish", "focus-duration", "focus-intention"])
+              $(id).disabled = true;
+            document.querySelectorAll("[data-duration]").forEach(b => b.disabled = true);
+          }
         }
         // Record a completed session through persistence before announcing success; a failed save must not look like completion.
         async function tickTimer() {
@@ -21060,8 +21110,8 @@ var StudyCore;
             return;
           }
           const t = studyData().timer;
-          if (t.endAt && timerRemaining(t) === 0 && !timerSaveFailed) {
-            const ok = await changeStudy((s) => {
+          if (t.endAt && timerRemaining(t) === 0 && !timerSaveFailed && !browserTimerSaving) {
+            const ok = await changeFocusTimer((s) => {
               s.sessions.push({
                 date: localISO(isDemo ? nowDate() : new Date(t.endAt)),
                 minutes: t.duration,
@@ -21076,22 +21126,20 @@ var StudyCore;
               renderPractices();
               renderExamPrep();
               renderAtlas();
-              // The iPhone uses the shared status announcement once; the native
-              // foreground notification is silent to avoid a second interruption.
-              if (!window.webkit?.messageHandlers?.scheduleFiles)
-                $("focus-announcement").textContent =
-                  "Focus session complete. Take a break when you need one.";
+              // Browser and iPhone use the shared live status once after saving.
               announce("Focus session complete. A little progress, recorded.");
             } else timerSaveFailed = true;
           }
           renderTimer();
         }
         async function finishBrowserFocus() {
+          if (browserTimerSaving) return;
           const t=studyData().timer,r=timerRemaining(t),spent=Math.max(0,t.duration*60-r);
-          if(!spent)return;
-          if(await changeStudy(s=>{s.sessions.push({date:localISO(nowDate()),minutes:spent/60,title:t.title,taskId:t.taskId||null});s.timer.remaining=0;s.timer.endAt=null;})){render();announce('Session recorded. Browser focus does not earn native rewards.');}
+          if(!spent || (!t.endAt && t.remaining===0))return;
+          if(await changeFocusTimer(s=>{s.sessions.push({date:localISO(nowDate()),minutes:spent/60,title:t.title,taskId:t.taskId||null});s.timer.remaining=0;s.timer.endAt=null;})){render();announce('Session recorded. Browser focus does not earn native rewards.');}
         }
         async function toggleTimer() {
+          if (browserTimerSaving) return;
           timerSaveFailed = false;
           const t = studyData().timer;
           if (t.endAt && timerRemaining(t) === 0) {
@@ -21099,7 +21147,7 @@ var StudyCore;
             return;
           }
           if (
-            await changeStudy((s) => {
+            await changeFocusTimer((s) => {
               if (t.endAt) {
                 s.timer.remaining = timerRemaining(t);
                 s.timer.endAt = null;
@@ -21119,6 +21167,7 @@ var StudyCore;
           }
         }
         async function chooseFocusTask(task) {
+          if (browserTimerSaving) return;
           if (
             studyData().timer.endAt ||
             (studyData().timer.remaining > 0 &&
@@ -21131,7 +21180,7 @@ var StudyCore;
             return;
           }
           if (
-            await changeStudy((s) => {
+            await changeFocusTimer((s) => {
               s.timer.title = task.title;
               s.timer.taskId = task.id;
             })
@@ -21410,12 +21459,13 @@ var StudyCore;
             const p=appearanceValues(),priorScene=studyPreferences().scenePreset;
             if(await changeStudy(study=>Object.assign(study.preferences,p))){appearanceBase=appearanceSignature();applyTheme();document.body.classList.toggle('reduced-motion',p.motion);document.body.classList.toggle('solid-glass',p.solid);$("appearance-status").textContent="Appearance saved.";if(priorScene!==p.scenePreset)revealLakeScene($("settings-editor"));}else $("appearance-status").textContent="Could not save. Your preview is kept.";
           };
-          $("focus-duration").onchange=async()=>{const duration=Number($("focus-duration").value);if(!Number.isInteger(duration)||duration<1||duration>240){renderTimer();return;}await changeStudy(study=>{study.timer.duration=duration;study.timer.remaining=duration*60;});renderTimer();};
-          $("focus-intention").onchange=async()=>{const task=studyData().tasks.find(t=>t.id===$("focus-intention").value);await changeStudy(study=>{study.timer.taskId=task?.id||null;study.timer.title=task?.title||'Open focus';});renderNow();renderTimer();};
+          $("focus-duration").onchange=async()=>{if(browserTimerSaving)return;const duration=Number($("focus-duration").value);if(!Number.isInteger(duration)||duration<1||duration>240){renderTimer();return;}await changeFocusTimer(study=>{study.timer.duration=duration;study.timer.remaining=duration*60;});renderTimer();};
+          $("focus-intention").onchange=async()=>{if(browserTimerSaving)return;const task=studyData().tasks.find(t=>t.id===$("focus-intention").value);await changeFocusTimer(study=>{study.timer.taskId=task?.id||null;study.timer.title=task?.title||'Open focus';});renderNow();renderTimer();};
           $("focus-details").onclick=()=>{const task=studyData().tasks.find(t=>t.id===studyData().timer.taskId);if(task)openTask(task);};
           $("focus-finish").onclick=async()=>{if(desktop){state.data=validateData(await desktop.action('finish'));render();}else await finishBrowserFocus();};
           $("focus-start").onclick = toggleTimer;
           $("focus-reset").onclick = async () => {
+            if (browserTimerSaving) return;
             if (
               studyData().timer.endAt &&
               !confirm(
@@ -21424,7 +21474,7 @@ var StudyCore;
             )
               return;
             if (
-              await changeStudy((s) => {
+              await changeFocusTimer((s) => {
                 s.timer.remaining = s.timer.duration * 60;
                 s.timer.endAt = null;
                 s.timer.title = "";
@@ -21439,9 +21489,9 @@ var StudyCore;
           document.querySelectorAll("[data-duration]").forEach(
             (b) =>
               (b.onclick = async () => {
-                if (studyData().timer.endAt) return;
+                if (browserTimerSaving || studyData().timer.endAt) return;
                 if (
-                  await changeStudy((s) => {
+                  await changeFocusTimer((s) => {
                     s.timer.duration = Number(b.dataset.duration);
                     s.timer.remaining = s.timer.duration * 60;
                   })
@@ -22100,13 +22150,18 @@ var StudyCore;
                 if (task) task.done = true;
               })
             ) {
+              const restoreFocus = document.activeElement === $("focus-complete-task");
               render();
+              const next = $("focus-clear-intention");
+              if (restoreFocus && !next.disabled && next.getClientRects().length)
+                next.focus({ preventScroll: true });
               announce("Assignment completed.");
             }
           };
           $("focus-clear-intention").onclick = async () => {
+            if (browserTimerSaving) return;
             if (
-              await changeStudy((study) => {
+              await changeFocusTimer((study) => {
                 study.timer.taskId = null;
                 study.timer.title = "";
                 study.timer.remaining = study.timer.duration * 60;

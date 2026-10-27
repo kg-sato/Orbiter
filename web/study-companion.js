@@ -6,6 +6,10 @@
     lastSeen = 0,
     disconnected = false;
   const $ = (id) => document.getElementById(id);
+  // Heartbeats update the countdown; announce only a change in session state.
+  const status = (message) => {
+    if ($("status").textContent !== message) $("status").textContent = message;
+  };
   const command = (action, extra = {}) => {
     if (!window.opener || window.opener.closed) return;
     window.opener.postMessage(
@@ -44,7 +48,7 @@
       $("practice-go").disabled =
         !connected;
     if (!connected) {
-      $("status").textContent = "Open Scheduler to reconnect";
+      status("Open Scheduler to reconnect");
       $("time").textContent = "--:--";
       document.body.classList.remove("running");
       return;
@@ -63,11 +67,11 @@
       : r === 0
         ? "Start again"
         : "Start / resume";
-    $("status").textContent = running
+    status(running
       ? "A little energy, moving forward."
       : r === 0
         ? "Take a breath. Your session is complete."
-        : "Here when you need a little momentum.";
+        : "Here when you need a little momentum.");
     $("progress").textContent =
       `${["Seed", "Awakening", "Flow", "Radiance", "Cosmos"][snapshot.level] || "Seed"} \u00b7 ${snapshot.minutesToday}m today`;
     const key = JSON.stringify(snapshot.practice);

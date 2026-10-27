@@ -141,7 +141,7 @@ const {chromium} = require('playwright-core');
     await page.waitForTimeout(1200);
     assert.equal(await page.evaluate(()=>window.OrbiterUI.snapshot().study.sessions.filter(s=>s.title==='Notification completion fixture').length),1);
     assert.equal(await page.evaluate(()=>window.__completionAnnouncements),1,'iPhone completion must announce once through shared status');
-    assert.equal(await page.locator('#focus-announcement').textContent(),'','Avoid second iPhone completion live-region announcement');
+    assert.equal(await page.locator('#focus-announcement').count(),0,'Browser and iPhone use only the shared completion live region');
     assert.deepEqual(errors,[]);
     await context.close();
     console.log('PASS: timer/permission contracts, reconciliation, pending/missing reminder and retry UI, one completion announcement, Settings action, draft/data preservation and phone layout. Browser bridge only.');

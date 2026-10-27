@@ -1,8 +1,16 @@
 # Orbiter coordination checkpoint
 
-Updated **2026-10-24** from this chat and the local repository. This is a handoff, not a release approval. Recheck status and versions before acting.
+Updated **2026-10-27** from this chat and the local repository. This is a handoff, not a release approval. Recheck status and versions before acting.
 
 ## Observed state
+
+### Focus reliability and accessible feedback — 2026-10-27
+
+- Integrated uncommitted into `codex/ui-direction` from focused task `01a17a2d-b7b1-7221-a09a-85e94ad7cc2a`, worktree `ce1e`, based on `2065098`. Manifests remain 0.6.1; older version entries below describe their dated deliveries.
+- Browser timer edits now share a pending-save guard across timer, main-card and delegated sanctuary controls. Completion waits for accepted persistence, uses one shared live announcement, rejects repeated Finish after completion, and offers an explicit retry after failed expiry saves. Completing a linked assignment restores keyboard focus to Take a break only if the completed button still held focus. Native timer/reward authority and storage schemas are unchanged.
+- The paired browser companion changes its live status only when the message changes; its countdown continues each second. A regression reproduced five status mutations for one unchanged message before the repair and confirms quiet heartbeats plus real pause/completion/disconnect/reconnect announcements afterward.
+- Production canonical/shared sources, generated iPhone/fictional preview, service-worker shell identity and native frontend are refreshed. Main-checkout focus, companion, notification, offline-data and four-layout phone-control regressions passed; source/version and diff checks passed. Desktop/phone saving, retry, completion and keyboard-focus captures are under ignored `build/focus-completion/`; companion captures are under `build/study-companion/`.
+- Installed Windows behavior, physical iPhone/WKWebView, live cloud persistence and actual screen-reader speech remain unverified. General concurrent non-timer saves and account/import replacement are outside this local timer guard. No packaging, installation, publication, staging or commit occurred. Source fixes are in the integration checkout; retain the focused worktree until its duplicate uncommitted work can be safely archived.
 
 ### Local Windows 0.6.0 delivery — 2026-10-24
 
