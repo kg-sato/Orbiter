@@ -96,7 +96,7 @@ function makeCat(code,equipment={},growthMs=0,stars=0){
  if(p.charm===2){const leaf=ball(charm,material('#a7c4a3'),[0,0,0],[.06,.13,.025]);leaf.rotation.z=.4;}
  if(p.charm===3){for(const x of [-.06,.06])ball(charm,blush,[x,-.04,0],[.065,.065,.04]);line(charm,[[-.06,0,0],[0,.15,0],[.06,0,0]],'#99bda2',.014);}
  if(equipment.halo==='halo-double')ball(charm,gold,[.15,0,0],[.045,.045,.025]);
- if(true && ['halo-thin','halo-07','halo-10','halo-12'].includes(equipment.halo))accessoryStudy(root,head,bow,equipment.halo);
+ if(true && ['halo-thin','halo-05','halo-07','halo-09','halo-10','halo-12'].includes(equipment.halo))accessoryStudy(root,head,bow,equipment.halo,age);
  else if(equipment.halo?.match(/^halo-\d/))addAccessory(root,head,bow,Number(equipment.halo.slice(-2)),gold,scarf);
  else if(equipment.halo){for(let i=0;i<(equipment.halo==='halo-double'?2:1);i++){const halo=new THREE.Mesh(new THREE.TorusGeometry(.73+i*.14,.025,6,48),gold);halo.position.set(0,2.55+i*.11,-.12);halo.rotation.x=1.15;root.add(halo);}if(equipment.halo==='halo-runes')for(let i=0;i<7;i++)ball(root,gold,[Math.cos(i*.9)*.95,2.5+Math.sin(i*.9)*.18,-.12],[.035,.07,.025]);}
  if(equipment.appearance && equipment.appearance!=='mint'){const colors={lilac:'#c8b5eb',opal:'#e6ddca',rose:'#e0b6c9',aurora:'#8ee4c8',eclipse:'#e9ba90',indigo:'#939ddd',singularity:'#aca0db',cultivation:'#ccd7a0'};scarf.color.set(colors[equipment.appearance]||scarves[p.scarf]);}
@@ -122,7 +122,7 @@ function makeCat(code,equipment={},growthMs=0,stars=0){
    const arch=new THREE.Mesh(new THREE.TorusGeometry(.66,.022,6,40,Math.PI),material('#b9b8d5'));arch.position.set(0,.55,-.48);arch.rotation.z=.2;habitat.add(arch);
    for(let i=0;i<4;i++)ball(habitat,gold,[Math.cos(i*.7)*.8,.34+i*.15,-.35],[.023,.023,.023]);
  }
- if(equipment.habitat){if(true && ['habitat-01','habitat-07','habitat-11','habitat-12'].includes(equipment.habitat))habitatStudy(habitat,equipment.habitat);else addHabitat(habitat,Number(equipment.habitat.slice(-2)),gold);}
+ if(equipment.habitat){if(true && ['habitat-01','habitat-04','habitat-07','habitat-09','habitat-11','habitat-12'].includes(equipment.habitat))habitatStudy(habitat,equipment.habitat);else addHabitat(habitat,Number(equipment.habitat.slice(-2)),gold);}
  for(let i=0;i<Math.min(stars,12);i++)ball(habitat,gold,[Math.cos(i*2.4)*1.0,.12+(i%3)*.11,Math.sin(i*2.4)*.35],[.022,.022,.022]);
  styleScarf(scarf,equipment.appearance);
  const particles=equipment.trail?(false?trail(equipment.trail):studyTrail(equipment.trail)):new THREE.Group();root.add(particles);
@@ -236,7 +236,7 @@ export function mount(host,code=mainCode,options={}){
  if(getComputedStyle(host).position==='static')host.style.position='relative';host.append(renderer.domElement);host.classList.add('cat-3d-ready');host.dataset.habitatStage=String(growth(growthMs).stage);setCat(code);cat.equipmentKey=key;resize();draw(performance.now());visible=true;wake();
 }
 export function portrait(code,ms=0,items={},angle=0){
- const cacheKey=MODEL_VERSION+":pond-051:"+document.body.dataset.preset+":"+code+":"+growth(ms).stage+":"+JSON.stringify(items)+":"+angle;
+ const cacheKey=MODEL_VERSION+":pond-051:equipment-four-1:"+document.body.dataset.preset+":"+code+":"+growth(ms).stage+":"+JSON.stringify(items)+":"+angle;
  if(portraits.has(cacheKey))return portraits.get(cacheKey);
  if(chestLease)return fallbackPortrait(code,growth(ms).stage,items);
  if(assetStatus().error||!init())return fallbackPortrait(code,growth(ms).stage,items);

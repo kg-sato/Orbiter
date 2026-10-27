@@ -4,11 +4,23 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 function kit(parent) {
   const root=new THREE.Group();parent.add(root);
-  const geometry={stone:new THREE.SphereGeometry(1,16,10),crystal:new THREE.LatheGeometry([new THREE.Vector2(0,-.5),new THREE.Vector2(.72,-.5),new THREE.Vector2(1,-.36),new THREE.Vector2(1,.25),new THREE.Vector2(0,.55)],5),gem:new THREE.OctahedronGeometry(1),ring:new THREE.TorusGeometry(1,.018,5,48)};
+  const rounded=new THREE.Shape();rounded.moveTo(-.38,-.5);rounded.lineTo(.38,-.5);rounded.quadraticCurveTo(.5,-.5,.5,-.38);rounded.lineTo(.5,.38);rounded.quadraticCurveTo(.5,.5,.38,.5);rounded.lineTo(-.38,.5);rounded.quadraticCurveTo(-.5,.5,-.5,.38);rounded.lineTo(-.5,-.38);rounded.quadraticCurveTo(-.5,-.5,-.38,-.5);
+  const box=new THREE.ExtrudeGeometry(rounded,{depth:1,bevelEnabled:false,curveSegments:3});box.translate(0,0,-.5);
+  const geometry={box,stone:new THREE.SphereGeometry(1,16,10),crystal:new THREE.LatheGeometry([new THREE.Vector2(0,-.5),new THREE.Vector2(.72,-.5),new THREE.Vector2(1,-.36),new THREE.Vector2(1,.25),new THREE.Vector2(0,.55)],5),gem:new THREE.OctahedronGeometry(1),ring:new THREE.TorusGeometry(1,.018,5,48)};
   const materials={stone:new THREE.MeshStandardMaterial({color:'#799ca9',roughness:.84}),dark:new THREE.MeshStandardMaterial({color:'#324b68',roughness:.7}),silver:new THREE.MeshStandardMaterial({color:'#d9e8ee',metalness:.72,roughness:.28}),prism:new THREE.MeshStandardMaterial({color:'#a1bbeb',metalness:.22,roughness:.3,emissive:'#344b8c',emissiveIntensity:.35}),light:new THREE.MeshStandardMaterial({color:'#b2eff3',emissive:'#6dcced',emissiveIntensity:.7,roughness:.4}),cloth:new THREE.MeshStandardMaterial({color:'#92a5cf',side:THREE.DoubleSide,roughness:.92})};
   const batches=new Map(),dummy=new THREE.Object3D();
   function instance(shape,mat,pos,scale,rotation=[0,0,0]){const key=shape+':'+mat;if(!batches.has(key))batches.set(key,[]);batches.get(key).push({pos,scale,rotation});}
-  function finish(){let triangles=0;for(const [key,items] of batches){const [g,m]=key.split(':'),mesh=new THREE.InstancedMesh(geometry[g],materials[m],items.length);items.forEach((item,i)=>{dummy.position.set(...item.pos);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});root.add(mesh);triangles+=(geometry[g].index?.count||geometry[g].attributes.position.count)/3*items.length;}
+  function finish(compact=false){let triangles=0;for(const [key,items] of batches){const [g,m]=key.split(':'),mesh=new THREE.InstancedMesh(geometry[g],materials[m],items.length);items.forEach((item,i)=>{dummy.position.set(...item.pos);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});root.add(mesh);triangles+=(geometry[g].index?.count||geometry[g].attributes.position.count)/3*items.length;}
+    // These small static props can combine unlike shapes into one call/material.
+    // Keep the established articulated/instanced studies on their existing path.
+    if(compact){
+      const buckets=new Map(),matrix=new THREE.Matrix4();
+      for(const mesh of [...root.children])if(mesh.isMesh&&!mesh.userData.studyTick&&!mesh.children.length){
+        if(!buckets.has(mesh.material))buckets.set(mesh.material,{parts:[],meshes:[]});const bucket=buckets.get(mesh.material);bucket.meshes.push(mesh);mesh.updateMatrix();
+        for(let i=0;i<(mesh.isInstancedMesh?mesh.count:1);i++){if(mesh.isInstancedMesh)mesh.getMatrixAt(i,matrix);else matrix.identity();const g=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone();bucket.parts.push(g.applyMatrix4(matrix).applyMatrix4(mesh.matrix));}
+      }
+      for(const [material,{parts,meshes}]of buckets){const merged=mergeGeometries(parts,false);parts.forEach(g=>g.dispose());if(merged){for(const mesh of meshes){mesh.removeFromParent();if(mesh.isInstancedMesh)mesh.dispose();else mesh.geometry.dispose();}root.add(new THREE.Mesh(merged,material));}}
+    }
     // Merge static same-material detail paths; articulated pieces stay separate.
     const mergeBuckets=new Map();for(const mesh of [...root.children])if(mesh.isMesh&&!mesh.isInstancedMesh&&!mesh.userData.studyTick&&!mesh.children.length){if(!mergeBuckets.has(mesh.material))mergeBuckets.set(mesh.material,[]);mergeBuckets.get(mesh.material).push(mesh);}
     for(const [material,meshes] of mergeBuckets)if(meshes.length>1){const parts=meshes.map(mesh=>{mesh.updateMatrix();return mesh.geometry.clone().applyMatrix4(mesh.matrix);});const merged=mergeGeometries(parts,false);parts.forEach(g=>g.dispose());if(merged){for(const mesh of meshes){mesh.removeFromParent();mesh.geometry.dispose();}root.add(new THREE.Mesh(merged,material));}}
@@ -20,7 +32,7 @@ function kit(parent) {
     Object.values(geometry).forEach(g=>{if(!usedG.has(g))g.dispose();});Object.values(materials).forEach(m=>{if(!usedM.has(m))m.dispose();});
     return root;
   }
-  function curve(points,mat,radius=.025){const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),64,radius,5,false),materials[mat]);root.add(mesh);return mesh;}
+  function curve(points,mat,radius=.025,segments=64){const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),segments,radius,5,false),materials[mat]);root.add(mesh);return mesh;}
   return {root,materials,instance,finish,curve};
 }
 
@@ -52,6 +64,34 @@ export function habitatStudy(parent,id){
       instance('gem','light',[x,height,z+.065],[.055,.055,.025]);
     }
     root.userData.studyTick=({time,motion,celebrating})=>{k.materials.prism.emissiveIntensity=.22+(celebrating?.6:Math.sin(time*.5)*.04*motion);};
+  }else if(id==='habitat-04'){
+    // A ribbed paper shade, hanging cap and tassel read separately at buddy scale.
+    k.materials.prism.color.set('#ead5ad');k.materials.prism.emissive.set('#a9793f');k.materials.prism.emissiveIntensity=.16;
+    k.materials.silver.color.set('#9ea99c');k.materials.silver.metalness=.28;
+    instance('stone','stone',[-1.15,.015,-.20],[.22,.075,.18]);
+    curve([[-1.20,.02,-.28],[-1.20,1.23,-.28],[-1.07,1.23,-.28]],'dark',.025,20);
+    curve([[-1.08,1.23,-.28],[-1.08,1.12,-.28]],'silver',.012,8);
+    instance('stone','prism',[-1.08,.88,-.28],[.205,.25,.18]);
+    for(const y of [.67,.77,.88,.99,1.09]){const r=Math.sqrt(Math.max(.1,1-((y-.88)/.25)**2));instance('ring','silver',[-1.08,y,-.28],[.205*r,.18*r,.65],[Math.PI/2,0,0]);}
+    for(const side of [-1,1])curve([[-1.08+side*.08,1.10,-.22],[-1.08+side*.15,.88,-.12],[-1.08+side*.08,.66,-.22]],'silver',.008,16);
+    instance('box','dark',[-1.08,1.10,-.28],[.15,.035,.13]);instance('box','dark',[-1.08,.66,-.28],[.13,.035,.12]);
+    curve([[-1.08,.64,-.28],[-1.08,.52,-.28]],'silver',.010,8);instance('gem','prism',[-1.08,.50,-.28],[.045,.08,.02]);
+    // Grounded light pool, no particle loop or independent light/renderer.
+    instance('stone','prism',[-1.10,-.008,-.12],[.28,.008,.20]);
+  }else if(id==='habitat-09'){
+    // Small open shrine on a floating stone deck, offset behind the right shore.
+    k.materials.prism.color.set('#91aab7');k.materials.prism.emissiveIntensity=0;
+    k.materials.silver.color.set('#c9c7b1');k.materials.silver.metalness=.20;
+    const x=1.02,z=-.38;
+    instance('stone','dark',[x,.10,z],[.39,.13,.31]);instance('box','stone',[x,.21,z],[.65,.10,.48]);
+    for(const dx of [-.22,.22])for(const dz of [-.16,.16])instance('box','silver',[x+dx,.49,z+dz],[.040,.51,.040]);
+    instance('box','silver',[x,.73,z],[.52,.045,.38]);
+    const roofShape=new THREE.Shape();roofShape.moveTo(-.40,0);roofShape.quadraticCurveTo(-.22,.025,0,.22);roofShape.quadraticCurveTo(.22,.025,.40,0);roofShape.lineTo(.34,-.07);roofShape.quadraticCurveTo(0,.03,-.34,-.07);roofShape.closePath();
+    const roofGeo=new THREE.ExtrudeGeometry(roofShape,{depth:.51,bevelEnabled:false,curveSegments:8});roofGeo.translate(x,.78,z-.255);root.add(new THREE.Mesh(roofGeo,k.materials.prism));
+    curve([[x-.40,.78,z+.26],[x,.99,z+.26],[x+.40,.78,z+.26]],'silver',.014,16);
+    instance('gem','light',[x,.48,z],[.075,.11,.065]);instance('box','dark',[x,.34,z],[.21,.04,.18]);
+    for(let i=0;i<2;i++)instance('stone','stone',[.55+i*.24,.025,.15-i*.07],[.16,.045,.11]);
+    for(const r of [.32,.43])instance('ring','silver',[x,-.02,z],[r,r*.66,.45],[Math.PI/2,0,0]);
   }else{
     // A true crossing current, with height separation at its intersection.
     for(let lane=0;lane<2;lane++){
@@ -62,11 +102,11 @@ export function habitatStudy(parent,id){
     const motes=new THREE.InstancedMesh(new THREE.SphereGeometry(.025,8,5),k.materials.light,24),dummy=new THREE.Object3D();root.add(motes);
     root.userData.studyTick=({time,motion,x,focus,celebrating})=>{for(let i=0;i<24;i++){const a=i/24*Math.PI*2+time*(focus?.22:.13)*motion;dummy.position.set(Math.sin(a)*(1.22+Math.abs(x)*.025),.05+.42*Math.pow(Math.sin(a),6)+Math.max(0,celebrating?.06:0),Math.sin(a*2)*.43);dummy.scale.setScalar(.6+(i%3)*.2);dummy.updateMatrix();motes.setMatrixAt(i,dummy.matrix);}motes.instanceMatrix.needsUpdate=true;};
   }
-  const result=k.finish();result.userData.studyBudget.item=id;if(id==='habitat-12')result.userData.studyBudget.particles=24;
+  const result=k.finish(['habitat-04','habitat-09'].includes(id));result.userData.studyBudget.item=id;if(id==='habitat-12')result.userData.studyBudget.particles=24;
   return result;
 }
 
-export function accessoryStudy(parent,head,bow,id){
+export function accessoryStudy(parent,head,bow,id,stage=0){
   const k=kit(parent),{root,instance,curve}=k;
   root.position.y=bow.position.y-.73;
   if(id==='halo-thin'){
@@ -93,6 +133,33 @@ export function accessoryStudy(parent,head,bow,id){
     const needle=new THREE.Group();root.add(needle);
     const north=new THREE.Mesh(new THREE.ConeGeometry(.032,.14,3),k.materials.light);north.position.set(0,.045,.055);north.scale.z=.25;needle.add(north);
     root.userData.studyTick=({x,motion,focus})=>{needle.rotation.z=focus?0:x*.5*motion;};
+  }else if(id==='halo-05'){
+    k.materials.cloth.color.set('#ad8e79');k.materials.silver.color.set('#dfccb0');k.materials.silver.metalness=.15;
+    // Explicit body-side anchors for Baby / Kitten / Young Cat / Adult.
+    // The bag sits outside the left paw; the strap ends below the muzzle.
+    const anchors=[[-.49,.42,.48,.86],[-.50,.45,.48,.91],[-.51,.49,.48,.96],[-.52,.53,.48,1]];
+    const [x,y,z,s]=anchors[stage];root.position.set(x,y,z);root.scale.setScalar(s);
+    instance('box','dark',[0,0,0],[.34,.32,.13]);instance('box','cloth',[0,0,.025],[.32,.30,.13]);
+    instance('box','cloth',[0,.105,.105],[.35,.16,.045]);
+    curve([[-.16,.12,.135],[0,.09,.14],[.16,.12,.135]],'silver',.012,12);
+    instance('box','silver',[.015,.025,.14],[.055,.085,.025]);instance('box','dark',[.015,.032,.157],[.025,.032,.008]);
+    // Stitched lower corners and a folded leaf tucked into the side seam.
+    for(const side of [-1,1])for(let i=0;i<3;i++)instance('box','silver',[side*.13,-.04-i*.036,.10],[.020,.010,.009]);
+    instance('gem','stone',[-.13,.23,.025],[.045,.10,.015],[0,0,-.35]);
+    const shoulder=(bow.position.y-y)/s;
+    curve([[-.14,.16,0],[.20,shoulder*.55+.04,.02],[.64,shoulder,.015]],'cloth',.029,20);
+    curve([[-.14,.16,.035],[.20,shoulder*.55+.04,.055],[.64,shoulder,.05]],'silver',.007,20);
+  }else if(id==='halo-09'){
+    k.materials.silver.color.set('#c5ad80');k.materials.silver.metalness=.35;k.materials.light.color.set('#f3dfb4');k.materials.light.emissive.set('#d9b77e');k.materials.light.emissiveIntensity=.28;
+    // A miniature framed lantern, scaled from the scarf anchor in every stage.
+    const sizes=[.82,.88,.95,1];root.position.copy(bow.position);root.position.y-=.22*sizes[stage];root.position.z+=.16;root.scale.setScalar(sizes[stage]);
+    curve([[-.16,.23,-.05],[0,.16,0],[.16,.23,-.05]],'silver',.012,16);
+    instance('ring','silver',[0,.125,0],[.052,.052,.6]);
+    instance('box','light',[0,-.015,0],[.13,.17,.08]);
+    instance('box','dark',[0,.09,0],[.20,.045,.13]);instance('box','dark',[0,-.12,0],[.19,.040,.13]);
+    for(const side of [-1,1])instance('box','silver',[side*.08,-.015,.055],[.018,.19,.025]);
+    instance('box','silver',[0,-.015,.055],[.012,.18,.02]);
+    instance('gem','silver',[0,-.175,0],[.025,.04,.015]);
   }else{
     // Broad layered lunar feathers remain identifiable at 120 pixels.
     const wings=[];
@@ -104,5 +171,5 @@ export function accessoryStudy(parent,head,bow,id){
     }
     root.userData.studyTick=({time,motion,celebrating})=>wings.forEach((wing,i)=>{wing.rotation.y=(i?1:-1)*(Math.sin(time*.75)*.025*motion+(celebrating?.24:0));});
   }
-  const result=k.finish();result.userData.studyBudget.item=id;return result;
+  const result=k.finish(['halo-05','halo-09'].includes(id));result.userData.studyBudget.item=id;return result;
 }
