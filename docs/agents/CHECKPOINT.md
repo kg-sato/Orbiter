@@ -4,6 +4,12 @@ Updated **2026-10-26** from this chat and the local repository. This is a handof
 
 ## Observed state
 
+### Knowledge vault and recoverable browser enrollment — 2026-10-28
+
+- Created separate `C:/Users/kgsat/Documents/ChatGPT/Projects/Orbiter Vault`, with Home, guidelines, ideas, templates, provenance, Roblox transfer inventory and project knowledge. See [cycle brief and source boundaries](../VAULT-RESEARCH-2026-10-28.md). Vault snapshots are dated evidence, not active project instructions or proof of installation.
+- Browser enrollment now prepares candidate state and atomically commits guest backup/account cache/active owner before publishing connected state. Failed pull or aborted storage leaves enrollment retryable; repeated enrollment preserves the original guest backup. Shared cloud bundle and affected service-worker hash regenerated; core and native frontend preparation passed. Source version remains 0.6.1.
+- The baseline failure was reproduced in synthetic Edge account tests. Final expanded cloud browser and codec suites pass, including download/storage failure, asynchronous abort, reload/retry, duplicate enrollment and exact guest restoration. Vault audit passes with 177 notes and no broken wikilinks/JSON/source-hash failures. Generation (2), iPhone source/version and offline HTML browser checks pass. No live account writes, native package, installed-app/device check, commit, push or publication.
+
 ### One-time follow-up commit/push authorization — 2026-10-26
 
 - User explicitly requested “commit and push for me this one time.” The 11-file continuation inventory matched the verified working sources, with an empty index and base `2e95109`, on `codex/companion-life-improvements`. This authorizes one follow-up commit and normal push to the existing PR #26 branch; it is not standing authorization for later commits, merges, releases or deployments. The sections below record the pre-commit implementation and verification state.

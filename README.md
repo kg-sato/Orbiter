@@ -95,6 +95,8 @@ This reads the existing packages without copying or installing them. Keep their 
 
 ## Project guidance and verification
 
+The separate local Orbiter Obsidian vault is the ongoing idea/research database. See [vault location, source coverage and first implementation cycle](docs/VAULT-RESEARCH-2026-10-28.md); start with its `Home.md` and distinguish historical sources from current evidence.
+
 The [current cycle](docs/agents/CURRENT-CYCLE.md) defines evidence-based optimization and cleanup while preserving existing product and workflow preferences.
 
 - [Project instructions](AGENTS.md), [working workflow](docs/agents/WORKFLOW.md) and [current checkpoint](docs/agents/CHECKPOINT.md).

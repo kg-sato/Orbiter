@@ -12,6 +12,14 @@ const lock=fn=>{const next=serial.then(fn);serial=next.catch(()=>{});return next
 async function database(){if(db)return db;db=await new Promise((resolve,reject)=>{const r=indexedDB.open('orbiter-cloud-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('accounts');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});return db;}
 async function read(key){const d=await database();return new Promise((resolve,reject)=>{const r=d.transaction('accounts').objectStore('accounts').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 async function write(key,value){const d=await database();return new Promise((resolve,reject)=>{const tx=d.transaction('accounts','readwrite');tx.objectStore('accounts').put(value,key);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Account storage is unavailable'));});}
+// Guest backup, account cache and ownership must commit together. A failed put
+// must abort earlier requests too, including synchronous quota/clone failures.
+async function connectWorkspace(owner,guest,next){const d=await database();return new Promise((resolve,reject)=>{
+  const tx=d.transaction('accounts','readwrite');
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error('Account storage is unavailable'));tx.onabort=()=>reject(tx.error||Error('Account storage is unavailable'));
+  try{const store=tx.objectStore('accounts');store.put(guest,'guest');store.put(next,owner);store.put(owner,'active-owner');}
+  catch(e){tx.abort();reject(e);}
+});}
 function bridge(){return window.SchedulerAccountBridge;}
 async function rpc(name,args){const {data:auth}=await client.auth.getSession();if(!auth.session||auth.session.user.id!==account?.id)throw Error('Account changed or expired. Reload or sign in to the same account; this queue stays with its original owner.');const {data,error}=await client.rpc(name,args);if(error)throw Error(error.message);return data;}
 function queue(next){
@@ -86,15 +94,18 @@ const api={
   verify:async(email,token)=>{if(native){const s=await invoke('verify',{email,token});account=s.account;return s;}if(account)throw Error('Sign out before changing accounts.');const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});if(error)throw Error(error.message);await adopt(data.user);return api.status();},
   preview:async()=>{if(native)return invoke('preview');const records=await rpc('orbiter_pull');return {localCount:Object.keys(encode(JSON.parse(bridge().snapshot()))).length,remoteCount:Object.values(records).filter(r=>r.value!==null).length};},
   enroll:async choice=>{if(native)return invoke('enroll',{choice});await lock(async()=>{
-    const guest=JSON.parse(bridge().snapshot());await write('guest',guest);await write('active-owner',account.id);connected=true;
-    if(cache.enrolled){await apply();return;}const remote=await rpc('orbiter_pull');cache.base=remote;cache.pending={};cache.conflicts={};cache.enrolled=true;
+    if(!account)throw Error('Sign in before connecting this workspace.');
+    if(choice!=='merge'&&choice!=='remote')throw Error('Choose how to connect this workspace.');
+    if(connected&&cache.enrolled)return;
+    const guest=JSON.parse(bridge().snapshot()),next=clone(cache);
+    if(!next.enrolled){const remote=await rpc('orbiter_pull');next.base=remote;next.pending={};next.conflicts={};next.enrolled=true;
     if(choice==='merge'){
       const local=encode(guest);for(const [key,value] of Object.entries(local)){
-        if(remote[key]?.value!==undefined&&remote[key]?.value!==null&&!equal(remote[key].value,value)){cache.pending[key]={id:crypto.randomUUID(),value,expected:remote[key].version};cache.conflicts[key]={local:value,remote:remote[key].value,version:remote[key].version};}
-        else if(remote[key]?.value===undefined)cache.pending[key]={id:crypto.randomUUID(),value,expected:0};
+        if(remote[key]?.value!==undefined&&remote[key]?.value!==null&&!equal(remote[key].value,value)){next.pending[key]={id:crypto.randomUUID(),value,expected:remote[key].version};next.conflicts[key]={local:value,remote:remote[key].value,version:remote[key].version};}
+        else if(remote[key]?.value===undefined)next.pending[key]={id:crypto.randomUUID(),value,expected:0};
       }
-    }
-    await write(account.id,cache);await apply();
+    }}
+    await connectWorkspace(account.id,guest,next);cache=next;connected=true;await apply();
   });await sync();return api.status();},
   save:async workspace=>{if(native||loading||!account||(!cache?.enrolled||!connected))return;await lock(async()=>{queue(encode(workspace));cache.workspace=clone(workspace);await write(account.id,cache);});emit('Saved on this device; syncing.');queueMicrotask(sync);},
   resolve:async(key,choice)=>{if(native)return invoke('resolve',{key,choice});await lock(async()=>{const c=cache.conflicts[key];if(!c)throw Error('Conflict already resolved');cache.base[key]={value:c.remote,version:c.version};if(choice==='remote')delete cache.pending[key];else cache.pending[key]={id:crypto.randomUUID(),value:c.local,expected:c.version};delete cache.conflicts[key];await write(account.id,cache);});await sync();},
