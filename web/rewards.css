@@ -33,3 +33,19 @@
 .orb-opening .orb-chest-stage,.orb-opening .orb-chest-stage *{animation:none!important;transform:none}
 
 .orb-crate-model{display:inline-block;position:relative;transform:none!important}.orb-crate-model img{display:block;width:100%;height:100%;object-fit:contain}.orb-crate-model::before,.orb-crate-model::after{display:none!important}
+
+/* The payoff shows the actual companion; preview stays distinct from Equip. */
+.orb-discovery-preview{margin:0 auto 12px;max-width:260px;text-align:center}
+.orb-discovery-preview img{display:block;width:200px;height:200px;max-width:100%;object-fit:contain;margin:auto}
+.orb-discovery-preview figcaption{font-size:12px;line-height:1.5;color:#cce3d6}
+.orb-discovery-preview+.orb-rarity{margin-top:8px}
+
+/* Moonlit field notes: a literary voice for finds, plain language for actions. */
+.orb-reward-dialog header small{display:flex;align-items:center;gap:10px;font-family:"Palatino Linotype","Book Antiqua",Georgia,serif;font-size:13px;font-style:italic;font-weight:400;letter-spacing:.03em;text-transform:none;color:#c7d7cb}
+.orb-reward-dialog header small::before{content:'';display:block;flex:0 0 27px;height:1px;background:currentColor;opacity:.55}
+.orb-reward-dialog h2,.orb-reward-content>h3{font-family:"Palatino Linotype","Book Antiqua",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.025em;line-height:1.08;color:#f1e9da;text-wrap:balance}
+.orb-reward-dialog h2{font-size:31px;max-width:12ch;margin:8px 0 12px}
+.orb-reward-content>h3{font-size:30px;margin:13px auto 16px;max-width:20ch;overflow-wrap:break-word}
+.orb-reward-content>.orb-rarity{font-size:11px;font-weight:400;letter-spacing:.16em}
+.orb-discovery-preview figcaption{font-size:12px;letter-spacing:.01em;color:#c5d7d2}
+@media(max-width:420px){.orb-reward-dialog h2{font-size:29px}.orb-reward-content>h3{font-size:28px}}

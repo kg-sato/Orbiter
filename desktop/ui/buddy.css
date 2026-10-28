@@ -82,6 +82,15 @@
 :host([data-habitat="habitat-10"]) #island { background:radial-gradient(ellipse at 10% 90%,#6ed1be55,transparent 60%),#1c3041; }
 :host([data-habitat="habitat-12"]) #island { background:radial-gradient(ellipse at 20% 90%,#9484d65c,transparent 65%),#202a41; }
 #reward-content .orb-preview-model { height:230px;max-width:100%; }
+#reward-content .orb-discovery-preview{margin:0 auto 8px}
+#reward-content .orb-discovery-preview img{width:140px;height:140px}
+#reward-content .orb-discovery-preview figcaption{font-size:11px}
+#reward-content:has(>.orb-discovery-preview){display:grid;grid-template-columns:minmax(100px,.85fr) minmax(0,1fr);grid-template-rows:auto auto auto;align-content:center;align-items:center;column-gap:12px;row-gap:6px;text-align:left}
+#reward-content>.orb-discovery-preview{grid-column:1;grid-row:1/4;max-width:100%;margin:0}
+#reward-content>.orb-discovery-preview img{width:120px;height:120px}
+#reward-content:has(>.orb-discovery-preview)>.orb-rarity{grid-column:2;margin:0}
+#reward-content:has(>.orb-discovery-preview)>h3{grid-column:2;margin:0;overflow-wrap:anywhere}
+#reward-content:has(>.orb-discovery-preview)>#equip-reveal{grid-column:2;justify-self:start;max-width:100%;min-height:44px}
 #reward-content .orb-equipment-preview h3 { margin:8px 0; }
 /* A miniature observatory, with the same three worlds as the planner. */
 :host { --island-sky:#101d30;--island-glow:#80b5bc;--island-moon:#abc8cb; }
@@ -189,3 +198,9 @@ button:focus-visible{outline:2px solid #defbf2;outline-offset:2px}
 
 /* A parked shared renderer leaves its matching bounded snapshot behind. */
 .cat-snapshot-ready:has(>[data-cat-snapshot])>svg,.cat-snapshot-ready:has(>[data-cat-snapshot])>img:not([data-cat-snapshot]){visibility:hidden}
+
+/* Companion keepsakes have their own voice; controls retain the UI face. */
+#reward-panel>header h2{font-family:"Palatino Linotype","Book Antiqua",Georgia,serif;font-size:19px;font-style:italic;font-weight:400;line-height:1.08;letter-spacing:-.02em;color:#f1e9da;text-wrap:balance}
+#reward-content:has(>.orb-discovery-preview)>h3{font-family:"Palatino Linotype","Book Antiqua",Georgia,serif;font-size:22px;font-style:italic;font-weight:400;line-height:1.08;letter-spacing:-.025em;margin:0;overflow-wrap:break-word;text-wrap:balance;color:#f1e9da}
+#reward-content:has(>.orb-discovery-preview)>.orb-rarity{margin:0;font-size:10px;font-weight:400;letter-spacing:.16em}
+#reward-content>.orb-discovery-preview figcaption{font-size:11px;line-height:1.4;letter-spacing:.01em;color:#c5d7d2}

@@ -57,6 +57,15 @@ export function collection(v, slot='appearance') {
   return `<div class="orb-equipped-summary" aria-label="Equipped collection">${['appearance','halo','trail','habitat'].map(s=>`<span>${escape(displayName(v.catalog.find(c=>c.id===v.settings[s])?.name||'No '+s))}</span>`).join('')}</div><nav class="orb-collection-tabs" aria-label="Reward categories">${[['appearance','Looks'],['halo','Accessories'],['trail','Trails'],['habitat','Habitat']].map(([s,n])=>`<button data-slot-filter="${s}" aria-pressed="${slot===s}">${n}</button>`).join('')}</nav><div class="orb-collection-grid">${v.catalog.filter(c=>(c.slot||'appearance')===slot).map(c=>{const owned=v.rewards.owned.includes(c.id),equipped=v.settings[slot]===c.id;return `<button class="orb-collection-item" data-equip="${escape(c.id)}" data-slot="${slot}" data-owned="${owned}" data-rarity="${c.rarity}" aria-pressed="${equipped}">${preview(c)}<strong>${escape(displayName(c.name))}</strong><small>${equipped?'Equipped':owned?'Owned · preview':c.rarity+' · locked'}</small></button>`;}).join('')}</div>`;
 }
 export function equipmentPreview(v,item){const owned=v.rewards.owned.includes(item.id);return `<section class="orb-equipment-preview"><small>${owned?'TRY IT ON':'LOCKED · PREVIEW ONLY'}</small><h3>${escape(displayName(item.name))}</h3><div class="orb-preview-model" aria-label="Companion equipment preview"></div><p>${escape(item.rarity)} · ${owned?'Your discovery':'Earn crates through focus to discover this item.'}</p><div class="orb-preview-actions"><button data-preview-cancel>Cancel preview</button><button data-preview-equip ${owned?'':'disabled'}>Equip</button></div><p data-preview-status role="status"></p></section>`;}
+// A saved discovery can be shown on the companion without equipping it. This
+// uses the bounded portrait cache, never a second live scene or a settings write.
+export function discoveryPreview(v,item,{code=window.OrbiterCats?.main(),growthMs=v?.rewards?.focusedMs||0}={}){
+  if(!item?.id||!['appearance','halo','trail','habitat'].includes(item.slot))return item?preview(item):'';
+  const items={...v?.settings,[item.slot]:item.id};
+  let portrait;try{portrait=window.OrbiterCats?.portrait(code,growthMs,items);}catch{}
+  if(!portrait)return preview(item);
+  return `<figure class="orb-discovery-preview"><img src="${escape(portrait)}" alt="Companion preview wearing ${escape(displayName(item.name))}" width="240" height="240"><figcaption>On your familiar · not equipped</figcaption></figure>`;
+}
 export function recap(v) {
   const r=v?.latestRecap;if(!r)return '';
   const ms=Math.max(0,r.focusedMs||0),seconds=Math.floor(ms/1000),minutes=Math.floor(seconds/60);
@@ -114,25 +123,28 @@ async function open(collectionOnly) {
   let chestPresentation;
   try {
     host.classList.add('orb-opening');
-    host.setAttribute('aria-busy','true');message('Opening your discovery…');
-    chestPresentation=window.OrbiterChests?.play(host,{quiet:calm(),onPhase:phase=>{if(dialog.open&&serial===revealSerial)message(phase==='complete'?'Saving your discovery…':phase==='open'?'A new discovery…':phase==='unlock'?'A little moonlight…':'Opening your discovery…');}});
+    host.setAttribute('aria-busy','true');message('Something stirs beneath the lid…');
+    chestPresentation=window.OrbiterChests?.play(host,{quiet:calm(),onPhase:phase=>{if(dialog.open&&serial===revealSerial)message(phase==='complete'?'Saving your discovery…':phase==='open'?'A shape comes into view…':phase==='unlock'?'Moonlight slips through…':'Something stirs beneath the lid…');}});
     const presentation=chestPresentation?.finished||Promise.resolve();
     const [result]=await Promise.all([action('chest'),presentation]);
     const reward=result?.reward;
 
     if(!dialog.open || serial!==revealSerial)return;
+    // Return the renderer before taking the actual companion portrait; a chest
+    // lease intentionally serves fallback portraits while it owns the canvas.
+    chestPresentation?.cancel('revealed');
     host.classList.remove('orb-opening');
-    host.setAttribute('aria-busy','false');message('Discovery saved to your collection.');
-    host.innerHTML=reward?`${preview(reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(displayName(reward.name))}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';
+    host.setAttribute('aria-busy','false');message('A keepsake, now yours.');
+    host.innerHTML=reward?`${discoveryPreview(current,reward)}<small class="orb-rarity">${escape(reward.rarity)}</small><h3>${escape(displayName(reward.name))}</h3>${reward.id?'<button class="primary" data-reveal-equip>Equip discovery</button>':'<p>A new light in your constellation.</p>'}`:'<p>Your discovery is saved in the collection.</p>';
     window.OrbiterLake?.play({kind:'crate',target:host});
-    host.querySelector('[data-reveal-equip]')?.addEventListener('click',async()=>{try{await action('settings',{[reward.slot]:reward.id});message('Equipped');}catch(e){message(e);}});
+    host.querySelector('[data-reveal-equip]')?.addEventListener('click',async e=>{const button=e.currentTarget;if(button.disabled)return;button.disabled=true;try{await action('settings',{[reward.slot]:reward.id});if(dialog.open&&serial===revealSerial){const caption=host.querySelector('figcaption');if(caption)caption.textContent='Equipped on your companion';button.textContent='Equipped';message('Equipped');}}catch(error){if(dialog.open&&serial===revealSerial){button.disabled=false;message(error);}}});
     window.OrbiterCats?.celebrate();
   }catch(e){if(dialog.open&&serial===revealSerial){host.innerHTML=`${crateArt()}<h3>Discovery paused</h3><p>Check your connection, then open Discoveries again.</p>`;message(e);}}finally{chestPresentation?.cancel('released');busy=false;host.classList.remove('orb-opening');host.setAttribute('aria-busy','false');}
 }
 function init() {
   const hero=document.getElementById('now-card');if(!hero)return;
   card=document.createElement('section');card.className='orb-reward-dashboard';card.hidden=hero.hidden;card.setAttribute('aria-label','Companion progress');hero.append(card);
-  dialog=document.createElement('dialog');dialog.className='orb-reward-dialog';dialog.innerHTML='<header><div><small>YOUR LITTLE UNIVERSE</small><h2>Discoveries</h2></div><button aria-label="Close discoveries">×</button></header><div class="orb-reward-content"></div><p class="orb-reward-status" role="status"></p><details><summary>How discoveries work</summary><p>Every 30 focused minutes earns a crate. Common 70% · Rare 25% · Mythic 5%. Only unowned items; unavailable tiers redistribute. Complete collections earn constellation stars.</p></details>';
+  dialog=document.createElement('dialog');dialog.className='orb-reward-dialog';dialog.innerHTML='<header><div><small>from the stillwater</small><h2>The moonpool archive</h2></div><button aria-label="Close discoveries">×</button></header><div class="orb-reward-content"></div><p class="orb-reward-status" role="status"></p><details><summary>How discoveries work</summary><p>Every 30 focused minutes earns a crate. Common 70% · Rare 25% · Mythic 5%. Only unowned items; unavailable tiers redistribute. Complete collections earn constellation stars.</p></details>';
   (document.getElementById('native-planner')||document.body).append(dialog);dialog.querySelector('header button').onclick=()=>dialog.close();
   dialog.addEventListener('close',()=>{revealSerial++;window.OrbiterChests?.cancel('closed');window.OrbiterCats?.cancelPreview();});
   recapCard=document.createElement('section');recapCard.className='orb-session-recap';recapCard.setAttribute('aria-label','Latest focus session');recapCard.hidden=true;hero.after(recapCard);
@@ -141,4 +153,4 @@ function init() {
 window.addEventListener('orbiter-native-state',e=>{current=e.detail;render();if(!window.__TAURI__)window.OrbiterUI?.refreshCat();});
 window.addEventListener('orbiter-workspace-rendered',e=>{recapPage=e.detail.page;if(card)card.hidden=e.detail.page!=='desk';renderRecap();});
 document.addEventListener('DOMContentLoaded',()=>{current=window.OrbiterNativeState||null;init();});
-window.OrbiterRewards={growth,strip,preview,collection,crateArt,recap,equipmentPreview,displayName};
+window.OrbiterRewards={growth,strip,preview,collection,crateArt,recap,equipmentPreview,discoveryPreview,displayName};

@@ -4,7 +4,7 @@ Original Orbiter artwork. No marketplace assets, remote textures, or external ru
 
 ## Editable source
 
-Open `orbiter-kitten-051.blend` in Blender 4.3 or later for the approved 0.5.1 avatar. The scene contains a continuous rounded head, recessed ear bowls with thick rounded rims, a seated body, four selectable ear variants, and an eight-bone armature. Eyes have a `Blink` shape key. Runtime coat patterns, scarves, charms and rewards attach to the exported rig without changing stored identity codes. The earlier `orbiter-kitten.blend` remains as design history.
+Open `orbiter-kitten-stillwater.blend` for the current moonlit-storybook refinement. The user selected this direction on 2026-10-28. It has a gently pear-shaped head, shallow pink ear bowls, smaller inset eyes, a sculpted muzzle, a fuller seated body and matte ceramic materials. Four selectable ear variants and the eight-bone armature remain intact. Eyes retain `Blink`; the smile retains `Happy`. Runtime coat patterns, scarves, charms and rewards keep their stored identity codes. `orbiter-kitten-051.blend` and the earlier `orbiter-kitten.blend` remain as design history.
 
 The reproducible modeling source is `build_kitten.py`. From the repository root:
 
@@ -15,6 +15,16 @@ npm run desktop:prepare
 ```
 
 The script writes this editable Blender file and `src/mascot/assets/kitten.glb`. Blender is a developer art tool; it is not distributed with the application. The GLB is embedded in the application bundle and decoded locally, including offline/native mode.
+
+### Stillwater source and review — 2026-10-28
+
+The existing local Blender 5.3 beta successfully generated the editable source and GLB. Runtime revision is `orbiter-kitten-stillwater-1`, invalidating old portrait-cache entries. The SVG fallback follows the new face/body/inner-ear treatment while preserving four coat/ear/scarf/charm identities and existing equipment wrappers.
+
+Controlled before/after portraits use code 0, two credited hours, unchanged equipment, angles and 240px output. Front/side/three-quarter, all coat and ear variants, baby and adult were captured under ignored `build/art-redirection/`; `comparison.png` shows the baseline and new neutral face. Source GLB: 19,824 definition triangles versus 20,000 before, 8 bones and 6 material roles; 718,636 bytes versus 728,704. These are asset measurements, not whole-app performance claims. Existing equipment/cosmic, avatar-cache, production generation and iPhone source checks pass. Final discovery/chest UI checks also target the new art and typography.
+
+The discovery voice is scoped to reward headings: local Palatino/Book Antiqua/Georgia italic serif, offset lowercase eyebrow, and short pond/moon phrasing. Buttons, actual item identities, rarity and failure instructions remain clear. No remote font, model, texture or new dependency.
+
+`halo-01` Petal Bow was also refined from two forehead beads into folded petals, a knot and ribbon tails at the right ear; SVG fallback now shows the same bow instead of a generic halo. Fixed code-0 portraits at all four growth stages were inspected, with clear eyes/face. Other cosmetic models were preserved. Final discovery and cosmic suites pass after this change; chest lifecycle checks passed against the new kitten. These are source/browser checks, not installed-app, device or whole-process performance evidence.
 
 ## Editing and export
 
