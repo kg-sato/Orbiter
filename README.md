@@ -2,7 +2,7 @@
 
 A study planner with a small companion to keep you company while you work. Plan your week, manage assignments and tests, keep course notes, and turn focused study into growth for your kitten and its pond habitat.
 
-**Current source version: 0.6.1.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
+**Current source version: 0.6.6.** Orbiter includes a Windows application, a browser workspace with optional private-beta accounts, and a prepared offline iPhone wrapper. These have different capabilities and verification status.
 
 ## What you can do
 
@@ -94,6 +94,8 @@ This reads the existing packages without copying or installing them. Keep their 
 | `build/` | Ignored generated frontends, captures and local installers |
 
 ## Project guidance and verification
+
+The separate local Orbiter Obsidian vault is the ongoing idea/research database. See [vault location, source coverage and first implementation cycle](docs/VAULT-RESEARCH-2026-10-28.md); start with its `Home.md` and distinguish historical sources from current evidence.
 
 The [current cycle](docs/agents/CURRENT-CYCLE.md) defines evidence-based optimization and cleanup while preserving existing product and workflow preferences.
 

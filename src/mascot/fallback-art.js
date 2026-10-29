@@ -2,7 +2,7 @@ import {fallbackPortrait as base} from './fallback.js';
 export function studyFallback(code,stage,equipment){
   
   // Preserve the actual identity illustration, replace only the generic decorations.
-  const newHalo=['halo-thin','halo-07','halo-10','halo-12'].includes(equipment.halo);
+  const newHalo=['halo-thin','halo-01','halo-07','halo-10','halo-12'].includes(equipment.halo);
   const newHabitat=['habitat-01','habitat-07','habitat-11','habitat-12'].includes(equipment.habitat);
   let svg=decodeURIComponent(base(code,stage,{...equipment,halo:newHalo?null:equipment.halo,habitat:newHabitat?null:equipment.habitat,trail:null}).split(',').slice(1).join(','));
   if(equipment.appearance==='mint')svg=svg.replaceAll('#ecc0ad','#b4e6d5');
@@ -18,6 +18,7 @@ export function studyFallback(code,stage,equipment){
   const pendant=equipment.halo==='halo-thin'?'<path d="M68 114L80 132L92 114" fill="none" stroke="#d7e7ef" stroke-width="1.5"/><path d="M80 128L86 138L80 146L74 138Z" fill="#dcebf2" stroke="#708da1"/><path d="M80 132V142" stroke="#78bfd9"/>':equipment.halo==='halo-10'?'<circle cx="80" cy="135" r="12" fill="#294359" stroke="#d1e3ed" stroke-width="2"/><path d="M80 125L84 140L76 138Z" fill="#b2e8ef"/><path d="M69 135H72M88 135H91M80 145V143" stroke="#d1e3ed"/>':'';
   const trail=equipment.trail==='trail-waves'?'<path d="M4 164Q40 151 80 164T156 164M8 170Q40 157 80 170T152 170" fill="none" stroke="#a1dce4" opacity=".65"/>':equipment.trail==='trail-sparks'?'<path d="M3 136L8 91L23 81M138 83L152 103L155 140" fill="none" stroke="#cfdbf5"/><g fill="#cfdbf5"><circle cx="8" cy="91" r="2"/><circle cx="23" cy="81" r="2"/><circle cx="152" cy="103" r="2"/></g>':equipment.trail==='trail-comet'?'<path d="M8 153Q-8 80 30 48" fill="none" stroke="#edc7b5" stroke-width="2"/><circle cx="30" cy="48" r="4" fill="#edc7b5"/>':'';
   const marks=equipment.appearance==='mint'?'<path d="M38 64Q80 81 121 64M34 99Q80 113 125 99" fill="none" stroke="#619cae" stroke-width="3" opacity=".65"/>':equipment.appearance==='look-11'?'<path d="M40 62L49 55L56 65L48 73ZM105 57L115 65L108 75L99 65Z" fill="#8b91c5" opacity=".75"/>':equipment.appearance==='indigo'?'<g fill="#c9dfee"><path d="M47 55L49 61L55 63L49 65L47 71L45 65L39 63L45 61ZM114 86L116 91L121 93L116 95L114 100L112 95L107 93L112 91Z"/></g>':'';
-  svg=svg.replace('<ellipse cx="80" cy="163"',habitat+behind+trail+'<ellipse cx="80" cy="163"').replace('</svg>',marks+pendant+'</svg>');
+  const petalBow=equipment.halo==='halo-01'?'<g transform="translate(112 48) rotate(18)" fill="#ecc0ad" stroke="#d3b6a9" stroke-width="1"><path d="M0 0C6-13 20-10 17-2C21 8 6 7 0 0ZM0 0C-6-13-20-10-17-2C-21 8-6 7 0 0Z"/><path d="M-2 2L-9 16L-3 13L1 16L3 3L11 14L13 8L18 9L3-1"/><ellipse rx="3" ry="4" fill="#e8c293"/></g>':'';
+  svg=svg.replace('<ellipse cx="80" cy="163"',habitat+behind+trail+'<ellipse cx="80" cy="163"').replace('</svg>',marks+pendant+petalBow+'</svg>');
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }

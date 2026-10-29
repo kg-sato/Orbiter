@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import modelUrl from './assets/kitten.glb';
 
-export const MODEL_VERSION='orbiter-kitten-051';
+export const MODEL_VERSION='orbiter-kitten-stillwater-1';
 let template=null,error=null;
 // Skeleton clones share immutable geometry. Classify weights once per geometry,
 // but retain attribute/version guards for a future edited or replaced buffer.

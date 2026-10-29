@@ -131,7 +131,15 @@ function makeCat(code,equipment={},growthMs=0,stars=0){
 }
 function addAccessory(root,head,bow,n,gold,scarf){
  const tint=material(lookColor('look-'+String(n).padStart(2,'0')));
- if(n===1){for(const side of [-1,1])ball(head,tint,[side*.13,.57,.48],[.15,.09,.045]);}
+ if(n===1){
+  // Petal Bow: a small folded ribbon at the ear, not two beads on the forehead.
+  const ribbon=new THREE.Group();ribbon.position.set(.43,.43,.39);ribbon.rotation.z=-.32;head.add(ribbon);
+  const petal=new THREE.Shape();petal.moveTo(0,0);petal.bezierCurveTo(.07,.13,.24,.14,.23,.035);petal.bezierCurveTo(.24,-.06,.08,-.055,0,0);
+  const loop=new THREE.ExtrudeGeometry(petal,{depth:.018,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.009,bevelThickness:.009,curveSegments:8});
+  for(const side of [-1,1]){const lobe=new THREE.Mesh(loop,tint);lobe.scale.x=side;ribbon.add(lobe);}
+  ball(ribbon,gold,[0,0,.025],[.035,.043,.025]);
+  for(const side of [-1,1])line(ribbon,[[side*.018,-.02,0],[side*.035,-.075,.005],[side*.085,-.14,.015]],lookColor('look-01'),.022);
+ }
  else if(n===2){ball(bow,gold,[0,-.13,.10],[.07,.085,.06]);}
  else if(n===3){const moon=new THREE.Mesh(new THREE.TorusGeometry(.09,.022,6,18,Math.PI*1.5),gold);moon.position.set(-.52,.35,.49);head.add(moon);}
  else if(n===4){for(let i=0;i<4;i++)ball(bow,ivory,[(i-1.5)*.11,0,.04],[.08,.08,.05]);}

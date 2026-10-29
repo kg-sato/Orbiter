@@ -4,6 +4,32 @@ Updated **2026-10-26** from this chat and the local repository. This is a handof
 
 ## Observed state
 
+### Requested 0.6.6 package and PR — 2026-10-28
+
+- User authorized packaging, committing/pushing with past-tense subjects of at most three words, and a new PR covering version/application changes. Prepared dedicated `codex/stillwater-0-6-6`, preserving the earlier enrollment commit. Versions now agree on 0.6.6, above historical local release records through 0.6.5; latest published release checked at intake was 0.6.0. No release publication, merge or installation is implied.
+- Built signed updater-compatible `build/release/Orbiter_0.6.6_x64-setup.exe` (4,403,643 bytes), SHA256 `16c3241d911096a77682d17f4e3a5a64cb90f3a3b21282a3cd1c71fc28f699db`. Crypto signature/trusted comment, tamper rejection, key continuity, checksums/alias, actual binary/installer versions and embedded final assets pass; 92 frozen inputs unchanged. Authenticode NotSigned. [Verification and limits](../VERIFY-0.6.6.md), [release notes](../RELEASE-0.6.6.md).
+- Final 0.6.6 discovery, chest, cloud, generation and iPhone source suites pass. Packaging script now uses the existing shared dependency setting for its Tauri CLI too. Source/artwork/previous discovery work is included in the requested commit scope. Local vault remains separate; installed/device/live-service behavior unverified.
+
+### Stillwater kitten and discovery voice — 2026-10-28
+
+- User selected **moonlit storybook — soft and mysterious**. Rebuilt original kitten with a pear-shaped head, smaller inset eyes, shallow pink ear bowls, a sculpted muzzle, fuller seated body and matte materials. New editable `design/avatar/orbiter-kitten-stillwater.blend`; old Blender sources preserved. Runtime/cache revision `orbiter-kitten-stillwater-1`; four identities/growth stages and rig contracts preserved. GLB 19,824 triangles, eight bones, six materials. SVG fallback follows the new treatment.
+- Discovery-only text now uses warm italic local serif titles, `from the stillwater`, `The moonpool archive`, and `A keepsake, now yours.`; actions, rarity, item identity and failures remain clear. `halo-01` Petal Bow now has folded petals/knot/tails at the ear, with matching fallback. [Current source and review](../../design/avatar/README.md).
+- Final preview suite passes including computed font/style/weight, expected portrait, authority/failure/duplicate guards, fallback and no-scroll 360/420/560px buddy layouts. Existing cosmic/equipment, avatar-cache, generation and iPhone source checks pass. Chest lifecycle passed against the new kitten. Controlled turnarounds/identity/growth/bow fits and final phone/buddy typography inspected under `build/art-redirection/` and `build/discovery-preview/`.
+- Canonical/iPhone/preview/native output integrated; source version stays 0.6.1. Uncommitted alongside the preceding discovery work; no new commit/push/package/install. Installed Windows, physical iPhone/VoiceOver, live services and full-app resource use remain unverified. User taste remains a review decision, not something automated tests establish.
+
+### Actual companion discovery portraits — 2026-10-28
+
+- Accepted chest results now show a cached portrait of the actual main kitten (planner) or active course kitten/growth (buddy), with existing equipment plus the discovery. It is explicitly preview-only until accepted Equip; failed Equip can retry, duplicate activation is guarded, and stars retain a nonwearable result. No economy, identity, authority or storage change.
+- Shared `rewards.js`, native shell and scoped styles integrated; canonical/iPhone/preview/native outputs regenerated at 0.6.1. [Design, acceptance and evidence](../../design/discovery-preview/README.md). New preview suite and existing chest lifecycle suite pass, including no extra context and canvas restoration. Phone/fallback and 360/420/560px long-name buddy captures inspected; name and Equip fit before scrolling. Build/generation/iPhone source checks pass.
+- Changes remain uncommitted; earlier commit/push authorization was already fulfilled. No new package, install, device or live-service check. Vault research/session notes updated. Separate source-audit candidate (not implemented): stalled chest requests retain the shared busy lock and prevent collection navigation until settlement.
+- Existing equipment/cosmic regression also passes after correcting its broken-avatar fixture to corrupt the exact kitten asset instead of the first embedded GLB (now the chest). Vault link/JSON/source-hash audit passes at 178 notes.
+
+### Knowledge vault and recoverable browser enrollment — 2026-10-28
+
+- Created separate `C:/Users/kgsat/Documents/ChatGPT/Projects/Orbiter Vault`, with Home, guidelines, ideas, templates, provenance, Roblox transfer inventory and project knowledge. See [cycle brief and source boundaries](../VAULT-RESEARCH-2026-10-28.md). Vault snapshots are dated evidence, not active project instructions or proof of installation.
+- Browser enrollment now prepares candidate state and atomically commits guest backup/account cache/active owner before publishing connected state. Failed pull or aborted storage leaves enrollment retryable; repeated enrollment preserves the original guest backup. Shared cloud bundle and affected service-worker hash regenerated; core and native frontend preparation passed. Source version remains 0.6.1.
+- The baseline failure was reproduced in synthetic Edge account tests. Final expanded cloud browser and codec suites pass, including download/storage failure, asynchronous abort, reload/retry, duplicate enrollment and exact guest restoration. Vault audit passes with 177 notes and no broken wikilinks/JSON/source-hash failures. Generation (2), iPhone source/version and offline HTML browser checks pass. No live account writes, native package, installed-app/device check, commit, push or publication.
+
 ### One-time follow-up commit/push authorization — 2026-10-26
 
 - User explicitly requested “commit and push for me this one time.” The 11-file continuation inventory matched the verified working sources, with an empty index and base `2e95109`, on `codex/companion-life-improvements`. This authorizes one follow-up commit and normal push to the existing PR #26 branch; it is not standing authorization for later commits, merges, releases or deployments. The sections below record the pre-commit implementation and verification state.

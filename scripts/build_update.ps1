@@ -1,6 +1,9 @@
 param([string]$SigningKey = "$PSScriptRoot\..\.release-keys\orbiter-updater.key")
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path "$PSScriptRoot\..").Path
+$nodeModules = if ($env:ORBITER_NODE_MODULES) { $env:ORBITER_NODE_MODULES } else { Join-Path $project 'node_modules' }
+$tauri = Join-Path $nodeModules '.bin\tauri.cmd'
+if (!(Test-Path -LiteralPath $tauri)) { throw 'Tauri CLI missing. Set ORBITER_NODE_MODULES to the existing matching dependency installation.' }
 if (!(Test-Path -LiteralPath $SigningKey)) { throw 'Updater signing key missing. Restore the original private key; do not generate a replacement for an existing update channel.' }
 $env:TAURI_SIGNING_PRIVATE_KEY = (Resolve-Path -LiteralPath $SigningKey).Path
 $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = ''
@@ -14,7 +17,7 @@ try {
     if ($LASTEXITCODE) { throw 'Native asset preparation failed' }
     Push-Location "$project\desktop"
     try {
-        & "$project\node_modules\.bin\tauri.cmd" build
+        & $tauri build
         if ($LASTEXITCODE) { throw 'Native build failed' }
     } finally { Pop-Location }
     python "$project\scripts\prepare_update.py"

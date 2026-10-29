@@ -117,24 +117,25 @@
    let chestPresentation;busy=true;this.recapView=false;const panel=this.$('reward-panel'),host=this.$('reward-content');
    host.classList.remove('recap-view','orb-revealed','orb-opening');panel.dataset.view=collectionOnly?'collection':'reveal';
    try{
-    const showing=present('reward'),ticket=presentationSerial;await showing;if(mode!=='buddy'||presentation!=='reward'||ticket!==presentationSerial)return;this.$('reward-heading').textContent=collectionOnly?'Discoveries':'Your discovery';
+    const showing=present('reward'),ticket=presentationSerial;await showing;if(mode!=='buddy'||presentation!=='reward'||ticket!==presentationSerial)return;this.$('reward-heading').textContent=collectionOnly?'Discoveries':'From the stillwater';
     if(collectionOnly){this.renderInventory();return;}
     host.innerHTML=R.crateArt();
     if(!state.rewards.chests){host.innerHTML=R.crateArt()+`<h3>A little more momentum.</h3><p>${Math.ceil((1800000-state.rewards.crateProgressMs)/60000)} focus minutes to your next crate.</p>`;return;}
-    host.innerHTML='<div class="crate-stage">'+R.crateArt()+'<span class="crate-halo" aria-hidden="true"></span></div><p class="crate-caption" role="status">Opening your discovery…</p>';
+    host.innerHTML='<div class="crate-stage">'+R.crateArt()+'<span class="crate-halo" aria-hidden="true"></span></div><p class="crate-caption" role="status">Something stirs beneath the lid…</p>';
     const quiet=this.dataset.calm==='true'||Number(document.body.dataset.motionIntensity)===0;
     host.classList.toggle('orb-opening',!quiet);host.setAttribute('aria-busy','true');
     // The native action runs once. Presentation waits independently for the lid,
     // even when a local RPC resolves before the browser's first paint.
-    chestPresentation=window.OrbiterChests?.play(host.querySelector('.crate-stage'),{quiet,onPhase:phase=>{const caption=host.querySelector('.crate-caption');if(caption)caption.textContent=phase==='complete'?'Saving your discovery…':phase==='open'?'A new discovery…':phase==='unlock'?'A little moonlight…':'Opening your discovery…';}});
+    chestPresentation=window.OrbiterChests?.play(host.querySelector('.crate-stage'),{quiet,onPhase:phase=>{const caption=host.querySelector('.crate-caption');if(caption)caption.textContent=phase==='complete'?'Saving your discovery…':phase==='open'?'A shape comes into view…':phase==='unlock'?'Moonlight slips through…':'Something stirs beneath the lid…';}});
     const opening=chestPresentation?.finished||Promise.resolve();
     const [v]=await Promise.all([act('chest'),opening]);
     if(mode!=='buddy'||presentation!=='reward'||ticket!==presentationSerial)return;
     const reward=v.reward;if(!reward)throw Error('Your discovery was saved. Reopen Discoveries to view it.');
+    chestPresentation?.cancel('revealed');
     host.classList.remove('orb-opening');host.classList.toggle('orb-revealed',!quiet);
-    host.innerHTML=R.preview(reward)+`<small class="orb-rarity">${reward.rarity}</small><h3></h3>`+(reward.id?'<button id="equip-reveal" class="primary">Equip discovery</button>':'<p>A new light in your constellation.</p>');
-    host.querySelector('h3').textContent=R.displayName(reward.name);
-    host.querySelector('#equip-reveal')?.addEventListener('click',()=>act('settings',{[reward.slot]:reward.id}).then(()=>notice('Equipped')).catch(()=>{}));
+    host.innerHTML=R.discoveryPreview(v,reward,{code:activeCode(),growthMs:selectedGrowth().focusedMs})+`<small class="orb-rarity">${reward.rarity}</small><h3></h3>`+(reward.id?'<button id="equip-reveal" class="primary">Equip discovery</button>':'<p>A new light in your constellation.</p>');
+    this.$('reward-heading').textContent='A keepsake, now yours.';host.querySelector('h3').textContent=R.displayName(reward.name);
+    host.querySelector('#equip-reveal')?.addEventListener('click',async e=>{const button=e.currentTarget;if(button.disabled)return;button.disabled=true;try{await act('settings',{[reward.slot]:reward.id});if(mode==='buddy'&&presentation==='reward'&&ticket===presentationSerial){const caption=host.querySelector('figcaption');if(caption)caption.textContent='Equipped on your companion';button.textContent='Equipped';notice('Equipped');}}catch{if(button.isConnected)button.disabled=false;}});
     window.OrbiterCats.celebrate();
    }catch(e){notice(e);if(presentation==='reward'&&panel.dataset.view==='reveal')host.innerHTML='<h3>Discovery paused</h3><p>Your collection is saved. Open Discoveries to check your items.</p>';}
    finally{chestPresentation?.cancel('released');busy=false;host.classList.remove('orb-opening');host.removeAttribute('aria-busy');}
